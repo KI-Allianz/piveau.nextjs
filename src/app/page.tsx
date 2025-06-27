@@ -4,7 +4,7 @@ import {useSearch} from "@/hooks/useSearch";
 import {useLocale} from "@/hooks/useLocale";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
-import {format, parse, parseISO} from "date-fns";
+import {parse, parseISO} from "date-fns";
 import HtmlSnippet from "@/components/HTMLSnippet";
 
 function parseDate(dateString: string | undefined | null): Date | null {
