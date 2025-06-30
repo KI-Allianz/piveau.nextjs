@@ -19,9 +19,13 @@ export function useLocale() {
       // In a real application, you might want to store this in a global state or context.
       console.log(`Locale set to: ${newLocale}`);
     },
-    translate: (item?: Record<string, string> | null) => {
+    translate: (item?: string | Record<string, string> | null) => {
       if (!item) {
         return 'N/A';
+      }
+
+      if (typeof item === 'string') {
+        return item; // If it's a string, return it as is
       }
 
       const localeId = extractLocale(locale || defaultLocale);
