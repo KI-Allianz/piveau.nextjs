@@ -3,6 +3,7 @@ import { Facet } from "./Facets";
 import {Label} from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {useSearchParams} from "next/navigation";
+import {Badge} from "@/components/ui/badge";
 
 function facetContains(facet: Facet, key: string): boolean {
   if (!facet || !facet.items || facet.items.length === 0) {
@@ -23,7 +24,7 @@ export default function BoolFacet({ facet }: Props) {
 
   return (
     <div className="bg-white p-4 rounded-lg shadow">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 justify-between">
         <Label htmlFor="airplane-mode">{translate(facet.title)}</Label>
         <Tabs
           defaultValue={searchParams.get(facet.id) == "true" ? "show" : searchParams.get(facet.id) == "false" ? "hide" : "ignore"}
@@ -48,8 +49,22 @@ export default function BoolFacet({ facet }: Props) {
         >
           <TabsList>
             <TabsTrigger value="ignore">Ignore</TabsTrigger>
-            <TabsTrigger disabled={(!searchParams.get(facet.id) || searchParams.get(facet.id) == "ignore") && !facetContains(facet, "false")} value="hide">Hide</TabsTrigger>
-            <TabsTrigger disabled={(!searchParams.get(facet.id) || searchParams.get(facet.id) == "ignore") && !facetContains(facet, "true")} value="show">Show</TabsTrigger>
+            <TabsTrigger disabled={(!searchParams.get(facet.id) || searchParams.get(facet.id) == "ignore") && !facetContains(facet, "false")} value="hide">
+              {facet.items.filter((item) => item.id === "false").length > 0 ? (
+                <Badge>
+                  {facet.items.find((item) => item.id === "false")?.count}
+                </Badge>
+              ) : null}
+              Hide
+            </TabsTrigger>
+            <TabsTrigger disabled={(!searchParams.get(facet.id) || searchParams.get(facet.id) == "ignore") && !facetContains(facet, "true")} value="show">
+              {facet.items.filter((item) => item.id === "true").length > 0 ? (
+                <Badge>
+                  {facet.items.find((item) => item.id === "true")?.count}
+                </Badge>
+              ) : null}
+              Show
+            </TabsTrigger>
           </TabsList>
         </Tabs>
       </div>

@@ -20,6 +20,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import {useLocale} from "@/hooks/useLocale";
+import {Badge} from "@/components/ui/badge";
 
 
 interface Props {
@@ -48,7 +49,7 @@ export function SelectAutoComplete({ defaultValue, facet, onSelectAction }: Prop
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="p-0">
         <Command >
           <CommandInput placeholder={`Search ${facet.title.toLowerCase()}...`} className="h-9" />
           <CommandList>
@@ -69,6 +70,9 @@ export function SelectAutoComplete({ defaultValue, facet, onSelectAction }: Prop
                     setOpen(false)
                   }}
                 >
+                  <Badge>
+                    {item.count}
+                  </Badge>
                   {translate(item.title)}
                   <Check
                     className={cn(
