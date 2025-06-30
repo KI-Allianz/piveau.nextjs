@@ -1,15 +1,5 @@
-import {useLocale} from "@/hooks/useLocale";
 import BoolFacet from "@/components/facets/BoolFacet";
 import SelectFacet from "@/components/facets/SelectFacet";
-
-function isBoolFacet(facet: Facet): boolean {
-  if (!facet || !facet.items || facet.items.length === 0) {
-    return false;
-  }
-
-  const items = facet.items.map((item) => item.title)
-  return items.includes("true") && items.includes("false");
-}
 
 export interface Facet {
   id: string
@@ -27,9 +17,6 @@ interface FacetsProps {
 }
 
 export default function Facets({ facets }: FacetsProps) {
-  const { translate } = useLocale();
-
-
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-2xl font-bold">Facets</h2>
@@ -38,10 +25,10 @@ export default function Facets({ facets }: FacetsProps) {
       </p>
       <div className="flex flex-col gap-4">
         {facets?.map((facet) => {
-          if (isBoolFacet(facet)) {
-            return <BoolFacet facet={facet} />
+          if (facet.id.startsWith("is_")) {
+            return <BoolFacet key={facet.id} facet={facet} />
           } else {
-            return <SelectFacet facet={facet} />
+            return <SelectFacet key={facet.id} facet={facet} />
           }
         })}
       </div>

@@ -15,6 +15,7 @@ import HtmlSnippet from "@/components/HTMLSnippet";
 import Facets from "@/components/facets/Facets";
 import SearchFacet from "@/components/facets/SearchFacet";
 import {useSearchParams} from "next/navigation";
+import {useEffect, useState} from "react";
 
 function parseDate(dateString: string | undefined | null): Date | null {
   if (!dateString) {
@@ -33,6 +34,7 @@ export default function Home() {
   const { translate } = useLocale();
 
   const searchParams = useSearchParams();
+  const [facets, setFacets] = useState<Record<string, string[]>>()
   const { data, isLoading, isPending } = useSearch({
     q: searchParams.get("q") || "",
     filter: "dataset",
@@ -57,7 +59,17 @@ export default function Home() {
       "categories.label",
       "publisher",
     ],
+    facets: facets,
   });
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const newFacets: Record<string, string[]> = {};
+    data?.facets.map((facet) => {
+      newFacets[facet.id] = params.getAll(facet.id);
+    })
+    setFacets(newFacets);
+  }, [searchParams]);
 
   if (isPending) {
     return <div>Pending...</div>;

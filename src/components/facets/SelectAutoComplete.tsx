@@ -23,13 +23,15 @@ import {useLocale} from "@/hooks/useLocale";
 
 
 interface Props {
+  defaultValue: string[]
   facet: Facet
+  onSelectAction: (value: string | undefined) => void
 }
 
-export function SelectAutoComplete({ facet }: Props) {
+export function SelectAutoComplete({ defaultValue, facet, onSelectAction }: Props) {
   const { translate } = useLocale();
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+  const [values, setValues] = React.useState(defaultValue)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -40,14 +42,14 @@ export function SelectAutoComplete({ facet }: Props) {
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value
-            ? translate(facet.items.find((item) => item.id === value)?.title)
+          {values.length > 0
+            ? translate(facet.items.find((item) => item.id === values[0])?.title)
             : `Select ${facet.title}...`}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
-        <Command>
+        <Command >
           <CommandInput placeholder={`Search ${facet.title.toLowerCase()}...`} className="h-9" />
           <CommandList>
             <CommandEmpty>No {facet.title.toLowerCase()} found.</CommandEmpty>
@@ -57,7 +59,13 @@ export function SelectAutoComplete({ facet }: Props) {
                   key={item.id}
                   value={item.id}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
+                    if (values.find((value => value === currentValue))) {
+                      setValues(values.filter(value => value !== currentValue))
+                    } else {
+                      setValues([...values, currentValue])
+                    }
+                    onSelectAction(currentValue)
+
                     setOpen(false)
                   }}
                 >
@@ -65,7 +73,7 @@ export function SelectAutoComplete({ facet }: Props) {
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === item.id ? "opacity-100" : "opacity-0"
+                      values.find((value => value === item.id)) ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>
