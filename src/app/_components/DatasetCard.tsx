@@ -3,22 +3,9 @@ import HtmlSnippet from "@/components/HTMLSnippet";
 import {Badge} from "@/components/ui/badge";
 import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
-import {parse, parseISO} from "date-fns";
 import {useLocale} from "@/hooks/useLocale";
 import Link from "next/link";
-
-function parseDate(dateString: string | undefined | null): Date | null {
-  if (!dateString) {
-    return new Date("2000-01-01");
-  }
-
-  let date = parseISO(dateString);
-  if (!isNaN(date.getTime())) {
-    return date;
-  }
-
-  return parse(dateString, "yyyy-MM-dd", new Date());
-}
+import {parseDate} from "@/lib/utils";
 
 interface Props {
   dataset: StandardSchemaV1.InferOutput<typeof schemaDataset>;

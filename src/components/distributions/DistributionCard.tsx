@@ -6,6 +6,9 @@ import {schemaDataset} from "@piveau/sdk-core/model";
 import {useLocale} from "@/hooks/useLocale";
 import Link from "next/link";
 import {Label} from "@/components/ui/label";
+import {DistributionLicense} from "@/components/distributions/DistributionLicense";
+import {parseDate} from "@/lib/utils";
+import {format, parse} from "date-fns";
 
 
 interface Props {
@@ -30,23 +33,18 @@ export default function DistributionCard({ distribution }: Props) {
         </CardHeader>
         <CardContent className="pt-3">
           <div>
-            <Label>License</Label>
-            <div>
-              <Link
-                href={distribution.license?.resource ?? "#"}
-                className="text-blue-500 hover:underline"
-              >
-                {distribution.license?.label}
-              </Link>
-            </div>
+            {distribution.license && (
+              <DistributionLicense license={distribution.license} />
+            )}
           </div>
         </CardContent>
       </div>
       <div>
-        <CardContent className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 px-6 justify-between">
+          <span className="text-end text-muted-foreground">{distribution.modified && format(distribution.modified, "dd MMMM yyyy")}</span>
           <DistributionDownloadButton access_urls={distribution.access_url} download_urls={distribution.download_url} />
           <DistributionLinkedDataButton id={distribution.id} />
-        </CardContent>
+        </div>
       </div>
     </Card>
   )

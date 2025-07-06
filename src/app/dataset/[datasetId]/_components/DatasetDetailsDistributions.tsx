@@ -10,7 +10,7 @@ interface Props {
 export default function DatasetDetailsDistributions({ dataset }: Props) {
   return (
     <div className="w-full">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 pb-10">
         {dataset.distributions?.map((distribution) => (
           <DistributionCard key={distribution.id} distribution={distribution} />
         ))}

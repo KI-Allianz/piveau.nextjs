@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
+import {SquareArrowOutUpRight} from "lucide-react";
 
 interface Props {
   access_urls: NonNullable<StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]>[number]["access_url"]
@@ -53,7 +54,10 @@ export function DistributionDownloadButton({access_urls, download_urls}: Props) 
                     value={"au" + url}
                     className="flex flex-col gap-1 items-start"
                   >
-                    <h3>Access Url</h3>
+                    <div className="flex gap-2 items-center">
+                      <SquareArrowOutUpRight />
+                      <h3 className="font-semibold">Access Url</h3>
+                    </div>
                     <p className="text-muted-foreground text-sm">{url}</p>
                   </CommandItem>
                 </Link>
@@ -69,7 +73,10 @@ export function DistributionDownloadButton({access_urls, download_urls}: Props) 
                     value={"du" + url}
                     className="flex flex-col gap-1 items-start"
                   >
-                    <h3>Download Url</h3>
+                    <div className="flex gap-2 items-center">
+                      <SquareArrowOutUpRight />
+                      <h3 className="font-semibold">Download Url</h3>
+                    </div>
                     <p className="text-muted-foreground text-sm">{url}</p>
                   </CommandItem>
                 </Link>
