@@ -74,7 +74,7 @@ export function DistributionLicense({license}: Props) {
                   </Button>
                 </Link>
                 <Link
-                  href={license?.la_url ?? "#"}
+                  href={(license as {la_url: string})?.la_url ?? "#"}
                   className="text-blue-500 hover:underline"
                 >
                   <Button variant={"outline"}>

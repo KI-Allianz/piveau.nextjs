@@ -17,7 +17,7 @@ export default function DatasetDetailsHeader({ dataset }: Props) {
         <div className="flex items-center justify-center">
           <h1 className="text-4xl font-semibold">{translate(dataset.title)}</h1>
         </div>
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center snippet">
           <HtmlSnippet
             html={translate(dataset.description)}
           />

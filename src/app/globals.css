@@ -161,26 +161,26 @@
   }
 }
 
-a {
+.snippet a {
   @apply text-blue-500 underline-offset-2 transition-colors hover:text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
 }
 
-h3 {
+.snippet h3 {
     @apply text-3xl font-semibold tracking-tight pb-3
 }
 
-hr {
+.snippet hr {
   @apply my-2 border-border/50;
 }
 
-ul {
+.snippet ul {
   @apply list-disc pl-10 mt-2;
 }
 
-li {
+.snippet li {
   @apply mb-2;
 }
 
-li > p > strong {
+.snippet li > p > strong {
   @apply hidden
 }

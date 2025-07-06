@@ -28,7 +28,7 @@ export default function DatasetCard({dataset}: Props) {
         </CardHeader>
         <CardContent>
           <div className="flex gap-2 justify-between">
-            <CardDescription className="flex-2/3">
+            <CardDescription className="flex-2/3 snippet">
               <HtmlSnippet
                 html={
                   translate(dataset.description).slice(0, 205) +
