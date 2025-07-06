@@ -1,5 +1,6 @@
 import BoolFacet from "@/components/facets/BoolFacet";
 import SelectFacet from "@/components/facets/SelectFacet";
+import FacetSkeleton from "@/components/facets/FacetSkeleton";
 
 export interface Facet {
   id: string
@@ -24,6 +25,11 @@ export default function Facets({ facets }: FacetsProps) {
         Facets are used to filter search results based on various attributes.
       </p>
       <div className="flex flex-col gap-4">
+        {!facets && (
+          [...Array(13).keys()].map(() => (
+            <FacetSkeleton />
+          ))
+        )}
         {facets?.map((facet) => {
           if (facet.id.startsWith("is_")) {
             return <BoolFacet key={facet.id} facet={facet} />

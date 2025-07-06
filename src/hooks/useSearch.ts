@@ -10,21 +10,32 @@ type DatasetResult = SearchResult<
   StandardSchemaV1.InferOutput<typeof schemaDataset>
 >["result"];        // gives { facets: …; results: … }
 
+interface Props extends SearchParams {
+  wait?: number; // optional wait time for debugging
+}
+
 export function useSearch(
-  params: SearchParams,
+  params: Props,
 ): UseQueryResult<DatasetResult> {
   return useQuery({
     // ⚠️  every param that can change MUST be part of the key
     queryKey: ['dataset-search', params],
     // your existing function becomes the queryFn
-    queryFn: () =>
-      searchResource<
+    queryFn: async () => {
+
+      // Debug insert wait
+      if (params.wait) {
+        await new Promise(resolve => setTimeout(resolve, params.wait));
+      }
+
+      const res = await searchResource<
         SearchResult<StandardSchemaV1.InferOutput<typeof schemaDataset>>
       >({
         baseUrl: 'https://piveau.hlrs.de/hub/search/',
         params
-      })
-        .then(res => res.data.result),    // strip the Axios wrapper
+      });
+      return res.data.result;
+    },    // strip the Axios wrapper
 
     // ────────────────────────────────────────────────*
     // nice-to-have flags
