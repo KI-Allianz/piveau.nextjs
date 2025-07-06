@@ -1,6 +1,7 @@
 import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
 import {useLocale} from "@/hooks/useLocale";
+import HtmlSnippet from "@/components/HTMLSnippet";
 
 
 interface Props {
@@ -17,7 +18,9 @@ export default function DatasetDetailsHeader({ dataset }: Props) {
           <h1 className="text-4xl font-semibold">{translate(dataset.title)}</h1>
         </div>
         <div className="flex items-center justify-center">
-          <p className="">{translate(dataset.description)}</p>
+          <HtmlSnippet
+            html={translate(dataset.description)}
+          />
         </div>
       </div>
     </div>
