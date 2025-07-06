@@ -4,11 +4,8 @@ import {DistributionLinkedDataButton} from "@/components/distributions/Distribut
 import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
 import {useLocale} from "@/hooks/useLocale";
-import Link from "next/link";
-import {Label} from "@/components/ui/label";
 import {DistributionLicense} from "@/components/distributions/DistributionLicense";
-import {parseDate} from "@/lib/utils";
-import {format, parse} from "date-fns";
+import {format} from "date-fns";
 
 
 interface Props {

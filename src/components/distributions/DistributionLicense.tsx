@@ -3,7 +3,6 @@ import {
   MorphingDialogTrigger,
   MorphingDialogContent,
   MorphingDialogTitle,
-  MorphingDialogImage,
   MorphingDialogSubtitle,
   MorphingDialogClose,
   MorphingDialogContainer,
