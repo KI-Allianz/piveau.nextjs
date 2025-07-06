@@ -26,8 +26,8 @@ export default function Facets({ facets }: FacetsProps) {
       </p>
       <div className="flex flex-col gap-4">
         {!facets && (
-          [...Array(13).keys()].map(() => (
-            <FacetSkeleton />
+          [...Array(13).keys()].map((index) => (
+            <FacetSkeleton key={index} />
           ))
         )}
         {facets?.map((facet) => {

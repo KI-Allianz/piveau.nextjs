@@ -51,13 +51,13 @@ export default function DatasetSearch() {
   }, [searchParams]);
 
   return (
-    <div className="flex gap-5">
+    <div className="flex gap-5 pb-10">
       <Facets facets={data?.facets} />
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full">
         <SearchFacet />
 
-        {isPending ? [...Array(10).keys()].map(() => (
-          <DatasetCardSkeleton />
+        {isPending ? [...Array(10).keys()].map((index) => (
+          <DatasetCardSkeleton key={index} />
         )) : (
           data?.results.map((result) => (
             <DatasetCard key={result.id} dataset={result} />
