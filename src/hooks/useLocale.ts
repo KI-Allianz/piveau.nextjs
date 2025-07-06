@@ -21,7 +21,7 @@ export function useLocale() {
     },
     translate: (item?: string | Record<string, string> | null) => {
       if (!item) {
-        return 'N/A';
+        return '';
       }
 
       if (typeof item === 'string') {

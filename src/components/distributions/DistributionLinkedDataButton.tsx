@@ -1,0 +1,87 @@
+"use client"
+
+import * as React from "react"
+
+import { Button } from "@/components/ui/button"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import Link from "next/link";
+import {StandardSchemaV1} from "@standard-schema/spec";
+import {schemaDataset} from "@piveau/sdk-core/model";
+
+const dataTypes = [
+  {
+    value: ".rdf",
+    label: "RDF / XML",
+  },
+  {
+    value: ".ttl",
+    label: "Turtle",
+  },
+  {
+    value: ".n3",
+    label: "Notation3",
+  },
+  {
+    value: ".nt",
+    label: "N-Triples",
+  },
+  {
+    value: ".jsonld",
+    label: "JSON-LD",
+  },
+]
+
+interface Props {
+  id: NonNullable<StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]>[number]["id"]
+}
+
+export function DistributionLinkedDataButton({id}: Props) {
+  const [open, setOpen] = React.useState(false)
+  const [search, setSearch] = React.useState("")
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="w-[150px] justify-start">
+          Linked Data
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="p-0" side="right" align="start">
+        <Command>
+          <CommandInput placeholder="Search urls..." value={search} onValueChange={setSearch} />
+          <CommandList>
+            <CommandEmpty>No downloads found.</CommandEmpty>
+            <CommandGroup>
+              {dataTypes.filter((status) => status.label.toLowerCase().includes(search.toLowerCase())).map((status) => (
+                <Link
+                  href={`https://piveau.hlrs.de/hub/repo/distributions/${id}${status.value}`}
+                  key={status.value}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <CommandItem
+                    value={status.value}
+                  >
+                    {status.label}
+                  </CommandItem>
+                </Link>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  )
+}
