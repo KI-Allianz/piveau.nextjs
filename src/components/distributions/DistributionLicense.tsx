@@ -73,15 +73,17 @@ export function DistributionLicense({license}: Props) {
                     Open
                   </Button>
                 </Link>
-                <Link
-                  href={(license as {la_url: string})?.la_url ?? "#"}
-                  className="text-blue-500 hover:underline"
-                >
-                  <Button variant={"outline"}>
-                    <SquareArrowOutUpRight />
-                    Licensing Assistant
-                  </Button>
-                </Link>
+                {(license as {la_url?: string}).la_url && (
+                  <Link
+                    href={(license as {la_url: string})?.la_url ?? "#"}
+                    className="text-blue-500 hover:underline"
+                  >
+                    <Button variant={"outline"}>
+                      <SquareArrowOutUpRight />
+                      Licensing Assistant
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
