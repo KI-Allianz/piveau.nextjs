@@ -37,17 +37,17 @@ export default function DatasetCard({dataset}: Props) {
               />
             </CardDescription>
             <div className="flex flex-wrap gap-2 flex-1/3">
-              <Badge>
+              <Badge variant={"outline"}>
                 {parseDate(dataset.issued)?.toLocaleDateString()}
               </Badge>
-              <Badge>
+              <Badge variant={"outline"}>
                 {parseDate(dataset.modified)?.toLocaleDateString()}
               </Badge>
               {dataset.distributions
                 ?.map((keyword) => keyword.format?.label)
                 .filter((format) => format)
                 .map((format) => (
-                  <Badge>{format}</Badge>
+                  <Badge variant={"outline"}>{format}</Badge>
                 ))}
             </div>
           </div>

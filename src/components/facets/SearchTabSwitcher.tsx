@@ -1,16 +1,26 @@
 import {useSearchParams} from "next/navigation";
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
+enum SearchTab {
+  DATASETS = "datasets",
+  DATA_SERVICES = "dataServices",
+  MODELS = "models"
+}
+
 
 export default function SearchTabSwitcher() {
   const searchParams = useSearchParams();
 
   const currentTab = (params: any) => {
     const tab = params.get("tab");
-    if (tab === "dataServices") {
-      return "dataServices";
+    switch (tab) {
+      case "dataServices":
+        return SearchTab.DATA_SERVICES;
+      case "models":
+        return SearchTab.MODELS;
+      default:
+        return SearchTab.DATASETS; // Default to datasets if no tab is specified
     }
-    return "datasets";
   }
 
   return (
@@ -22,7 +32,7 @@ export default function SearchTabSwitcher() {
         const current = currentTab(params);
 
         if (current !== value) {
-          if (value === "datasets") {
+          if (value === SearchTab.DATASETS) {
             params.delete("tab");
           } else {
             params.set("tab", value);
@@ -33,10 +43,9 @@ export default function SearchTabSwitcher() {
       }}
     >
       <TabsList>
-        <TabsTrigger value="datasets">Datasets</TabsTrigger>
-        <TabsTrigger value="dataServices">
-          Data Services
-        </TabsTrigger>
+        <TabsTrigger value={SearchTab.DATASETS}>Datasets</TabsTrigger>
+        <TabsTrigger value={SearchTab.DATA_SERVICES}>Data Services</TabsTrigger>
+        <TabsTrigger value={SearchTab.MODELS}>AI Models</TabsTrigger>
       </TabsList>
     </Tabs>
   )

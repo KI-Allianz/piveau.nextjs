@@ -30,7 +30,7 @@ export function DistributionLicense({license}: Props) {
         style={{
           borderRadius: '4px',
         }}
-        className='border border-gray-200/60 bg-white'
+        className='border border-gray-200/60 bg-card'
       >
         <div className='flex items-center space-x-3 p-3'>
           <div className='flex flex-col items-start justify-center space-y-0'>
@@ -49,7 +49,7 @@ export function DistributionLicense({license}: Props) {
           style={{
             borderRadius: '12px',
           }}
-          className='relative h-auto w-[500px] border border-gray-100 bg-white'
+          className='relative h-auto w-[500px] border border-gray-100 bg-card'
         >
           <div className='relative p-6'>
             <div className=''>

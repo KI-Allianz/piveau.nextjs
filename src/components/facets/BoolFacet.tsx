@@ -23,8 +23,8 @@ export default function BoolFacet({ facet }: Props) {
   const searchParams = useSearchParams();
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <div className="flex flex-col gap-4 justify-between">
+    <div className=" p-4 rounded-lg shadow">
+      <div className="bg-card flex flex-col gap-4 justify-between">
         <Label htmlFor="airplane-mode">{translate(facet.title)}</Label>
         <Tabs
           defaultValue={searchParams.get(facet.id) == "true" ? "show" : searchParams.get(facet.id) == "false" ? "hide" : "ignore"}
