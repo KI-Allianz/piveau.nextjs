@@ -7,6 +7,7 @@ import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import DatasetCard from "@/app/_components/DatasetCard";
 import DatasetCardSkeleton from "@/app/_components/DatasetCardSkeleton";
+import SearchTabSwitcher from "@/components/facets/SearchTabSwitcher";
 
 export default function DatasetSearch() {
   const searchParams = useSearchParams();
@@ -16,7 +17,7 @@ export default function DatasetSearch() {
     filter: "dataset",
     limit: 10,
     page: 0,
-    dataServices: false,
+    dataServices: searchParams.get("tab") == "dataServices",
     sort: "relevance+desc, modified+desc, title.en+asc",
     includes: [
       "id",
@@ -35,7 +36,9 @@ export default function DatasetSearch() {
       "categories.label",
       "publisher",
     ],
-    facets: facets,
+    facets: {
+      ...facets
+    },
 
     //Debugging
     //wait: 2000
@@ -53,8 +56,11 @@ export default function DatasetSearch() {
   return (
     <div className="flex gap-5 pb-10">
       <Facets facets={data?.facets} />
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full">
-        <SearchFacet />
+      <main className="flex flex-col gap-6 row-start-2 items-center sm:items-start w-full">
+        <div className="flex flex-col w-full gap-2">
+          <SearchFacet />
+          <SearchTabSwitcher />
+        </div>
 
         {isPending ? [...Array(10).keys()].map((index) => (
           <DatasetCardSkeleton key={index} />
