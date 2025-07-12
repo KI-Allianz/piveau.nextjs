@@ -64,7 +64,7 @@ export function DistributionLinkedDataButton({id}: Props) {
           <CommandList>
             <CommandEmpty>No downloads found.</CommandEmpty>
             <CommandGroup>
-              {dataTypes.filter((status) => status.label.toLowerCase().includes(search.toLowerCase())).map((status) => (
+              {dataTypes.map((status) => (
                 <Link
                   href={`https://piveau.hlrs.de/hub/repo/distributions/${id}${status.value}`}
                   key={status.value}
@@ -73,6 +73,7 @@ export function DistributionLinkedDataButton({id}: Props) {
                 >
                   <CommandItem
                     value={status.value}
+                    keywords={[status.label, status.value]}
                   >
                     {status.label}
                   </CommandItem>

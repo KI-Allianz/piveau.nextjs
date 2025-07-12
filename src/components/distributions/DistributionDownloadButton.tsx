@@ -43,7 +43,7 @@ export function DistributionDownloadButton({access_urls, download_urls}: Props) 
           <CommandList>
             <CommandEmpty>No downloads found.</CommandEmpty>
             <CommandGroup className="gap-1">
-              {access_urls?.filter((url) => url.toLowerCase().includes(search.toLowerCase())).map((url) => (
+              {access_urls?.map((url) => (
                 <Link
                   href={url}
                   key={"au" + url}
@@ -52,6 +52,7 @@ export function DistributionDownloadButton({access_urls, download_urls}: Props) 
                 >
                   <CommandItem
                     value={"au" + url}
+                    keywords={["url", "access", "access url", url]}
                     className="flex flex-col gap-1 items-start"
                   >
                     <div className="flex gap-2 items-center">
@@ -62,7 +63,7 @@ export function DistributionDownloadButton({access_urls, download_urls}: Props) 
                   </CommandItem>
                 </Link>
               ))}
-              {download_urls?.filter((url) => url.toLowerCase().includes(search.toLowerCase())).map((url) => (
+              {download_urls?.map((url) => (
                 <Link
                   href={url}
                   key={"du" + url}
@@ -71,6 +72,7 @@ export function DistributionDownloadButton({access_urls, download_urls}: Props) 
                 >
                   <CommandItem
                     value={"du" + url}
+                    keywords={["url", "download", "download url", url]}
                     className="flex flex-col gap-1 items-start"
                   >
                     <div className="flex gap-2 items-center">

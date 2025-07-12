@@ -59,6 +59,7 @@ export function SelectAutoComplete({ defaultValue, facet, onSelectAction }: Prop
                 <CommandItem
                   key={item.id}
                   value={item.id}
+                  keywords={[translate(item.title), item.id]}
                   onSelect={(currentValue) => {
                     if (values.find((value => value === currentValue))) {
                       setValues(values.filter(value => value !== currentValue))
