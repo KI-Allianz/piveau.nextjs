@@ -5,8 +5,7 @@ import DatasetDetailsHeader from "@/app/dataset/[datasetId]/_components/DatasetD
 import DatasetDetailsKeywords from "@/app/dataset/[datasetId]/_components/DatasetDetailsKeywords";
 import DatasetDetailsDistributions from "@/app/dataset/[datasetId]/_components/DatasetDetailsDistributions";
 import Header from "@/components/Header";
-import React, {Suspense} from "react";
-import DatasetSearch from "@/app/_components/DatasetSearch";
+import React from "react";
 
 interface Props {
   params: Promise<{datasetId: string}>;
