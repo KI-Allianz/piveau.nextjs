@@ -63,10 +63,10 @@ export default function DatasetSearch() {
         </div>
 
         {isPending ? [...Array(10).keys()].map((index) => (
-          <DatasetCardSkeleton key={index} />
+          <DatasetCardSkeleton key={"dss" + index} />
         )) : (
           data?.results.map((result, index) => (
-            <DatasetCard key={"ds" + index} dataset={result} />
+            <DatasetCard key={"ds" + result.id} dataset={result} />
           ))
         )}
       </main>

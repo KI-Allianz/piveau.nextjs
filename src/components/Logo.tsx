@@ -10,7 +10,7 @@ export default function Logo() {
       fill="none"
       className="max-h-[48px] w-auto"
     >
-      <g clip-path="url(#clip0_721_5883)">
+      <g clipPath="url(#clip0_721_5883)">
         <path d="M135.87 2.36167C131.587 -2.06168 125.283 0.621335 120.803 3.18004C108.683 10.1103 97.1686 18.1283 85.323 25.504C84.8723 25.7837 84.5253 26.1152 84.2612 26.4777C86.276 27.9798 88.3064 29.4871 90.342 30.9995C100.515 24.6286 110.516 17.9936 120.772 11.7574C122.523 10.6956 128.101 6.29296 130.251 7.26672C132.757 8.40104 130.52 14.9118 129.976 16.8282C127.92 24.0796 125.423 31.2274 122.709 38.2509C121.191 42.177 119.591 46.072 117.902 49.9256C117.131 51.6867 115.779 57.032 113.779 57.3531C112.391 57.581 109.232 54.8514 108.134 54.0952C106.409 52.9039 104.726 51.6504 103.032 50.4229C100.059 48.2733 97.1013 46.1031 94.1438 43.9329C81.055 34.304 68.0957 24.5095 54.9914 14.9014C51.1896 12.1148 47.5329 18.4649 51.2984 21.2205C63.978 30.5178 76.5281 39.9912 89.1869 49.3196C95.3351 53.8517 101.494 59.3006 108.268 62.8538C113.386 65.5368 118.224 65.397 121.305 60.0413C124.817 53.9346 127.236 46.7557 129.769 40.1932C132.483 33.1645 134.979 26.0219 137.036 18.7705C138.47 13.6997 140.019 6.63999 135.876 2.36685L135.87 2.36167Z"
               fill="url(#paint0_radial_721_5883)">
         </path>
@@ -107,12 +107,12 @@ export default function Logo() {
       </g>
       <defs>
         <radialGradient id="paint0_radial_721_5883" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(2.64676 94.2782) scale(159.774 159.774)">
-          <stop stop-color="#000AFA"></stop>
-          <stop offset="0.97" stop-color="#BA477F"></stop>
+          <stop stopColor="#000AFA"></stop>
+          <stop offset="0.97" stopColor="#BA477F"></stop>
         </radialGradient>
         <radialGradient id="paint1_radial_721_5883" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(2.64669 94.2786) scale(159.774 159.774)">
-          <stop stop-color="#000AFA"></stop>
-          <stop offset="0.97" stop-color="#BA477F"></stop>
+          <stop stopColor="#000AFA"></stop>
+          <stop offset="0.97" stopColor="#BA477F"></stop>
         </radialGradient>
         <clipPath id="clip0_721_5883">
           <rect width="512" height="97.8731" fill="white">
