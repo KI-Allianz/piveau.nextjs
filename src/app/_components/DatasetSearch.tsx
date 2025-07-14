@@ -21,8 +21,8 @@ export default function DatasetSearch() {
     sort: "relevance+desc, modified+desc, title.en+asc",
     includes: [
       "id",
-      "title.en",
-      "description.en",
+      "title",
+      "description",
       "languages",
       "modified",
       "issued",
@@ -65,7 +65,7 @@ export default function DatasetSearch() {
         {isPending ? [...Array(10).keys()].map((index) => (
           <DatasetCardSkeleton key={"dss" + index} />
         )) : (
-          data?.results.map((result, index) => (
+          data?.results.map((result) => (
             <DatasetCard key={"ds" + result.id} dataset={result} />
           ))
         )}
