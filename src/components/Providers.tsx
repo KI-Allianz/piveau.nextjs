@@ -6,7 +6,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React, { useState } from 'react';
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  // 1️⃣ keep a single instance per browser tab
   const [queryClient] = useState(() => new QueryClient());
 
   return (

@@ -1,4 +1,4 @@
-import DatasetSearch from "@/app/_components/DatasetSearch";
+import DatasetSearch from "./_components/DatasetSearch";
 import React, {Suspense} from "react";
 import Header from "@/components/Header";
 

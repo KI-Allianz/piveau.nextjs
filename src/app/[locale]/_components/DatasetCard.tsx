@@ -15,7 +15,7 @@ export default function DatasetCard({dataset}: Props) {
   const { translate } = useLocale();
 
   return (
-    <Link href={`/dataset/${dataset.id}`} className="w-full" >
+    <Link href={`/src/app/%5Blang%5D/dataset/${dataset.id}`} className="w-full" >
       <Card
         className="w-full hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer"
       >

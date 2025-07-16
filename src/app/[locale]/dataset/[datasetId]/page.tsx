@@ -1,9 +1,9 @@
 import { getResourceById } from "@piveau/sdk-core";
 import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
-import DatasetDetailsHeader from "@/app/dataset/[datasetId]/_components/DatasetDetailsHeader";
-import DatasetDetailsKeywords from "@/app/dataset/[datasetId]/_components/DatasetDetailsKeywords";
-import DatasetDetailsDistributions from "@/app/dataset/[datasetId]/_components/DatasetDetailsDistributions";
+import DatasetDetailsHeader from "./_components/DatasetDetailsHeader";
+import DatasetDetailsKeywords from "./_components/DatasetDetailsKeywords";
+import DatasetDetailsDistributions from "./_components/DatasetDetailsDistributions";
 import Header from "@/components/Header";
 import React from "react";
 

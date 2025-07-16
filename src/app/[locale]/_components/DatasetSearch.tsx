@@ -5,8 +5,8 @@ import Facets from "@/components/facets/Facets";
 import SearchFacet from "@/components/facets/SearchFacet";
 import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
-import DatasetCard from "@/app/_components/DatasetCard";
-import DatasetCardSkeleton from "@/app/_components/DatasetCardSkeleton";
+import DatasetCard from "./DatasetCard";
+import DatasetCardSkeleton from "./DatasetCardSkeleton";
 import SearchTabSwitcher from "@/components/facets/SearchTabSwitcher";
 
 export default function DatasetSearch() {

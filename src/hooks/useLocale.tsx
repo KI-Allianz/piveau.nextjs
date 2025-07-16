@@ -1,20 +1,48 @@
+'use client'
 
-//const defaultLocale = 'en-US';
-const defaultLocale = 'en-US';
+import React, { createContext, useContext } from 'react';
+import {defaultLocale} from "@/lib/lang";
 
 const extractLocale = (locale: string) => {
   // Extract the language part from the locale string (e.g., 'en-US' -> 'en')
   return locale.split('-')[0];
 }
 
+const LanguageContext = createContext<{
+  language: string
+}>({
+  language: defaultLocale
+});
+
+export function LanguageProvider({
+                              children,
+                                   language
+                            }: {
+  language: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <LanguageContext.Provider value={{
+      language: language
+    }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+
+
+
 
 export function useLocale() {
-  const locale = typeof window !== 'undefined' ? window.navigator.language : 'en-US';
+  const context = useContext(LanguageContext);
+  if (context === null) {
+    throw new Error('useLocale must be used within an LanguageProvider');
+  }
 
-  console.log(`Current locale: ${locale}`);
+  console.log(`Current locale: ${context.language}`);
 
   return {
-    getLocale: () => locale,
+    getLocale: () => context.language,
     setLocale: (newLocale: string) => {
       // This is a placeholder for setting the locale.
       // In a real application, you might want to store this in a global state or context.
@@ -29,7 +57,7 @@ export function useLocale() {
         return item; // If it's a string, return it as is
       }
 
-      const localeId = extractLocale(locale || defaultLocale);
+      const localeId = extractLocale(context.language);
 
       // This is a placeholder for a translation function.
       // In a real application, you would implement actual translation logic.
