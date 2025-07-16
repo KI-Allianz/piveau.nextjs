@@ -6,6 +6,7 @@ import {
   defaultLocale, getDateLocale, getTranslations,
   supportedLocales
 } from "@/lib/lang";
+import {redirect, usePathname} from "next/navigation";
 
 const LanguageContext = createContext<{
   language: supportedLocales
@@ -36,13 +37,16 @@ export function useLocale() {
 
   console.log(`Current locale: ${context.language}`);
 
+  const pathname = usePathname()
+
   return {
     locale: context.language,
     dateLocale: getDateLocale(context.language),
-    setLocale: (newLocale: string) => {
+    setLocale: (newLocale: supportedLocales) => {
       // This is a placeholder for setting the locale.
       // In a real application, you might want to store this in a global state or context.
       console.log(`Locale set to: ${newLocale}`);
+      redirect(`/${newLocale}/${pathname.split("/").slice(2).join("/")}`)
     },
     translateDict: buildTranslateDictFunction(context.language),
     translations: getTranslations(context.language)

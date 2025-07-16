@@ -6,7 +6,6 @@ import {usePathname} from "next/navigation";
 import {twMerge} from "tailwind-merge";
 
 const navItems = [
-  /** ToDo add route to landing? Add/change weblate translation */
   {
     title: "Datasets",
     href: "/",

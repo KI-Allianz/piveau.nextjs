@@ -6,6 +6,7 @@ import DatasetDetailsKeywords from "./_components/DatasetDetailsKeywords";
 import DatasetDetailsDistributions from "./_components/DatasetDetailsDistributions";
 import Header from "@/components/Header";
 import React from "react";
+import Footer from "@/components/Footer";
 
 interface Props {
   params: Promise<{datasetId: string}>;
@@ -31,6 +32,7 @@ export default async function DatasetPage({ params }: Props) {
         <DatasetDetailsKeywords dataset={response.result} />
         <DatasetDetailsDistributions dataset={response.result} />
       </div>
+      <Footer />
     </div>
 
   );

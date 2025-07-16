@@ -4,7 +4,11 @@ import { de as deDate, enUS as enDate } from 'date-fns/locale';
 
 export const defaultLocale = 'en';
 export type supportedLocales = 'en' | 'de';
-export const SupportedLocales = ['en', 'de'];
+export const SupportedLocales: supportedLocales[] = ['en', 'de'];
+export const languageNames: Record<supportedLocales, string> = {
+  en: 'English',
+  de: 'Deutsch',
+}
 
 export const extractLocale = (locale: string) => {
   // Extract the language part from the locale string (e.g., 'en-US' -> 'en')
