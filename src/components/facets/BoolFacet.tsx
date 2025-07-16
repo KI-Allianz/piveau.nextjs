@@ -19,7 +19,7 @@ interface Props {
 }
 
 export default function BoolFacet({ facet }: Props) {
-  const { translateDict } = useLocale();
+  const { translateDict, translations } = useLocale();
   const searchParams = useSearchParams();
 
   return (
@@ -48,14 +48,14 @@ export default function BoolFacet({ facet }: Props) {
           }}
         >
           <TabsList>
-            <TabsTrigger value="ignore">Ignore</TabsTrigger>
+            <TabsTrigger value="ignore">{translations.search.facets.ignore}</TabsTrigger>
             <TabsTrigger disabled={(!searchParams.get(facet.id) || searchParams.get(facet.id) == "ignore") && !facetContains(facet, "false")} value="hide">
               {facet.items.filter((item) => item.id === "false").length > 0 ? (
                 <Badge>
                   {facet.items.find((item) => item.id === "false")?.count}
                 </Badge>
               ) : null}
-              Hide
+              {translations.search.facets.hide}
             </TabsTrigger>
             <TabsTrigger disabled={(!searchParams.get(facet.id) || searchParams.get(facet.id) == "ignore") && !facetContains(facet, "true")} value="show">
               {facet.items.filter((item) => item.id === "true").length > 0 ? (
@@ -63,7 +63,7 @@ export default function BoolFacet({ facet }: Props) {
                   {facet.items.find((item) => item.id === "true")?.count}
                 </Badge>
               ) : null}
-              Show
+              {translations.search.facets.show}
             </TabsTrigger>
           </TabsList>
         </Tabs>

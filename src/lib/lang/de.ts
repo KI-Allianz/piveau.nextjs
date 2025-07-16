@@ -5,7 +5,13 @@ export const de: translations = {
   search: {
     facets: {
       title: 'Facetten',
-      description: 'Filtere Ergebnisse nach Facetten wie Kategorie, Katalog und mehr.'
+      description: 'Filtere Ergebnisse nach Facetten wie Kategorie, Katalog und mehr.',
+      select: "Wähle {0}...",
+      search: "Suche {0}...",
+      hide: "Ausblenden",
+      show: "Anzeigen",
+      ignore: "Ignorieren",
+      notFound: "Keine {0} gefunden."
     },
     placeholder: 'Suche nach Datensätzen, Datenservices und KI-Modellen...',
     tabs: {

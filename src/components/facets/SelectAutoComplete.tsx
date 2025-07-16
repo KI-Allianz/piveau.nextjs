@@ -4,7 +4,7 @@ import * as React from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { Facet } from "./Facets";
 
-import { cn } from "@/lib/utils"
+import {cn, formatString} from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -30,7 +30,7 @@ interface Props {
 }
 
 export function SelectAutoComplete({ defaultValue, facet, onSelectAction }: Props) {
-  const { translateDict } = useLocale();
+  const { translateDict, translations } = useLocale();
   const [open, setOpen] = React.useState(false)
   const [values, setValues] = React.useState(defaultValue)
 
@@ -45,15 +45,15 @@ export function SelectAutoComplete({ defaultValue, facet, onSelectAction }: Prop
         >
           {values.length > 0
             ? translateDict(facet.items.find((item) => item.id === values[0])?.title)
-            : `Select ${facet.title}...`}
+            : formatString(translations.search.facets.select, facet.title)}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0">
         <Command >
-          <CommandInput placeholder={`Search ${facet.title.toLowerCase()}...`} className="h-9" />
+          <CommandInput placeholder={formatString(translations.search.facets.search, facet.title)} className="h-9" />
           <CommandList>
-            <CommandEmpty>No {facet.title.toLowerCase()} found.</CommandEmpty>
+            <CommandEmpty>{formatString(translations.search.facets.notFound, facet.title)}</CommandEmpty>
             <CommandGroup>
               {facet.items.map((item) => (
                 <CommandItem

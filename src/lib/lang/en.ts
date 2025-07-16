@@ -5,7 +5,13 @@ export const en: translations = {
   search: {
     facets: {
       title: 'Facets',
-      description: 'Filter results by facets such as category, catalogue, and more.'
+      description: 'Filter results by facets such as category, catalogue, and more.',
+      select: "Select {0}...",
+      search: "Select {0}...",
+      hide: "Hide",
+      show: "Show",
+      ignore: "Ignore",
+      notFound: "No {0} found."
     },
     placeholder: 'Search datasets, data services, and AI models...',
     tabs: {

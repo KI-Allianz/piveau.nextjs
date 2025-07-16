@@ -5,6 +5,12 @@ export type translations = {
     facets: {
       title: string;
       description: string;
+      select: string,
+      search: string;
+      hide: string,
+      show: string,
+      ignore: string,
+      notFound: string;
     },
     placeholder: string;
     tabs: {

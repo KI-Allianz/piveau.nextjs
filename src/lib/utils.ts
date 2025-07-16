@@ -18,3 +18,11 @@ export function parseDate(dateString: string | undefined | null): Date | null {
 
   return parse(dateString, "yyyy-MM-dd", new Date());
 }
+
+export function formatString(str: string, ...replacements: string[]): string {
+  return str.replace(/{(\d+)}/g, function(match, number) {
+    return typeof replacements[number] != 'undefined'
+      ? replacements[number]
+      : match;
+  });
+}
