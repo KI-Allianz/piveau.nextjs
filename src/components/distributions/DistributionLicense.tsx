@@ -12,12 +12,15 @@ import {schemaDataset} from "@piveau/sdk-core/model";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {Scale, SquareArrowOutUpRight} from "lucide-react";
+import {useLocale} from "@/hooks/useLocale";
 
 interface Props {
   license: NonNullable<StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]>[number]["license"]
 }
 
 export function DistributionLicense({license}: Props) {
+  const { translations } = useLocale()
+
   return (
     <MorphingDialog
       transition={{
@@ -36,7 +39,7 @@ export function DistributionLicense({license}: Props) {
           <div className='flex flex-col items-start justify-center space-y-0'>
             <MorphingDialogTitle className='text-[10px] font-medium text-black sm:text-xs flex gap-1'>
               <Scale size={15} />
-              License
+              {translations.dataset.distribution.license}
             </MorphingDialogTitle>
             <MorphingDialogSubtitle className='text-[10px] text-gray-600 sm:text-xs'>
               {license?.label}
@@ -55,7 +58,7 @@ export function DistributionLicense({license}: Props) {
             <div className=''>
               <span className='text-[10px] font-medium text-muted-foreground sm:text-xs flex gap-1'>
                 <Scale size={15} />
-                License
+                {translations.dataset.distribution.license}
               </span>
               <MorphingDialogTitle className='text-black'>
                 {license?.label}
@@ -70,7 +73,7 @@ export function DistributionLicense({license}: Props) {
                 >
                   <Button variant={"outline"}>
                     <SquareArrowOutUpRight />
-                    Open
+                    {translations.open}
                   </Button>
                 </Link>
                 {(license as {la_url?: string}).la_url && (
@@ -80,7 +83,7 @@ export function DistributionLicense({license}: Props) {
                   >
                     <Button variant={"outline"}>
                       <SquareArrowOutUpRight />
-                      Licensing Assistant
+                      {translations.dataset.distribution.licensingAssistant}
                     </Button>
                   </Link>
                 )}

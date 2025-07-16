@@ -30,7 +30,7 @@ interface Props {
 }
 
 export function SelectAutoComplete({ defaultValue, facet, onSelectAction }: Props) {
-  const { translate } = useLocale();
+  const { translateDict } = useLocale();
   const [open, setOpen] = React.useState(false)
   const [values, setValues] = React.useState(defaultValue)
 
@@ -44,7 +44,7 @@ export function SelectAutoComplete({ defaultValue, facet, onSelectAction }: Prop
           className="w-full justify-between"
         >
           {values.length > 0
-            ? translate(facet.items.find((item) => item.id === values[0])?.title)
+            ? translateDict(facet.items.find((item) => item.id === values[0])?.title)
             : `Select ${facet.title}...`}
           <ChevronsUpDown className="opacity-50" />
         </Button>
@@ -59,7 +59,7 @@ export function SelectAutoComplete({ defaultValue, facet, onSelectAction }: Prop
                 <CommandItem
                   key={item.id}
                   value={item.id}
-                  keywords={[translate(item.title), item.id]}
+                  keywords={[translateDict(item.title), item.id]}
                   onSelect={(currentValue) => {
                     if (values.find((value => value === currentValue))) {
                       setValues(values.filter(value => value !== currentValue))
@@ -74,7 +74,7 @@ export function SelectAutoComplete({ defaultValue, facet, onSelectAction }: Prop
                   <Badge>
                     {item.count}
                   </Badge>
-                  {translate(item.title)}
+                  {translateDict(item.title)}
                   <Check
                     className={cn(
                       "ml-auto",

@@ -12,17 +12,17 @@ interface Props {
 }
 
 export default function DatasetCard({dataset}: Props) {
-  const { translate } = useLocale();
+  const { translateDict, locale } = useLocale();
 
   return (
-    <Link href={`/src/app/%5Blang%5D/dataset/${dataset.id}`} className="w-full" >
+    <Link href={`/${locale}/dataset/${dataset.id}`} className="w-full" >
       <Card
         className="w-full hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer"
       >
         <CardHeader>
           <CardTitle>
             <h2 className="text-2xl text-wrap">
-              {translate(dataset.title)}
+              {translateDict(dataset.title)}
             </h2>
           </CardTitle>
         </CardHeader>
@@ -31,8 +31,8 @@ export default function DatasetCard({dataset}: Props) {
             <CardDescription className="flex-2/3 snippet">
               <HtmlSnippet
                 html={
-                  translate(dataset.description).slice(0, 205) +
-                  (translate(dataset.description).length > 205 ? "..." : "")
+                  translateDict(dataset.description).slice(0, 205) +
+                  (translateDict(dataset.description).length > 205 ? "..." : "")
                 }
               />
             </CardDescription>

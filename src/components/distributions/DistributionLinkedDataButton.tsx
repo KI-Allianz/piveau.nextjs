@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
+import {useLocale} from "@/hooks/useLocale";
 
 const dataTypes = [
   {
@@ -48,6 +49,7 @@ interface Props {
 }
 
 export function DistributionLinkedDataButton({id}: Props) {
+  const { translations } = useLocale()
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState("")
 
@@ -55,14 +57,14 @@ export function DistributionLinkedDataButton({id}: Props) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className="w-[150px] justify-start">
-          Linked Data
+          {translations.dataset.distribution.linkedData}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0" side="right" align="start">
         <Command>
-          <CommandInput placeholder="Search urls..." value={search} onValueChange={setSearch} />
+          <CommandInput placeholder={translations.dataset.distribution.placeholder} value={search} onValueChange={setSearch} />
           <CommandList>
-            <CommandEmpty>No downloads found.</CommandEmpty>
+            <CommandEmpty>{translations.download.noDownloads}</CommandEmpty>
             <CommandGroup>
               {dataTypes.map((status) => (
                 <Link

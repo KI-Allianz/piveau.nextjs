@@ -20,6 +20,7 @@ import Link from "next/link";
 import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
 import {SquareArrowOutUpRight} from "lucide-react";
+import {useLocale} from "@/hooks/useLocale";
 
 interface Props {
   access_urls: NonNullable<StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]>[number]["access_url"]
@@ -27,6 +28,7 @@ interface Props {
 }
 
 export function DistributionDownloadButton({access_urls, download_urls}: Props) {
+  const { translations } = useLocale()
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState("")
 
@@ -34,14 +36,14 @@ export function DistributionDownloadButton({access_urls, download_urls}: Props) 
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className="w-[150px] justify-start">
-          Download
+          {translations.download.download}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0" side="right" align="start">
         <Command>
-          <CommandInput placeholder="Search urls..." value={search} onValueChange={setSearch} />
+          <CommandInput placeholder={translations.dataset.distribution.placeholder} value={search} onValueChange={setSearch} />
           <CommandList>
-            <CommandEmpty>No downloads found.</CommandEmpty>
+            <CommandEmpty>{translations.download.noDownloads}</CommandEmpty>
             <CommandGroup className="gap-1">
               {access_urls?.map((url) => (
                 <Link
