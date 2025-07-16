@@ -25,6 +25,9 @@ export type translations = {
       licensingAssistant: string
       linkedData: string;
       placeholder: string;
+    },
+    map: {
+      title: string;
     }
   },
   download: {

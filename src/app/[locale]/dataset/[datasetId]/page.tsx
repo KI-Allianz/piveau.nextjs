@@ -7,6 +7,7 @@ import DatasetDetailsDistributions from "./_components/DatasetDetailsDistributio
 import Header from "@/components/Header";
 import React from "react";
 import Footer from "@/components/Footer";
+import MapComponent from "@/components/MapComponent";
 
 interface Props {
   params: Promise<{datasetId: string}>;
@@ -21,8 +22,6 @@ export default async function DatasetPage({ params }: Props) {
     id: datasetId,
   })
 
-  // console.log(response.result)
-
   return (
     <div className="bg-background w-full max-w-[1920px] mx-auto shadow-[0_0_12px_rgba(0,0,0,0.17)]">
       <Header />
@@ -31,6 +30,8 @@ export default async function DatasetPage({ params }: Props) {
         <DatasetDetailsHeader dataset={response.result} />
         <DatasetDetailsKeywords dataset={response.result} />
         <DatasetDetailsDistributions dataset={response.result} />
+
+        <MapComponent geoJsonData={response.result.spatial} />
       </div>
       <Footer />
     </div>

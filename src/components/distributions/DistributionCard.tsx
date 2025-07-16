@@ -17,7 +17,7 @@ interface Props {
 export default function DistributionCard({ distribution }: Props) {
   const { translateDict, dateLocale } = useLocale();
 
-  console.log(distribution)
+  // console.log(distribution)
 
   return (
     <Card key={distribution.id} className="w-full flex flex-row justify-between">

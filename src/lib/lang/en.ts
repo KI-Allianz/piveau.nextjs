@@ -26,6 +26,9 @@ export const en: translations = {
       licensingAssistant: "Licensing Assistant",
       linkedData: "Linked Data",
       placeholder: "Search urls..."
+    },
+    map: {
+      title: 'Map'
     }
   },
   download: {

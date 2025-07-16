@@ -35,7 +35,7 @@ export function useLocale() {
     throw new Error('useLocale must be used within an LanguageProvider');
   }
 
-  console.log(`Current locale: ${context.language}`);
+  // console.log(`Current locale: ${context.language}`);
 
   const pathname = usePathname()
 
