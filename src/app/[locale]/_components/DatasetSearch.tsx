@@ -8,6 +8,7 @@ import {useEffect, useState} from "react";
 import DatasetCard from "./DatasetCard";
 import DatasetCardSkeleton from "./DatasetCardSkeleton";
 import SearchTabSwitcher from "@/components/facets/SearchTabSwitcher";
+import SearchPagination from "./SearchPagination";
 
 export default function DatasetSearch() {
   const searchParams = useSearchParams();
@@ -15,8 +16,8 @@ export default function DatasetSearch() {
   const { data, isPending } = useSearch({
     q: searchParams.get("q") || "",
     filter: "dataset",
-    limit: 10,
-    page: 0,
+    limit: searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10,
+    page: searchParams.get("page") ? parseInt(searchParams.get("page") as string) : 0,
     dataServices: searchParams.get("tab") == "dataServices",
     sort: "relevance+desc, modified+desc, title.en+asc",
     includes: [
@@ -69,6 +70,12 @@ export default function DatasetSearch() {
             <DatasetCard key={"ds" + result.id} dataset={result} />
           ))
         )}
+
+        <SearchPagination
+          currentPage={searchParams.get("page") ? parseInt(searchParams.get("page") as string) : 0}
+          totalPages={Math.ceil((data?.count ?? 10) / (searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10))}
+          itemsPerPage={searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10}
+        />
       </main>
     </div>
   );
