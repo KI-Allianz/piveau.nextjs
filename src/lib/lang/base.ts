@@ -21,6 +21,7 @@ export type translations = {
   },
   dataset: {
     distribution: {
+      title: string;
       license: string;
       licensingAssistant: string
       linkedData: string;
@@ -28,7 +29,10 @@ export type translations = {
     },
     map: {
       title: string;
-    }
+    },
+    categories: string
+    keywords: string;
+    description: string;
   },
   download: {
     download: string;

@@ -3,7 +3,6 @@
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import { schemaDataset } from "@piveau/sdk-core/model";
 import { useLocale } from "@/hooks/useLocale";
-import HtmlSnippet from "@/components/HTMLSnippet";
 
 
 interface Props {
@@ -18,11 +17,6 @@ export default function DatasetDetailsHeader({ dataset }: Props) {
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-center">
           <h1 className="text-4xl font-semibold">{translateDict(dataset.title)}</h1>
-        </div>
-        <div className="flex items-center justify-center snippet">
-          <HtmlSnippet
-            html={translateDict(dataset.description)}
-          />
         </div>
       </div>
     </div>

@@ -27,7 +27,7 @@ export default function LanguageSelector() {
         <SelectGroup>
           <SelectLabel>Languages</SelectLabel>
           {SupportedLocales.map((locale) => (
-            <Link href={`/${locale}/${pathname.split("/").slice(2).join("/")}`} className="flex items-center">
+            <Link key={locale} href={`/${locale}/${pathname.split("/").slice(2).join("/")}`} className="flex items-center">
               <SelectItem key={locale} value={locale}>
                 {languageNames[locale]}
               </SelectItem>

@@ -22,6 +22,7 @@ export const de: translations = {
   },
   dataset: {
     distribution: {
+      title: "Distributions",
       license: "Lizenz",
       licensingAssistant: "Lizenzierungsassistent",
       linkedData: "Verknüpfte Daten",
@@ -29,7 +30,10 @@ export const de: translations = {
     },
     map: {
       title: 'Karte'
-    }
+    },
+    keywords: "Keywords",
+    categories: "Kategorien",
+    description: "Beschreibung",
   },
   download: {
     download: 'Herunterladen',
