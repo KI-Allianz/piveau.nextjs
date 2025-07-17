@@ -35,7 +35,7 @@ export default async function DatasetPage({ params }: Props) {
 
         <Accordion type="multiple" className="w-full" defaultValue={["description", "keywords", "distributions", "map"]}>
           <AccordionItem value={"description"} className="py-2">
-            <AccordionTrigger className="py-2 text-xl leading-6 hover:no-underline">
+            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
               {translations.dataset.description}
             </AccordionTrigger>
             <AccordionContent className="pb-2">
@@ -43,7 +43,7 @@ export default async function DatasetPage({ params }: Props) {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value={"keywords"} className="py-2">
-            <AccordionTrigger className="py-2 text-xl leading-6 hover:no-underline">
+            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
               {translations.dataset.keywords}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
@@ -51,7 +51,7 @@ export default async function DatasetPage({ params }: Props) {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value={"categories"} className="py-2">
-            <AccordionTrigger className="py-2 text-xl leading-6 hover:no-underline">
+            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
               {translations.dataset.categories}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
@@ -59,7 +59,7 @@ export default async function DatasetPage({ params }: Props) {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value={"distributions"} className="py-2">
-            <AccordionTrigger className="py-2 text-xl leading-6 hover:no-underline">
+            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
               {translations.dataset.distribution.title}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
@@ -68,7 +68,7 @@ export default async function DatasetPage({ params }: Props) {
           </AccordionItem>
           {response.result.spatial && (
             <AccordionItem value={"map"} className="py-2">
-              <AccordionTrigger className="py-2 text-xl leading-6 hover:no-underline">
+              <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
                 {translations.dataset.map.title}
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground pb-2">

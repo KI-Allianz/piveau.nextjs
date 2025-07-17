@@ -170,7 +170,7 @@
 }
 
 .snippet h3 {
-    @apply text-3xl font-semibold tracking-tight pb-3
+    @apply text-xl font-semibold tracking-tight pb-3
 }
 
 .snippet hr {

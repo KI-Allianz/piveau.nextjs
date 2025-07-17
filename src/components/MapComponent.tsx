@@ -29,7 +29,7 @@ function FitBoundsToGeoJSON({ geoJsonData }: Props) {
 export default function MapComponent({ geoJsonData }: Props) {
   return (
     <div>
-      <MapContainer center={[0, 0]} zoom={13} scrollWheelZoom={false} style={{ height: '400px', width: '100%' }}>
+      <MapContainer center={[0, 0]} zoom={13} scrollWheelZoom={true} style={{ height: '400px', width: '100%', borderRadius: '15px' }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
