@@ -21,7 +21,7 @@ import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
 import {useLocale} from "@/hooks/useLocale";
 
-const dataTypes = [
+export const dataTypes = [
   {
     value: ".rdf",
     label: "RDF / XML",
@@ -57,7 +57,7 @@ export function DistributionLinkedDataButton({id}: Props) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className="w-[150px] justify-start">
-          {translations.dataset.distribution.linkedData}
+          {translations.dataset.linkedData}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0" side="right" align="start">

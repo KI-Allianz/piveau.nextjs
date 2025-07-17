@@ -25,7 +25,6 @@ export const de: translations = {
       title: "Distributions",
       license: "Lizenz",
       licensingAssistant: "Lizenzierungsassistent",
-      linkedData: "Verknüpfte Daten",
       placeholder: "Suche urls..."
     },
     map: {
@@ -34,6 +33,7 @@ export const de: translations = {
     keywords: "Keywords",
     categories: "Kategorien",
     description: "Beschreibung",
+    linkedData: "Verknüpfte Daten",
   },
   download: {
     download: 'Herunterladen',

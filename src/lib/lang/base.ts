@@ -24,7 +24,6 @@ export type translations = {
       title: string;
       license: string;
       licensingAssistant: string
-      linkedData: string;
       placeholder: string;
     },
     map: {
@@ -33,6 +32,7 @@ export type translations = {
     categories: string
     keywords: string;
     description: string;
+    linkedData: string;
   },
   download: {
     download: string;
