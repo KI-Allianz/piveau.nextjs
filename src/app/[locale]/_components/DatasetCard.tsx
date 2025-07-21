@@ -40,9 +40,9 @@ export default function DatasetCard({dataset}: Props) {
               <Badge variant={"outline"}>
                 {dataset.modified ? parseDate(dataset.modified)?.toLocaleDateString() : parseDate(dataset.issued)?.toLocaleDateString()}
               </Badge>
-              {dataset.distributions
+              {[... new Set(dataset.distributions
                 ?.map((keyword) => keyword.format?.label)
-                .filter((format) => format)
+                .filter((format) => format))]
                 .map((format) => (
                   <Badge variant={"outline"}>{format}</Badge>
                 ))}

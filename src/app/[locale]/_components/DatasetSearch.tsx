@@ -35,6 +35,7 @@ export default function DatasetSearch() {
       "distributions.format.id",
       "distributions.license",
       "categories.label",
+      "keywords.label",
       "publisher",
     ],
     facets: {

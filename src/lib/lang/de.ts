@@ -22,7 +22,7 @@ export const de: translations = {
   },
   dataset: {
     distribution: {
-      title: "Distributions",
+      title: "Distributionen",
       license: "Lizenz",
       licensingAssistant: "Lizenzierungsassistent",
       placeholder: "Suche urls..."
