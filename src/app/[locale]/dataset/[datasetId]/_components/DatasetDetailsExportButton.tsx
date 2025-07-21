@@ -32,9 +32,6 @@ export default function DatasetDetailsExportButton({ id }: Props) {
       <DropdownMenuTrigger asChild>
         <Button variant="outline">
           <Menu
-            className="opacity-60"
-            size={16}
-            aria-hidden="true"
           />
         </Button>
       </DropdownMenuTrigger>
