@@ -39,4 +39,5 @@ export type translations = {
     noDownloads: string;
   }
   open: string;
+  languages: string;
 }

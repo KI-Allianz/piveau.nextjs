@@ -39,5 +39,6 @@ export const en: translations = {
     download: 'Download',
     noDownloads: 'No downloads found.'
   },
-  open: 'Open'
+  open: 'Open',
+  languages: "Languages",
 }

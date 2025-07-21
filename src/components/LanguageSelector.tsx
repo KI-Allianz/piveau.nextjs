@@ -16,7 +16,7 @@ import {useLocale} from "@/hooks/useLocale";
 
 export default function LanguageSelector() {
   const pathname = usePathname()
-  const { locale, setLocale } = useLocale();
+  const { locale, setLocale, translations } = useLocale();
 
   return (
     <Select defaultValue={locale} onValueChange={setLocale}>
@@ -25,7 +25,7 @@ export default function LanguageSelector() {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Languages</SelectLabel>
+          <SelectLabel>{translations.languages}</SelectLabel>
           {SupportedLocales.map((locale) => (
             <Link key={locale} href={`/${locale}/${pathname.split("/").slice(2).join("/")}`} className="flex items-center">
               <SelectItem key={locale} value={locale}>
