@@ -16,6 +16,7 @@ interface Props extends SearchParams {
 
 export function useSearch(
   params: Props,
+  onSuccess?: () => void,
 ): UseQueryResult<DatasetResult> {
   return useQuery({
     // ⚠️  every param that can change MUST be part of the key
@@ -34,6 +35,8 @@ export function useSearch(
         baseUrl: 'https://piveau.hlrs.de/hub/search/',
         params
       });
+
+      onSuccess?.()
       return res.data.result;
     },    // strip the Axios wrapper
 

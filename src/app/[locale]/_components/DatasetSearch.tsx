@@ -7,18 +7,40 @@ import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import DatasetCard from "./DatasetCard";
 import DatasetCardSkeleton from "./DatasetCardSkeleton";
-import SearchTabSwitcher from "@/components/facets/SearchTabSwitcher";
+import SearchTabSwitcher, { SearchTab } from "@/components/facets/SearchTabSwitcher";
 import SearchPagination from "./SearchPagination";
 
 export default function DatasetSearch() {
   const searchParams = useSearchParams();
   const [facets, setFacets] = useState<Record<string, string[]>>()
+
+  const fixFacets = (facets: Record<string, string[]> | undefined) => {
+    const fixedFacets: Record<string, string[]> = {};
+    if (!facets || Object.keys(facets).length === 0) {
+      if (searchParams.get("tab") === SearchTab.MODELS) {
+        // If no facets are available, we set a default value for AI Models
+        fixedFacets["format"] = ["ONNX"];
+      }
+
+      return fixedFacets;
+    }
+
+    Object.entries(facets).forEach(([key, value]) => {
+      if (value.length <= 0 && key === "format" && searchParams.get("tab") === SearchTab.MODELS) {
+        // If the format facet is empty, we set a default value for AI Models
+        fixedFacets[key] = ["ONNX"];
+      }
+    });
+
+    return fixedFacets;
+  }
+
   const { data, isPending } = useSearch({
     q: searchParams.get("q") || "",
     filter: "dataset",
     limit: searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10,
     page: searchParams.get("page") ? parseInt(searchParams.get("page") as string) : 0,
-    dataServices: searchParams.get("tab") == "dataServices",
+    dataServices: searchParams.get("tab") == SearchTab.DATA_SERVICES,
     sort: "relevance+desc, modified+desc, title.en+asc",
     includes: [
       "id",
@@ -39,20 +61,29 @@ export default function DatasetSearch() {
       "publisher",
     ],
     facets: {
-      ...facets
+      ...fixFacets(facets)
     },
 
     //Debugging
     //wait: 2000
   });
 
+
+
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    const newFacets: Record<string, string[]> = {};
-    data?.facets.map((facet) => {
-      newFacets[facet.id] = params.getAll(facet.id);
-    })
-    setFacets(newFacets);
+    const updateFacets = () => {
+      console.log("Updating facets with search params:", searchParams.toString());
+
+      const params = new URLSearchParams(searchParams.toString());
+      const newFacets: Record<string, string[]> = {};
+      data?.facets.map((facet) => {
+        newFacets[facet.id] = params.getAll(facet.id);
+      })
+
+      setFacets(newFacets);
+    }
+
+    updateFacets();
   }, [searchParams]);
 
   return (

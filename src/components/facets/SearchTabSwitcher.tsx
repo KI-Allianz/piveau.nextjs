@@ -1,7 +1,7 @@
 import {useSearchParams} from "next/navigation";
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
-enum SearchTab {
+export enum SearchTab {
   DATASETS = "datasets",
   DATA_SERVICES = "dataServices",
   MODELS = "models"
