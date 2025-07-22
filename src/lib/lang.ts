@@ -52,7 +52,7 @@ export const translateDict = (lang: supportedLocales, item?: string | Record<str
 
   // This is a placeholder for a translation function.
   // In a real application, you would implement actual translation logic.
-  return item[localeId] || item[extractLocale(defaultLocale)] || 'Translation not available';
+  return item[localeId] || item[extractLocale(defaultLocale)] || item[Object.keys(item)[0]] || 'Translation not available';
 }
 
 export const buildTranslateDictFunction = (lang: supportedLocales) => {

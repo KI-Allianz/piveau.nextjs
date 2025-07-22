@@ -23,8 +23,12 @@ export default function DistributionCard({ distribution }: Props) {
     <Card key={distribution.id} className="w-full flex flex-row justify-between">
       <div className="flex-1">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="flex gap-2">
             {translateDict(distribution.title)}
+
+            <span className="text-muted-foreground">
+              {distribution.format?.label}
+            </span>
           </CardTitle>
           <CardDescription>
             {translateDict(distribution.description)}
