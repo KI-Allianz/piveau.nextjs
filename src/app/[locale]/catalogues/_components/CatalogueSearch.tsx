@@ -5,13 +5,13 @@ import Facets from "@/components/facets/Facets";
 import SearchFacet from "@/components/facets/SearchFacet";
 import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
-import DatasetCard from "./DatasetCard";
-import DatasetCardSkeleton from "./DatasetCardSkeleton";
-import SearchTabSwitcher, { SearchTab } from "@/components/facets/SearchTabSwitcher";
+import CatalogCard from "./CatalogCard";
+import CatalogCardSkeleton from "./CatalogCardSkeleton";
+import { SearchTab } from "@/components/facets/SearchTabSwitcher";
 import SearchPagination from "@/components/SearchPagination";
 import {useLocale} from "@/hooks/useLocale";
 
-export default function DatasetSearch() {
+export default function CatalogueSearch() {
   const searchParams = useSearchParams();
   const { translations } = useLocale()
   const [facets, setFacets] = useState<Record<string, string[]>>()
@@ -19,27 +19,15 @@ export default function DatasetSearch() {
   const fixFacets = (facets: Record<string, string[]> | undefined) => {
     const fixedFacets: Record<string, string[]> = {};
     if (!facets || Object.keys(facets).length === 0) {
-      if (searchParams.get("tab") === SearchTab.MODELS) {
-        // If no facets are available, we set a default value for AI Models
-        fixedFacets["format"] = ["ONNX"];
-      }
-
       return fixedFacets;
     }
-
-    Object.entries(facets).forEach(([key, value]) => {
-      if (value.length <= 0 && key === "format" && searchParams.get("tab") === SearchTab.MODELS) {
-        // If the format facet is empty, we set a default value for AI Models
-        fixedFacets[key] = ["ONNX"];
-      }
-    });
 
     return fixedFacets;
   }
 
   const { data, isPending } = useSearch({
     q: searchParams.get("q") || "",
-    filter: "dataset",
+    filter: "catalogue",
     limit: searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10,
     page: searchParams.get("page") ? parseInt(searchParams.get("page") as string) : 0,
     dataServices: searchParams.get("tab") == SearchTab.DATA_SERVICES,
@@ -48,19 +36,10 @@ export default function DatasetSearch() {
       "id",
       "title",
       "description",
-      "languages",
       "modified",
       "issued",
-      "catalog.id",
-      "catalog.title",
-      "catalog.country.id",
-      "distributions.id",
-      "distributions.format.label",
-      "distributions.format.id",
-      "distributions.license",
-      "categories.label",
-      "keywords.label",
-      "publisher",
+      "country",
+      "count"
     ],
     facets: {
       ...fixFacets(facets)
@@ -93,15 +72,14 @@ export default function DatasetSearch() {
       <Facets facets={data?.facets} />
       <main className="flex flex-col gap-6 row-start-2 items-center sm:items-start w-full">
         <div className="flex flex-col w-full gap-2">
-          <SearchFacet placeholder={translations.search.placeholder.datasets} />
-          <SearchTabSwitcher />
+          <SearchFacet placeholder={translations.search.placeholder.catalogues} />
         </div>
 
         {isPending ? [...Array(10).keys()].map((index) => (
-          <DatasetCardSkeleton key={"dss" + index} />
+          <CatalogCardSkeleton key={"dss" + index} />
         )) : (
           data?.results.map((result) => (
-            <DatasetCard key={"ds" + result.id} dataset={result} />
+            <CatalogCard key={"ds" + result.id} dataset={result} />
           ))
         )}
 

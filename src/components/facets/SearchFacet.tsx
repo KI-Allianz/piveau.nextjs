@@ -1,12 +1,13 @@
 import {Input} from "@/components/ui/input";
 import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
-import {useLocale} from "@/hooks/useLocale";
 
+interface Props {
+  placeholder: string
+}
 
-export default function SearchFacet() {
+export default function SearchFacet({placeholder}: Props) {
   const searchParams = useSearchParams();
-  const { translations } = useLocale()
   const [query, setQuery] = useState(searchParams.get("q") || "");
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function SearchFacet() {
 
   return (
     <Input
-      placeholder={translations.search.placeholder}
+      placeholder={placeholder}
       className="w-full bg-card p-6 rounded-lg shadow"
       value={query}
       onChange={(e) => setQuery(e.target.value)}

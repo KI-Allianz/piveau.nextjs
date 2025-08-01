@@ -12,7 +12,10 @@ export type translations = {
       ignore: string,
       notFound: string;
     },
-    placeholder: string;
+    placeholder: {
+      datasets: string;
+      catalogues: string;
+    },
     tabs: {
       datasets: string;
       dataServices: string;

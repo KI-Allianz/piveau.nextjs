@@ -13,7 +13,10 @@ export const de: translations = {
       ignore: "Ignorieren",
       notFound: "Keine {0} gefunden."
     },
-    placeholder: 'Suche nach Datensätzen, Datenservices und KI-Modellen...',
+    placeholder: {
+      datasets: 'Suche nach Datensätzen, Datenservices und KI-Modellen...',
+      catalogues: 'Suche nach Kataloge...'
+    },
     tabs: {
       datasets: 'Datasets',
       dataServices: 'Data Services',

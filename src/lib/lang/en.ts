@@ -13,7 +13,10 @@ export const en: translations = {
       ignore: "Ignore",
       notFound: "No {0} found."
     },
-    placeholder: 'Search datasets, data services, and AI models...',
+    placeholder: {
+      datasets: 'Search datasets, data services, and AI models...',
+      catalogues: 'Search catalogues...'
+    },
     tabs: {
       datasets: 'Datasets',
       dataServices: 'Data Services',
