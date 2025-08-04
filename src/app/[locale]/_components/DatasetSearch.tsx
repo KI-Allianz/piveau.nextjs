@@ -10,6 +10,7 @@ import DatasetCardSkeleton from "./DatasetCardSkeleton";
 import SearchTabSwitcher, { SearchTab } from "@/components/facets/SearchTabSwitcher";
 import SearchPagination from "@/components/SearchPagination";
 import {useLocale} from "@/hooks/useLocale";
+import SortButton from "@/components/facets/SortButton";
 
 export default function DatasetSearch() {
   const searchParams = useSearchParams();
@@ -43,7 +44,7 @@ export default function DatasetSearch() {
     limit: searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10,
     page: searchParams.get("page") ? parseInt(searchParams.get("page") as string) : 0,
     dataServices: searchParams.get("tab") == SearchTab.DATA_SERVICES,
-    sort: "relevance+desc, modified+desc, title.en+asc",
+    sort: searchParams.get("sort") || "relevance+desc, modified+desc, title.en+asc",
     includes: [
       "id",
       "title",
@@ -94,7 +95,10 @@ export default function DatasetSearch() {
       <main className="flex flex-col gap-6 row-start-2 items-center sm:items-start w-full">
         <div className="flex flex-col w-full gap-2">
           <SearchFacet placeholder={translations.search.placeholder.datasets} />
-          <SearchTabSwitcher />
+          <div className="flex justify-between">
+            <SearchTabSwitcher />
+            <SortButton />
+          </div>
         </div>
 
         {isPending ? [...Array(10).keys()].map((index) => (
