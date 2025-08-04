@@ -6,7 +6,7 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar"
-import {ArrowUpDown} from "lucide-react";
+import {ArrowDownWideNarrow, ArrowUpNarrowWide} from "lucide-react";
 
 export enum SortMode {
   LAST_MODIFIED = "modified+desc, relevance+desc, title.en+asc",
@@ -15,12 +15,27 @@ export enum SortMode {
   NAME_DESC = "title.en+desc, relevance+desc, modified+desc",
   LAST_ISSUED = "issued+desc, relevance+desc, title.en+asc",
 }
-const sortModeNames: Record<SortMode, string> = {
-  [SortMode.LAST_MODIFIED]: "Last Modified",
-  [SortMode.RELEVANCE]: "Relevance",
-  [SortMode.NAME_ASC]: "Name Ascending",
-  [SortMode.NAME_DESC]: "Name Descending",
-  [SortMode.LAST_ISSUED]: "Last Issued",
+const sortModes = {
+  [SortMode.LAST_MODIFIED]: {
+    label: "Last Modified",
+    type: "desc"
+  },
+  [SortMode.RELEVANCE]: {
+    label: "Relevance",
+    type: "desc"
+  },
+  [SortMode.NAME_ASC]: {
+    label: "Name Ascending",
+    type: "asc"
+  },
+  [SortMode.NAME_DESC]: {
+    label: "Name Descending",
+    type: "desc"
+  },
+  [SortMode.LAST_ISSUED]: {
+    label: "Last Issued",
+    type: "desc"
+  },
 }
 
 
@@ -58,11 +73,25 @@ export default function SortButton() {
     }
   }
 
+  const buildSortButtonTrigger = (mode: SortMode) => {
+    const sortMode = sortModes[mode];
+    return (
+      <span className="flex items-center gap-2">
+        {sortMode.label}
+        {sortMode.type === "asc" ? (
+          <ArrowUpNarrowWide className="h-4 w-4 text-muted-foreground" />
+          ) : (
+          <ArrowDownWideNarrow className="h-4 w-4 text-muted-foreground" />
+        )}
+      </span>
+    )
+  }
+
   return (
     <Menubar>
       <MenubarMenu>
         <MenubarTrigger>
-          <ArrowUpDown size={15} />
+          {buildSortButtonTrigger(currentMode(searchParams))}
         </MenubarTrigger>
         <MenubarContent>
           {Object.values(SortMode).map((mode) => (
@@ -72,7 +101,7 @@ export default function SortButton() {
               <MenubarItem
                 onClick={() => onChange(mode)}
               >
-                {sortModeNames[mode]}
+                {sortModes[mode].label}
               </MenubarItem>
             </MenubarCheckboxItem>
           ))}
