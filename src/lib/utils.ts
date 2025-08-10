@@ -26,3 +26,7 @@ export function formatString(str: string, ...replacements: string[]): string {
       : match;
   });
 }
+
+export const aiModelFormats = [
+  "ONNX",
+];

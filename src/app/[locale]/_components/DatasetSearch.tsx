@@ -11,6 +11,7 @@ import SearchTabSwitcher, { SearchTab } from "@/components/facets/SearchTabSwitc
 import SearchPagination from "@/components/SearchPagination";
 import {useLocale} from "@/hooks/useLocale";
 import SortButton from "@/components/facets/SortButton";
+import {aiModelFormats} from "@/lib/utils";
 
 export default function DatasetSearch() {
   const searchParams = useSearchParams();
@@ -22,7 +23,7 @@ export default function DatasetSearch() {
     if (!facets || Object.keys(facets).length === 0) {
       if (searchParams.get("tab") === SearchTab.MODELS) {
         // If no facets are available, we set a default value for AI Models
-        fixedFacets["format"] = ["ONNX"];
+        fixedFacets["format"] = aiModelFormats;
       }
 
       return fixedFacets;
@@ -31,7 +32,7 @@ export default function DatasetSearch() {
     Object.entries(facets).forEach(([key, value]) => {
       if (value.length <= 0 && key === "format" && searchParams.get("tab") === SearchTab.MODELS) {
         // If the format facet is empty, we set a default value for AI Models
-        fixedFacets[key] = ["ONNX"];
+        fixedFacets[key] = aiModelFormats;
       }
     });
 
