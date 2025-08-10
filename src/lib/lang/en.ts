@@ -33,6 +33,12 @@ export const en: translations = {
     map: {
       title: 'Map'
     },
+    assistant: {
+      title: "AI Data Assistant",
+      header: "Ask about this dataset",
+      placeholder: "E.g., What is the main topic of this dataset?",
+      ask: "Ask"
+    },
     keywords: "Keywords",
     categories: "Categories",
     description: "Description",

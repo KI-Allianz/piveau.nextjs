@@ -32,6 +32,12 @@ export type translations = {
     map: {
       title: string;
     },
+    assistant: {
+      title: string;
+      header: string;
+      placeholder: string;
+      ask: string;
+    }
     categories: string
     keywords: string;
     description: string;

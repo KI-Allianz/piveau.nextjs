@@ -12,6 +12,7 @@ import DatasetDetailsCategories from "@/app/[locale]/dataset/[datasetId]/_compon
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {getTranslations, supportedLocales} from "@/lib/lang";
 import DatasetDetailsDescription from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsDescription";
+import DatasetDetailsChatbot from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsChatbot";
 
 interface Props {
   params: Promise<{datasetId: string, locale: supportedLocales}>;
@@ -33,7 +34,7 @@ export default async function DatasetPage({ params }: Props) {
       <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
         <DatasetDetailsHeader dataset={response.result} />
 
-        <Accordion type="multiple" className="w-full" defaultValue={["description", "keywords", "distributions", "map"]}>
+        <Accordion type="multiple" className="w-full" defaultValue={["description", "keywords", "categories", "distributions", "assistant", "map"]}>
           <AccordionItem value={"description"} className="py-2">
             <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
               {translations.dataset.description}
@@ -64,6 +65,14 @@ export default async function DatasetPage({ params }: Props) {
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
               <DatasetDetailsDistributions dataset={response.result} />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value={"assistant"} className="py-2">
+            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
+              {translations.dataset.assistant.title}
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground pb-2">
+              <DatasetDetailsChatbot dataset={response.result} />
             </AccordionContent>
           </AccordionItem>
           {response.result.spatial && (

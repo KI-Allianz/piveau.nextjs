@@ -33,6 +33,12 @@ export const de: translations = {
     map: {
       title: 'Karte'
     },
+    assistant: {
+      title: "KI Datenassistent",
+      header: "Frage zu diesem Datensatz",
+      placeholder: "z.B. Was ist das Hauptthema dieses Datensatzes?",
+      ask: "Ask"
+    },
     keywords: "Keywords",
     categories: "Kategorien",
     description: "Beschreibung",
