@@ -36,6 +36,15 @@ export type translations = {
     keywords: string;
     description: string;
     linkedData: string;
+    aiModel: string;
+  },
+  catalogue: {
+    title: string,
+    description: string,
+    languages: string,
+    created: string,
+    updated: string,
+    metadata: string,
   },
   download: {
     download: string;

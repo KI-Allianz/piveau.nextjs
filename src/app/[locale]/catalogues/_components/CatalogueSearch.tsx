@@ -49,8 +49,6 @@ export default function CatalogueSearch() {
     //wait: 2000
   });
 
-
-
   useEffect(() => {
     const updateFacets = () => {
       console.log("Updating facets with search params:", searchParams.toString());
@@ -79,7 +77,7 @@ export default function CatalogueSearch() {
           <CatalogCardSkeleton key={"dss" + index} />
         )) : (
           data?.results.map((result) => (
-            <CatalogCard key={"ds" + result.id} dataset={result} />
+            <CatalogCard key={"ds" + result.id} catalog={result} />
           ))
         )}
 

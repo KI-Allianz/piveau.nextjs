@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function DatasetCard({dataset}: Props) {
-  const { translateDict, locale } = useLocale();
+  const { translateDict, translations, locale } = useLocale();
 
   return (
     <Link href={`/${locale}/dataset/${dataset.id}`} className="w-full" >
@@ -40,7 +40,7 @@ export default function DatasetCard({dataset}: Props) {
               {dataset.distributions && dataset.distributions.map((keyword) => keyword.format?.label)
                 .filter((format) => format && aiModelFormats.includes(format)).length > 0 && (
                 <Badge variant={"outline"} className="bg-amber-100 text-amber-800 border-amber-500">
-                  {translateDict("AI Model")}
+                  {translations.dataset.aiModel}
                 </Badge>
               )}
               <Badge variant={"outline"}>

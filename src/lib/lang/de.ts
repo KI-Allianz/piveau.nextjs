@@ -37,6 +37,15 @@ export const de: translations = {
     categories: "Kategorien",
     description: "Beschreibung",
     linkedData: "Verknüpfte Daten",
+    aiModel: "KI Modell"
+  },
+  catalogue: {
+    title: "Titel",
+    description: "Beschreibung",
+    languages: "Sprachen",
+    created: "Erstellt",
+    updated: "Aktualisiert",
+    metadata: "Katalog-Metadaten als verknüpfte Daten",
   },
   download: {
     download: 'Herunterladen',

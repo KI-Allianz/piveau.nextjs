@@ -37,6 +37,15 @@ export const en: translations = {
     categories: "Categories",
     description: "Description",
     linkedData: "Linked Data",
+    aiModel: "AI Model"
+  },
+  catalogue: {
+    title: "Title",
+    description: "Description",
+    languages: "Languages",
+    created: "Created",
+    updated: "Updated",
+    metadata: "Catalogue Metadata as linked data",
   },
   download: {
     download: 'Download',

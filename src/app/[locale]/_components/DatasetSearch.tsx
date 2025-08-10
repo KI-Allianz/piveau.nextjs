@@ -12,8 +12,15 @@ import SearchPagination from "@/components/SearchPagination";
 import {useLocale} from "@/hooks/useLocale";
 import SortButton from "@/components/facets/SortButton";
 import {aiModelFormats} from "@/lib/utils";
+import {schemaCatalog} from "@piveau/sdk-core/model";
+import {StandardSchemaV1} from "@standard-schema/spec";
+import CatalogInfo from "@/app/[locale]/_components/CatalogInfo";
 
-export default function DatasetSearch() {
+interface Props {
+  catalog?: StandardSchemaV1.InferOutput<typeof schemaCatalog>
+}
+
+export default function DatasetSearch({ catalog }: Props) {
   const searchParams = useSearchParams();
   const { translations } = useLocale()
   const [facets, setFacets] = useState<Record<string, string[]>>()
@@ -25,6 +32,10 @@ export default function DatasetSearch() {
         // If no facets are available, we set a default value for AI Models
         fixedFacets["format"] = aiModelFormats;
       }
+      if (catalog) {
+        // If no facets are available, we set a default value for the catalog
+        fixedFacets["catalog"] = [catalog.id];
+      }
 
       return fixedFacets;
     }
@@ -33,6 +44,10 @@ export default function DatasetSearch() {
       if (value.length <= 0 && key === "format" && searchParams.get("tab") === SearchTab.MODELS) {
         // If the format facet is empty, we set a default value for AI Models
         fixedFacets[key] = aiModelFormats;
+      }
+      if (catalog) {
+        // If no facets are available, we set a default value for the catalog
+        fixedFacets["catalog"] = [catalog.id];
       }
     });
 
@@ -92,7 +107,13 @@ export default function DatasetSearch() {
 
   return (
     <div className="flex gap-5 pb-10">
-      <Facets facets={data?.facets} />
+      <div className="flex flex-col gap-6">
+        {catalog && (
+          <CatalogInfo catalog={catalog} />
+        )}
+
+        <Facets facets={data?.facets} />
+      </div>
       <main className="flex flex-col gap-6 row-start-2 items-center sm:items-start w-full">
         <div className="flex flex-col w-full gap-2">
           <SearchFacet placeholder={translations.search.placeholder.datasets} />
