@@ -1,0 +1,15 @@
+services:
+  piveau-nextjs:
+    container_name: piveau-nextjs
+    # all that is needed to build prod live image
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+      # DATABASE_URL needed for static site generation - getStaticProps
+      # NEXTAUTH_URL needed for CustomHead SEO
+    ports:
+      - "3000:3000"
+    #command: sleep infinity
+    # env_file:
+    # - ./.dockerenv
