@@ -3,27 +3,29 @@
 import { useSearch } from "@/hooks/useSearch";
 import Facets from "@/components/facets/Facets";
 import SearchFacet from "@/components/facets/SearchFacet";
-import {useSearchParams} from "next/navigation";
-import {useEffect, useState} from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import DatasetCard from "./DatasetCard";
 import DatasetCardSkeleton from "./DatasetCardSkeleton";
-import SearchTabSwitcher, { SearchTab } from "@/components/facets/SearchTabSwitcher";
+import SearchTabSwitcher, {
+  SearchTab,
+} from "@/components/facets/SearchTabSwitcher";
 import SearchPagination from "@/components/SearchPagination";
-import {useLocale} from "@/hooks/useLocale";
+import { useLocale } from "@/hooks/useLocale";
 import SortButton from "@/components/facets/SortButton";
-import {aiModelFormats} from "@/lib/utils";
-import {schemaCatalog} from "@piveau/sdk-core/model";
-import {StandardSchemaV1} from "@standard-schema/spec";
+import { aiModelFormats } from "@/lib/utils";
+import { schemaCatalog } from "@piveau/sdk-core/model";
+import { StandardSchemaV1 } from "@standard-schema/spec";
 import CatalogInfo from "@/app/[locale]/_components/CatalogInfo";
 
 interface Props {
-  catalog?: StandardSchemaV1.InferOutput<typeof schemaCatalog>
+  catalog?: StandardSchemaV1.InferOutput<typeof schemaCatalog>;
 }
 
 export default function DatasetSearch({ catalog }: Props) {
   const searchParams = useSearchParams();
-  const { translations } = useLocale()
-  const [facets, setFacets] = useState<Record<string, string[]>>()
+  const { translations } = useLocale();
+  const [facets, setFacets] = useState<Record<string, string[]>>();
 
   const fixFacets = (facets: Record<string, string[]> | undefined) => {
     const fixedFacets: Record<string, string[]> = {};
@@ -41,26 +43,36 @@ export default function DatasetSearch({ catalog }: Props) {
     }
 
     Object.entries(facets).forEach(([key, value]) => {
-      if (value.length <= 0 && key === "format" && searchParams.get("tab") === SearchTab.MODELS) {
+      if (
+        value.length <= 0 &&
+        key === "format" &&
+        searchParams.get("tab") === SearchTab.MODELS
+      ) {
         // If the format facet is empty, we set a default value for AI Models
         fixedFacets[key] = aiModelFormats;
-      }
-      if (catalog) {
+      } else if (catalog && key === "catalog") {
         // If no facets are available, we set a default value for the catalog
         fixedFacets["catalog"] = [catalog.id];
+      } else {
+        fixedFacets[key] = value;
       }
     });
 
     return fixedFacets;
-  }
+  };
 
   const { data, isPending } = useSearch({
     q: searchParams.get("q") || "",
     filter: "dataset",
-    limit: searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10,
-    page: searchParams.get("page") ? parseInt(searchParams.get("page") as string) : 0,
+    limit: searchParams.get("limit")
+      ? parseInt(searchParams.get("limit") as string)
+      : 10,
+    page: searchParams.get("page")
+      ? parseInt(searchParams.get("page") as string)
+      : 0,
     dataServices: searchParams.get("tab") == SearchTab.DATA_SERVICES,
-    sort: searchParams.get("sort") || "relevance+desc, modified+desc, title.en+asc",
+    sort:
+      searchParams.get("sort") || "relevance+desc, modified+desc, title.en+asc",
     includes: [
       "id",
       "title",
@@ -80,27 +92,28 @@ export default function DatasetSearch({ catalog }: Props) {
       "publisher",
     ],
     facets: {
-      ...fixFacets(facets)
+      ...fixFacets(facets),
     },
 
     //Debugging
     //wait: 2000
   });
 
-
-
   useEffect(() => {
     const updateFacets = () => {
-      console.log("Updating facets with search params:", searchParams.toString());
+      console.log(
+        "Updating facets with search params:",
+        searchParams.toString(),
+      );
 
       const params = new URLSearchParams(searchParams.toString());
       const newFacets: Record<string, string[]> = {};
       data?.facets.map((facet) => {
         newFacets[facet.id] = params.getAll(facet.id);
-      })
+      });
 
       setFacets(newFacets);
-    }
+    };
 
     updateFacets();
   }, [searchParams]);
@@ -108,9 +121,7 @@ export default function DatasetSearch({ catalog }: Props) {
   return (
     <div className="flex gap-5 pb-10">
       <div className="flex flex-col gap-6">
-        {catalog && (
-          <CatalogInfo catalog={catalog} />
-        )}
+        {catalog && <CatalogInfo catalog={catalog} />}
 
         <Facets facets={data?.facets} />
       </div>
@@ -123,18 +134,31 @@ export default function DatasetSearch({ catalog }: Props) {
           </div>
         </div>
 
-        {isPending ? [...Array(10).keys()].map((index) => (
-          <DatasetCardSkeleton key={"dss" + index} />
-        )) : (
-          data?.results.map((result) => (
-            <DatasetCard key={"ds" + result.id} dataset={result} />
+        {isPending
+          ? [...Array(10).keys()].map((index) => (
+            <DatasetCardSkeleton key={"dss" + index} />
           ))
-        )}
+          : data?.results.map((result) => (
+            <DatasetCard key={"ds" + result.id} dataset={result} />
+          ))}
 
         <SearchPagination
-          currentPage={searchParams.get("page") ? parseInt(searchParams.get("page") as string) : 0}
-          totalPages={Math.ceil((data?.count ?? 10) / (searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10))}
-          itemsPerPage={searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10}
+          currentPage={
+            searchParams.get("page")
+              ? parseInt(searchParams.get("page") as string)
+              : 0
+          }
+          totalPages={Math.ceil(
+            (data?.count ?? 10) /
+            (searchParams.get("limit")
+              ? parseInt(searchParams.get("limit") as string)
+              : 10),
+          )}
+          itemsPerPage={
+            searchParams.get("limit")
+              ? parseInt(searchParams.get("limit") as string)
+              : 10
+          }
         />
       </main>
     </div>
