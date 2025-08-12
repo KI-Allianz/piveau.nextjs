@@ -1,49 +1,49 @@
-import {translations} from "@/lib/lang/base";
-
+import { translations } from "@/lib/lang/base";
 
 export const de: translations = {
   search: {
     facets: {
-      title: 'Facetten',
-      description: 'Filtere Ergebnisse nach Facetten wie Kategorie, Katalog und mehr.',
+      title: "Facetten",
+      description:
+        "Filtere Ergebnisse nach Facetten wie Kategorie, Katalog und mehr.",
       select: "Wähle {0}...",
       search: "Suche {0}...",
       hide: "Ausblenden",
       show: "Anzeigen",
       ignore: "Ignorieren",
-      notFound: "Keine {0} gefunden."
+      notFound: "Keine {0} gefunden.",
     },
     placeholder: {
-      datasets: 'Suche nach Datensätzen, Datenservices und KI-Modellen...',
-      catalogues: 'Suche nach Kataloge...'
+      datasets: "Suche nach Datensätzen, Datenservices und KI-Modellen...",
+      catalogues: "Suche nach Kataloge...",
     },
     tabs: {
-      datasets: 'Datasets',
-      dataServices: 'Data Services',
-      aiModels: 'AI Models'
-    }
+      datasets: "Datasets",
+      dataServices: "Data Services",
+      aiModels: "AI Models",
+    },
   },
   dataset: {
     distribution: {
-      title: "Distributionen",
+      title: "Verfügbare Daten",
       license: "Lizenz",
       licensingAssistant: "Lizenzierungsassistent",
-      placeholder: "Suche urls..."
+      placeholder: "Suche urls...",
     },
     map: {
-      title: 'Karte'
+      title: "Karte",
     },
     assistant: {
       title: "KI Datenassistent",
       header: "Frage zu diesem Datensatz",
       placeholder: "z.B. Was ist das Hauptthema dieses Datensatzes?",
-      ask: "Ask"
+      ask: "Ask",
     },
     keywords: "Keywords",
     categories: "Kategorien",
     description: "Beschreibung",
     linkedData: "Verknüpfte Daten",
-    aiModel: "KI Modell"
+    aiModel: "KI Modell",
   },
   catalogue: {
     title: "Titel",
@@ -54,9 +54,9 @@ export const de: translations = {
     metadata: "Katalog-Metadaten als verknüpfte Daten",
   },
   download: {
-    download: 'Herunterladen',
-    noDownloads: 'Keine Downloads gefunden.'
+    download: "Herunterladen",
+    noDownloads: "Keine Downloads gefunden.",
   },
-  open: 'Öffnen',
+  open: "Öffnen",
   languages: "Sprachen",
-}
+};

@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -10,38 +10,49 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 import Link from "next/link";
-import {StandardSchemaV1} from "@standard-schema/spec";
-import {schemaDataset} from "@piveau/sdk-core/model";
-import {SquareArrowOutUpRight} from "lucide-react";
-import {useLocale} from "@/hooks/useLocale";
+import { StandardSchemaV1 } from "@standard-schema/spec";
+import { schemaDataset } from "@piveau/sdk-core/model";
+import { SquareArrowOutUpRight } from "lucide-react";
+import { useLocale } from "@/hooks/useLocale";
 
 interface Props {
-  access_urls: NonNullable<StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]>[number]["access_url"]
-  download_urls: NonNullable<StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]>[number]["download_url"]
+  access_urls: NonNullable<
+    StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]
+  >[number]["access_url"];
+  download_urls: NonNullable<
+    StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]
+  >[number]["download_url"];
 }
 
-export function DistributionDownloadButton({access_urls, download_urls}: Props) {
-  const { translations } = useLocale()
-  const [open, setOpen] = React.useState(false)
-  const [search, setSearch] = React.useState("")
+export function DistributionDownloadButton({
+  access_urls,
+  download_urls,
+}: Props) {
+  const { translations } = useLocale();
+  const [open, setOpen] = React.useState(false);
+  const [search, setSearch] = React.useState("");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="w-[150px] justify-start">
+        <Button variant="highlighted" className="w-[150px] justify-start">
           {translations.download.download}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0" side="right" align="start">
         <Command>
-          <CommandInput placeholder={translations.dataset.distribution.placeholder} value={search} onValueChange={setSearch} />
+          <CommandInput
+            placeholder={translations.dataset.distribution.placeholder}
+            value={search}
+            onValueChange={setSearch}
+          />
           <CommandList>
             <CommandEmpty>{translations.download.noDownloads}</CommandEmpty>
             <CommandGroup className="gap-1">
@@ -90,5 +101,5 @@ export function DistributionDownloadButton({access_urls, download_urls}: Props) 
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }
