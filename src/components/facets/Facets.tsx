@@ -18,7 +18,7 @@ interface FacetsProps {
   facets: Facet[] | undefined;
 }
 
-const hiddenFacets = ["hvdCategory", "is_hvd", "dataScope"];
+const hiddenFacets = ["hvdCategory", "is_hvd", "dataScope", "scoring"];
 
 export default function Facets({ facets }: FacetsProps) {
   const { translations } = useLocale();
@@ -32,7 +32,7 @@ export default function Facets({ facets }: FacetsProps) {
           [...Array(13).keys()].map((index) => <FacetSkeleton key={index} />)}
         {facets
           ?.filter((facet) => !hiddenFacets.includes(facet.id))
-          .filter((facet) => facet.items.length > 0)
+          .filter((facet) => facet.items.length > 1)
           .map((facet) => {
             if (facet.id.startsWith("is_")) {
               return <BoolFacet key={facet.id} facet={facet} />;
