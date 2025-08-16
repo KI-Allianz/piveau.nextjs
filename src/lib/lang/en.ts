@@ -25,7 +25,7 @@ export const en: translations = {
   },
   dataset: {
     distribution: {
-      title: "Distributions",
+      title: "Available Data",
       license: "License",
       licensingAssistant: "Licensing Assistant",
       placeholder: "Search urls..."
@@ -56,6 +56,10 @@ export const en: translations = {
   download: {
     download: 'Download',
     noDownloads: 'No downloads found.'
+  },
+  expand: {
+    more: "Show more",
+    less: "Show less"
   },
   open: 'Open',
   languages: "Languages",

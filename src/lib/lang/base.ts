@@ -55,7 +55,11 @@ export type translations = {
   download: {
     download: string;
     noDownloads: string;
-  }
+  },
+  expand: {
+    more: string;
+    less: string;
+  },
   open: string;
   languages: string;
 }

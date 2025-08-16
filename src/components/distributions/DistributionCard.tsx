@@ -8,6 +8,8 @@ import {schemaDataset} from "@piveau/sdk-core/model";
 import {useLocale} from "@/hooks/useLocale";
 import {DistributionLicense} from "@/components/distributions/DistributionLicense";
 import {format} from "date-fns";
+import HtmlSnippet from "@/components/HTMLSnippet";
+import {ExpandableClamp} from "@/components/ExpandableClamp";
 
 
 interface Props {
@@ -31,7 +33,11 @@ export default function DistributionCard({ distribution }: Props) {
             </span>
           </CardTitle>
           <CardDescription>
-            {translateDict(distribution.description)}
+            <ExpandableClamp collapsedHeight={120} backgroundColor="card">
+              <HtmlSnippet
+                html={translateDict(distribution.description)}
+              />
+            </ExpandableClamp>
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-3">

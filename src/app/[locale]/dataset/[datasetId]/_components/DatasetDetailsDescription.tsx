@@ -2,8 +2,9 @@
 
 import { useLocale } from "@/hooks/useLocale";
 import HtmlSnippet from "@/components/HTMLSnippet";
-import {StandardSchemaV1} from "@standard-schema/spec";
-import {schemaDataset} from "@piveau/sdk-core/model";
+import { StandardSchemaV1 } from "@standard-schema/spec";
+import { schemaDataset } from "@piveau/sdk-core/model";
+import {ExpandableClamp} from "@/components/ExpandableClamp";
 
 
 interface Props {
@@ -15,9 +16,12 @@ export default function DatasetDetailsDescription({ description }: Props) {
 
   return (
     <div className="flex items-center justify-center snippet">
-      <HtmlSnippet
-        html={translateDict(description)}
-      />
+      <ExpandableClamp collapsedHeight={250}>
+        <HtmlSnippet
+          html={translateDict(description)}
+        />
+      </ExpandableClamp>
+
     </div>
   )
 }

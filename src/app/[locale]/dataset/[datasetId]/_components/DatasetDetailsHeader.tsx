@@ -22,6 +22,7 @@ export default function DatasetDetailsHeader({ dataset }: Props) {
       <div className="flex flex-row gap-5">
         <Button onClick={() => router.back()} variant="outline">
           <ChevronLeft />
+          Back
         </Button>
         <DatasetDetailsExportButton id={dataset.id} />
         <div className="flex items-center justify-center w-full">

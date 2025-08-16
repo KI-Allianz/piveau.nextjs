@@ -57,6 +57,10 @@ export const de: translations = {
     download: "Herunterladen",
     noDownloads: "Keine Downloads gefunden.",
   },
+  expand: {
+    more: "Mehr anzeigen",
+    less: "Weniger anzeigen",
+  },
   open: "Öffnen",
   languages: "Sprachen",
 };
