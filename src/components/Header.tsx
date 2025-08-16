@@ -52,7 +52,7 @@ export default function Header() {
     <header className="">
       <div className="pt-4 mx-4 justify-center flex">
         <nav className="navbar flex flex-row items-center justify-between w-full max-w-[1440px] h-[80px] bg-white rounded-2xl pr-[2.3rem] pl-[3.75rem]">
-          <Link className="navbar-brand" href="https://ki-allianz.de/">
+          <Link className="navbar-brand" href={`/${locale}`}>
             <Logo />
           </Link>
           <div className="flex items-center h-[48px]" id="navbarNav">
