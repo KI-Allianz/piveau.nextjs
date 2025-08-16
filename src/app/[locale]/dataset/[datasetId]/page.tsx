@@ -23,7 +23,7 @@ export default async function DatasetPage({ params }: Props) {
   const { datasetId, locale } = await params;
   const translations = getTranslations(locale)
   const response = await getResourceById<StandardSchemaV1.InferOutput<typeof schemaDataset>>({
-    baseUrl: 'https://piveau.hlrs.de/hub/search/',
+    baseUrl: process.env.SEARCH_HUB_URL || 'https://piveau.hlrs.de/hub/search/',
     resource: 'datasets',
     id: datasetId,
   })

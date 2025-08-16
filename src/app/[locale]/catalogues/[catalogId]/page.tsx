@@ -14,7 +14,7 @@ interface Props {
 export default async function CatalogPage({ params }: Props) {
   const { catalogId } = await params;
   const response = await getResourceById<StandardSchemaV1.InferOutput<typeof schemaCatalog>>({
-    baseUrl: 'https://piveau.hlrs.de/hub/search/',
+    baseUrl: process.env.SEARCH_HUB_URL || 'https://piveau.hlrs.de/hub/search/',
     resource: 'catalogues',
     id: catalogId,
   })

@@ -32,7 +32,7 @@ export function useSearch(
       const res = await searchResource<
         SearchResult<StandardSchemaV1.InferOutput<typeof schemaDataset>>
       >({
-        baseUrl: 'https://piveau.hlrs.de/hub/search/',
+        baseUrl: process.env.SEARCH_HUB_URL || 'https://piveau.hlrs.de/hub/search/',
         params
       });
 
