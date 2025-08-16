@@ -2,16 +2,13 @@ import { getResourceById } from "@piveau/sdk-core";
 import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
 import DatasetDetailsHeader from "./_components/DatasetDetailsHeader";
-import DatasetDetailsKeywords from "./_components/DatasetDetailsKeywords";
 import DatasetDetailsDistributions from "./_components/DatasetDetailsDistributions";
 import Header from "@/components/Header";
 import React from "react";
 import Footer from "@/components/Footer";
 import MapComponent from "@/components/MapComponent";
-import DatasetDetailsCategories from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsCategories";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {getTranslations, supportedLocales} from "@/lib/lang";
-import DatasetDetailsDescription from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsDescription";
 import DatasetDetailsChatbot from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsChatbot";
 
 interface Props {
