@@ -7,6 +7,10 @@ import DatasetDetailsExportButton from "@/app/[locale]/dataset/[datasetId]/_comp
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {ChevronLeft} from "lucide-react";
+import DatasetDetailsKeywords from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsKeywords";
+import DatasetDetailsCategories from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsCategories";
+import DatasetDetailsDescription from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsDescription";
+import React from "react";
 
 
 interface Props {
@@ -18,18 +22,27 @@ export default function DatasetDetailsHeader({ dataset }: Props) {
   const router = useRouter()
 
   return (
-    <div className="w-full">
-      <div className="flex flex-row gap-5">
+    <div className="w-full space-y-3">
+      <div className="flex flex-row gap-5 justify-between">
         <Button onClick={() => router.back()} variant="outline">
           <ChevronLeft />
           Back
         </Button>
+
+        <h1 className="text-4xl font-semibold text-center">
+          {translateDict(dataset.title)}
+        </h1>
+
         <DatasetDetailsExportButton id={dataset.id} />
-        <div className="flex items-center justify-center w-full">
-          <h1 className="text-4xl font-semibold">
-            {translateDict(dataset.title)}
-          </h1>
-        </div>
+      </div>
+
+      <div className="pt-3 flex flex-col gap-2">
+        <DatasetDetailsKeywords dataset={dataset} />
+        <DatasetDetailsCategories dataset={dataset} />
+      </div>
+
+      <div>
+        <DatasetDetailsDescription description={dataset.description} />
       </div>
     </div>
   )

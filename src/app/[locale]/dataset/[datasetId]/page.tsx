@@ -34,31 +34,7 @@ export default async function DatasetPage({ params }: Props) {
       <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
         <DatasetDetailsHeader dataset={response.result} />
 
-        <Accordion type="multiple" className="w-full" defaultValue={["description", "keywords", "categories", "distributions", "assistant", "map"]}>
-          <AccordionItem value={"description"} className="py-2">
-            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-              {translations.dataset.description}
-            </AccordionTrigger>
-            <AccordionContent className="pb-2">
-              <DatasetDetailsDescription description={response.result.description} />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value={"keywords"} className="py-2">
-            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-              {translations.dataset.keywords}
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsKeywords dataset={response.result} />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value={"categories"} className="py-2">
-            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-              {translations.dataset.categories}
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsCategories dataset={response.result} />
-            </AccordionContent>
-          </AccordionItem>
+        <Accordion type="multiple" className="w-full" defaultValue={["distributions", "assistant", "map"]}>
           <AccordionItem value={"distributions"} className="py-2">
             <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
               {translations.dataset.distribution.title}
