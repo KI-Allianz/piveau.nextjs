@@ -129,7 +129,7 @@ export function ExpandableClamp({
               <Button
                 onClick={toggle}
                 variant={"outline"}
-                className={"z-10"}
+                className={""}
               >
                 {expanded ? translations.expand.less : translations.expand.more}
               </Button>

@@ -28,9 +28,6 @@ export default function DistributionCard({ distribution }: Props) {
           <CardTitle className="flex gap-2">
             {translateDict(distribution.title)}
 
-            <span className="text-muted-foreground">
-              {distribution.format?.label}
-            </span>
           </CardTitle>
           <CardDescription>
             <ExpandableClamp collapsedHeight={120} backgroundColor="card">
@@ -50,7 +47,12 @@ export default function DistributionCard({ distribution }: Props) {
       </div>
       <div>
         <div className="flex flex-col gap-2 px-6 justify-between">
-          <span className="text-end text-muted-foreground">{distribution.modified && format(distribution.modified, "dd MMMM yyyy", {locale: dateLocale})}</span>
+          <span className="text-end text-muted-foreground">
+            {distribution.modified && format(distribution.modified, "dd MMMM yyyy", {locale: dateLocale})}
+          </span>
+          <span className="text-end text-muted-foreground text-nowrap">
+              {distribution.format?.label}
+          </span>
           <DistributionDownloadButton access_urls={distribution.access_url} download_urls={distribution.download_url} />
           <DistributionLinkedDataButton id={distribution.id} />
         </div>
