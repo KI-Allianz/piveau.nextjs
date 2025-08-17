@@ -13,12 +13,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {Menu} from "lucide-react";
-import {dataTypes} from "@/components/distributions/DistributionLinkedDataButton";
 import Link from "next/link";
 import * as React from "react";
 import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
 import {useLocale} from "@/hooks/useLocale";
+import {dataTypes} from "@/lib/content";
 
 interface Props {
   id: NonNullable<StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]>[number]["id"]

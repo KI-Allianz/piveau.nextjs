@@ -10,6 +10,9 @@ import MapComponent from "@/components/MapComponent";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {getTranslations, supportedLocales} from "@/lib/lang";
 import DatasetDetailsChatbot from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsChatbot";
+import {redirect} from "next/navigation";
+import { headers as getHeaders } from 'next/headers';
+import {dataTypes, pickBestDataType} from "@/lib/content";
 
 interface Props {
   params: Promise<{datasetId: string, locale: supportedLocales}>;
@@ -18,12 +21,24 @@ interface Props {
 export default async function DatasetPage({ params }: Props) {
 
   const { datasetId, locale } = await params;
+  const headers = await getHeaders();
+
+  // Content negotiation up front
+  const accept = headers.get('accept') ?? '';
+  const match = pickBestDataType(accept, dataTypes);
+
+  if (match) {
+    redirect(`https://piveau.hlrs.de/hub/repo/datasets/${datasetId}${match.value}`);
+  }
+
   const translations = getTranslations(locale)
   const response = await getResourceById<StandardSchemaV1.InferOutput<typeof schemaDataset>>({
     baseUrl: process.env.SEARCH_HUB_URL || 'https://piveau.hlrs.de/hub/search/',
     resource: 'datasets',
     id: datasetId,
   })
+
+
 
   return (
     <div className="bg-background w-full max-w-[1920px] mx-auto shadow-[0_0_12px_rgba(0,0,0,0.17)]">

@@ -20,29 +20,8 @@ import Link from "next/link";
 import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
 import {useLocale} from "@/hooks/useLocale";
+import {dataTypes} from "@/lib/content";
 
-export const dataTypes = [
-  {
-    value: ".rdf",
-    label: "RDF / XML",
-  },
-  {
-    value: ".ttl",
-    label: "Turtle",
-  },
-  {
-    value: ".n3",
-    label: "Notation3",
-  },
-  {
-    value: ".nt",
-    label: "N-Triples",
-  },
-  {
-    value: ".jsonld",
-    label: "JSON-LD",
-  },
-]
 
 interface Props {
   id: NonNullable<StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]>[number]["id"]
