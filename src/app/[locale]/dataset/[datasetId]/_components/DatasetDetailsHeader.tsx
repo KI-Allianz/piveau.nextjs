@@ -11,13 +11,15 @@ import DatasetDetailsKeywords from "@/app/[locale]/dataset/[datasetId]/_componen
 import DatasetDetailsCategories from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsCategories";
 import DatasetDetailsDescription from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsDescription";
 import React from "react";
+import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 
 
 interface Props {
   dataset: StandardSchemaV1.InferOutput<typeof schemaDataset>;
+  baseUrl: string;
 }
 
-export default function DatasetDetailsHeader({ dataset }: Props) {
+export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
   const { translateDict } = useLocale();
   const router = useRouter()
 
@@ -33,7 +35,10 @@ export default function DatasetDetailsHeader({ dataset }: Props) {
           {translateDict(dataset.title)}
         </h1>
 
-        <DatasetDetailsExportButton id={dataset.id} />
+        <div className="space-x-2">
+          <ExampleCodePopover url={`${baseUrl}/de/dataset/${dataset.id}`} />
+          <DatasetDetailsExportButton id={dataset.id} />
+        </div>
       </div>
 
       <div className="pt-3 flex flex-col gap-2">

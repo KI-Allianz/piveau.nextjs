@@ -44,7 +44,7 @@ export default async function DatasetPage({ params }: Props) {
     <div className="bg-background w-full max-w-[1920px] mx-auto shadow-[0_0_12px_rgba(0,0,0,0.17)]">
       <Header />
       <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
-        <DatasetDetailsHeader dataset={response.result} />
+        <DatasetDetailsHeader dataset={response.result} baseUrl={process.env.DOMAIN || ""} />
 
         <Accordion type="multiple" className="w-full" defaultValue={["distributions", "assistant", "map"]}>
           <AccordionItem value={"distributions"} className="py-2">
