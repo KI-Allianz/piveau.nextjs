@@ -61,6 +61,21 @@ export const en: translations = {
     more: "Show more",
     less: "Show less"
   },
+  facets: {
+    dataScope: "Data Scope",
+    is_hvd: "HVD",
+    hvdCategory: "HVD Category",
+    country: "Country",
+    catalog: "Catalog",
+    superCatalog: "Super Catalog",
+    categories: "Categories",
+    publisher: "Publisher",
+    keywords: "Keywords",
+    scoring: "Scoring",
+    format: "Format",
+    license: "License",
+    subject: "Subject"
+  },
   open: 'Open',
   languages: "Languages",
 }

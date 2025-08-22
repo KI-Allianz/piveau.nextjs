@@ -4,6 +4,7 @@ import {Label} from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {useSearchParams} from "next/navigation";
 import {Badge} from "@/components/ui/badge";
+import {facetIds} from "@/lib/lang/facets";
 
 function facetContains(facet: Facet, key: string): boolean {
   if (!facet || !facet.items || facet.items.length === 0) {
@@ -19,13 +20,13 @@ interface Props {
 }
 
 export default function BoolFacet({ facet }: Props) {
-  const { translateDict, translations } = useLocale();
+  const { translateDict, translations, translateFacet } = useLocale();
   const searchParams = useSearchParams();
 
   return (
     <div className=" p-4 rounded-lg shadow">
       <div className="bg-card flex flex-col gap-4 justify-between">
-        <Label htmlFor="airplane-mode">{translateDict(facet.title)}</Label>
+        <Label htmlFor="airplane-mode">{translateFacet(facet.id as facetIds) || translateDict(facet.title)}</Label>
         <Tabs
           defaultValue={searchParams.get(facet.id) == "true" ? "show" : searchParams.get(facet.id) == "false" ? "hide" : "ignore"}
           className=""

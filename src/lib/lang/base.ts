@@ -1,3 +1,4 @@
+import {facetTranslations} from "@/lib/lang/facets";
 
 
 export type translations = {
@@ -60,6 +61,7 @@ export type translations = {
     more: string;
     less: string;
   },
+  facets: facetTranslations;
   open: string;
   languages: string;
 }

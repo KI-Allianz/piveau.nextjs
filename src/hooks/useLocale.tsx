@@ -7,6 +7,7 @@ import {
   supportedLocales
 } from "@/lib/lang";
 import {redirect, usePathname} from "next/navigation";
+import {facetIds} from "@/lib/lang/facets";
 
 const LanguageContext = createContext<{
   language: supportedLocales
@@ -49,6 +50,7 @@ export function useLocale() {
       redirect(`/${newLocale}/${pathname.split("/").slice(2).join("/")}`)
     },
     translateDict: buildTranslateDictFunction(context.language),
-    translations: getTranslations(context.language)
+    translations: getTranslations(context.language),
+    translateFacet: (facetId: facetIds) => getTranslations(context.language).facets[facetId]
   }
 }
