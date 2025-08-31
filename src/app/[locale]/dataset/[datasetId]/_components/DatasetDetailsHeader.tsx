@@ -43,7 +43,7 @@ export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
       </div>
 
       <div className="flex justify-center py-5">
-        <div className="flex flex-row justify-between items-center gap-20 bg-neutral-200 py-8 px-6 rounded-2xl w-fit">
+        <div className="flex flex-row justify-between items-center gap-20 bg-neutral-200 py-5 px-6 rounded-2xl w-fit">
           <Link href={"/"} className="flex items-center gap-2 group font-bold transition-all duration-200 hover:text-blue-800">
             <div className="bg-[#080efa] text-white p-1.5 rounded-xl w-fit group-hover:bg-blue-800 transition-all duration-200">
               <Archive size={18} />
