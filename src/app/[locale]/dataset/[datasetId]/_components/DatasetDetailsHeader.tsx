@@ -6,13 +6,14 @@ import { useLocale } from "@/hooks/useLocale";
 import DatasetDetailsExportButton from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsExportButton";
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
-import {Archive, ChevronLeft, Users} from "lucide-react";
+import {Archive, ChevronLeft, Tag, Users} from "lucide-react";
 import DatasetDetailsDescription from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsDescription";
 import React from "react";
 import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 import Link from "next/link";
 import {Badge} from "@/components/ui/badge";
 import {parseDate} from "@/lib/utils";
+import {getCategoryIcon} from "@/lib/icons";
 
 
 interface Props {
@@ -70,14 +71,16 @@ export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
       <div className="pt-3 flex flex-wrap gap-2">
         {dataset.keywords?.map((keyword) => (
           <Link key={keyword.id} href={`/${locale}?keywords=${keyword.id}`} >
-            <Badge variant={"outlineHover"}>
+            <Badge variant={"outlineHover"} className="flex items-center gap-2">
+              <Tag size={12} />
               <span className="">{keyword.label}</span>
             </Badge>
           </Link>
         ))}
         {dataset.categories?.map((category) => (
           <Link key={category.id} href={`/${locale}?categories=${category.id}`} >
-            <Badge variant={"outlineHover"}>
+            <Badge variant={"outlineHover"} className="flex items-center gap-2">
+              {getCategoryIcon(category.id)}
               <span className="">{translateDict(category.label)}</span>
             </Badge>
           </Link>
