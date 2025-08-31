@@ -44,6 +44,8 @@ export const de: translations = {
     description: "Beschreibung",
     linkedData: "Verknüpfte Daten",
     aiModel: "KI Modell",
+    lastModified: "Zuletzt geändert",
+    issuedOn: "Ausgestellt am",
   },
   catalogue: {
     title: "Titel",

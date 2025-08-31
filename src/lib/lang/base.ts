@@ -44,6 +44,8 @@ export type translations = {
     description: string;
     linkedData: string;
     aiModel: string;
+    lastModified: string;
+    issuedOn: string;
   },
   catalogue: {
     title: string,
