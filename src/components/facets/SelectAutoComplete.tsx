@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/popover";
 import { useLocale } from "@/hooks/useLocale";
 import { Badge } from "@/components/ui/badge";
+import { facetIds } from "@/lib/lang/facets";
 
 interface Props {
   defaultValue: string[];
@@ -33,7 +34,7 @@ export function SelectAutoComplete({
   facet,
   onSelectAction,
 }: Props) {
-  const { translateDict, translations } = useLocale();
+  const { translateDict, translations, translateFacet } = useLocale();
   const [open, setOpen] = React.useState(false);
   const [values, setValues] = React.useState(defaultValue);
 
@@ -50,7 +51,11 @@ export function SelectAutoComplete({
             ? translateDict(
               facet.items.find((item) => item.id === values[0])?.title,
             )
-            : formatString(translations.search.facets.select, facet.title)}
+            : formatString(
+              translations.search.facets.select,
+              translateFacet(facet.id as facetIds) ||
+              translateDict(facet.title),
+            )}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
