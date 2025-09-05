@@ -15,6 +15,8 @@ import {Badge} from "@/components/ui/badge";
 import {parseDate} from "@/lib/utils";
 import {getCategoryIcon} from "@/lib/icons";
 import DatasetBreadcrumbs from "@/app/[locale]/dataset/[datasetId]/_components/DatasetBreadcrumbs";
+import DatasetDetailsFavouriteButton
+  from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsFavouriteButton";
 
 
 interface Props {
@@ -40,6 +42,7 @@ export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
 
 
         <div className="space-x-2">
+          <DatasetDetailsFavouriteButton dataset={dataset} />
           <ExampleCodePopover url={`${baseUrl}/de/dataset/${dataset.id}`} />
           <DatasetDetailsExportButton id={dataset.id} />
         </div>

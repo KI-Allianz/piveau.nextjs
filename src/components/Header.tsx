@@ -17,6 +17,11 @@ const navItems = [
     href: "/catalogues",
     external: false,
   },
+  {
+    title: "Favourites",
+    href: "/favourites",
+    external: false,
+  },
   // {
   //   title: "Events",
   //   href: "https://ki-allianz.de/events/",
