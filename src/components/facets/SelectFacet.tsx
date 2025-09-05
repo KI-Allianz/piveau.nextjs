@@ -18,6 +18,7 @@ export default function SelectFacet({ facet }: Props) {
       <SelectAutoComplete
         defaultValue={searchParams.getAll(facet.id) || []}
         facet={facet}
+        showIcon={["categories", "keywords"].includes(facet.id)}
         onSelectAction={(value) => {
         const params = new URLSearchParams(window.location.search);
 

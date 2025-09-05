@@ -72,7 +72,7 @@ export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
         {dataset.keywords?.map((keyword) => (
           <Link key={keyword.id} href={`/${locale}?keywords=${keyword.id}`} >
             <Badge variant={"outlineHover"} className="flex items-center gap-2">
-              <Tag size={12} />
+              <Tag />
               <span className="">{keyword.label}</span>
             </Badge>
           </Link>

@@ -22,17 +22,20 @@ import {
 import { useLocale } from "@/hooks/useLocale";
 import { Badge } from "@/components/ui/badge";
 import { facetIds } from "@/lib/lang/facets";
+import {getCategoryIcon} from "@/lib/icons";
 
 interface Props {
   defaultValue: string[];
   facet: Facet;
   onSelectAction: (value: string | undefined) => void;
+  showIcon: boolean
 }
 
 export function SelectAutoComplete({
   defaultValue,
   facet,
   onSelectAction,
+  showIcon
 }: Props) {
   const { translateDict, translations, translateFacet } = useLocale();
   const [open, setOpen] = React.useState(false);
@@ -107,16 +110,19 @@ export function SelectAutoComplete({
                       setOpen(false);
                     }}
                   >
-                    <Badge>{item.count}</Badge>
-                    {translateDict(item.title)}
                     <Check
                       className={cn(
-                        "ml-auto",
+                        "",
                         values.find((value) => value === item.id)
                           ? "opacity-100"
                           : "opacity-0",
                       )}
                     />
+                    {showIcon && getCategoryIcon(item.id)}
+                    {translateDict(item.title)}
+                    <Badge className="ml-auto">
+                      {item.count}
+                    </Badge>
                   </CommandItem>
                 ))}
             </CommandGroup>

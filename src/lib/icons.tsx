@@ -12,33 +12,33 @@ import {
   Users
 } from "lucide-react";
 
-export function getCategoryIcon(categoryId: string) {
+export function getCategoryIcon(categoryId: string, size: number = 14) {
   switch (categoryId) {
     case "GOVE":
-      return <Landmark size={12} />;
+      return <Landmark size={size} />;
     case "REGI":
-      return <MapPinned size={12} />;
+      return <MapPinned size={size} />;
     case "SOCI":
-      return <Users size={12} />;
+      return <Users size={size} />;
     case "ECON":
-      return <Euro size={12} />;
+      return <Euro size={size} />;
     case "ENVI":
-      return <Leaf size={12} />;
+      return <Leaf size={size} />;
     case "EDUC":
-      return <GraduationCap size={12} />;
+      return <GraduationCap size={size} />;
     case "TECH":
-      return <Microscope size={12} />;
+      return <Microscope size={size} />;
     case "TRAN":
-      return <Car size={12} />;
+      return <Car size={size} />;
     case "AGRI":
-      return <Tractor size={12} />;
+      return <Tractor size={size} />;
     case "JUST":
-      return <Scale size={12} />;
+      return <Scale size={size} />;
     case "HEAL":
-      return <HeartPulse size={12} />;
+      return <HeartPulse size={size} />;
     case "ENER":
-      return <PlugZap size={12} />;
+      return <PlugZap size={size} />;
     default:
-      return <Tag size={12} />;
+      return <Tag size={size} />;
   }
 }
