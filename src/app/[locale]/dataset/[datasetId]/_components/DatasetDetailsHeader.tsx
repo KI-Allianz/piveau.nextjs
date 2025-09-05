@@ -14,6 +14,7 @@ import Link from "next/link";
 import {Badge} from "@/components/ui/badge";
 import {parseDate} from "@/lib/utils";
 import {getCategoryIcon} from "@/lib/icons";
+import DatasetBreadcrumbs from "@/app/[locale]/dataset/[datasetId]/_components/DatasetBreadcrumbs";
 
 
 interface Props {
@@ -28,19 +29,26 @@ export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
   return (
     <div className="w-full space-y-3">
       <div className="flex flex-row gap-5 justify-between">
-        <Button onClick={() => router.back()} variant="outline">
-          <ChevronLeft />
-          Back
-        </Button>
+        <div className="flex space-x-2">
+          <Button onClick={() => router.back()} variant="outline">
+            <ChevronLeft />
+            Back
+          </Button>
+          <DatasetBreadcrumbs dataset={dataset} />
+        </div>
 
-        <h1 className="text-4xl font-semibold text-center">
-          {translateDict(dataset.title)}
-        </h1>
+
 
         <div className="space-x-2">
           <ExampleCodePopover url={`${baseUrl}/de/dataset/${dataset.id}`} />
           <DatasetDetailsExportButton id={dataset.id} />
         </div>
+      </div>
+
+      <div className="pt-7">
+        <h1 className="text-4xl font-semibold text-center">
+          {translateDict(dataset.title)}
+        </h1>
       </div>
 
       <div className="flex justify-center py-5">
