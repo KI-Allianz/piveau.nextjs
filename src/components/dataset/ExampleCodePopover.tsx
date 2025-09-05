@@ -47,7 +47,7 @@ export default function ExampleCodePopover({ url }: Props) {
             {exampleCode}
           </SyntaxHighlighter>
 
-          <div className="absolute top-0 right-0 m-2">
+          <div className="absolute top-0 right-0 m-2" onFocusCapture={e => e.stopPropagation()}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" onClick={openDocumentation}>
