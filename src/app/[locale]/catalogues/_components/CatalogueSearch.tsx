@@ -3,18 +3,19 @@
 import { useSearch } from "@/hooks/useSearch";
 import Facets from "@/components/facets/Facets";
 import SearchFacet from "@/components/facets/SearchFacet";
-import {useSearchParams} from "next/navigation";
-import {useEffect, useState} from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import CatalogCard from "./CatalogCard";
 import CatalogCardSkeleton from "./CatalogCardSkeleton";
 import { SearchTab } from "@/components/facets/SearchTabSwitcher";
 import SearchPagination from "@/components/SearchPagination";
-import {useLocale} from "@/hooks/useLocale";
+import { useLocale } from "@/hooks/useLocale";
+import { UrlCollection } from "@/lib/utils";
 
-export default function CatalogueSearch() {
+export default function CatalogueSearch({ urls }: { urls: UrlCollection }) {
   const searchParams = useSearchParams();
-  const { translations } = useLocale()
-  const [facets, setFacets] = useState<Record<string, string[]>>()
+  const { translations } = useLocale();
+  const [facets, setFacets] = useState<Record<string, string[]>>();
 
   const fixFacets = (facets: Record<string, string[]> | undefined) => {
     const fixedFacets: Record<string, string[]> = {};
@@ -23,13 +24,18 @@ export default function CatalogueSearch() {
     }
 
     return fixedFacets;
-  }
+  };
 
   const { data, isPending } = useSearch({
+    url: urls.SEARCH,
     q: searchParams.get("q") || "",
     filter: "catalogue",
-    limit: searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10,
-    page: searchParams.get("page") ? parseInt(searchParams.get("page") as string) : 0,
+    limit: searchParams.get("limit")
+      ? parseInt(searchParams.get("limit") as string)
+      : 10,
+    page: searchParams.get("page")
+      ? parseInt(searchParams.get("page") as string)
+      : 0,
     dataServices: searchParams.get("tab") == SearchTab.DATA_SERVICES,
     sort: "relevance+desc, modified+desc, title.en+asc",
     includes: [
@@ -39,10 +45,10 @@ export default function CatalogueSearch() {
       "modified",
       "issued",
       "country",
-      "count"
+      "count",
     ],
     facets: {
-      ...fixFacets(facets)
+      ...fixFacets(facets),
     },
 
     //Debugging
@@ -51,16 +57,19 @@ export default function CatalogueSearch() {
 
   useEffect(() => {
     const updateFacets = () => {
-      console.log("Updating facets with search params:", searchParams.toString());
+      console.log(
+        "Updating facets with search params:",
+        searchParams.toString(),
+      );
 
       const params = new URLSearchParams(searchParams.toString());
       const newFacets: Record<string, string[]> = {};
       data?.facets.map((facet) => {
         newFacets[facet.id] = params.getAll(facet.id);
-      })
+      });
 
       setFacets(newFacets);
-    }
+    };
 
     updateFacets();
   }, [searchParams]);
@@ -70,21 +79,36 @@ export default function CatalogueSearch() {
       <Facets facets={data?.facets} />
       <main className="flex flex-col gap-6 row-start-2 items-center sm:items-start w-full">
         <div className="flex flex-col w-full gap-2">
-          <SearchFacet placeholder={translations.search.placeholder.catalogues} />
+          <SearchFacet
+            placeholder={translations.search.placeholder.catalogues}
+          />
         </div>
 
-        {isPending ? [...Array(10).keys()].map((index) => (
-          <CatalogCardSkeleton key={"dss" + index} />
-        )) : (
-          data?.results.map((result) => (
-            <CatalogCard key={"ds" + result.id} catalog={result} />
+        {isPending
+          ? [...Array(10).keys()].map((index) => (
+            <CatalogCardSkeleton key={"dss" + index} />
           ))
-        )}
+          : data?.results.map((result) => (
+            <CatalogCard key={"ds" + result.id} catalog={result} />
+          ))}
 
         <SearchPagination
-          currentPage={searchParams.get("page") ? parseInt(searchParams.get("page") as string) : 0}
-          totalPages={Math.ceil((data?.count ?? 10) / (searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10))}
-          itemsPerPage={searchParams.get("limit") ? parseInt(searchParams.get("limit") as string) : 10}
+          currentPage={
+            searchParams.get("page")
+              ? parseInt(searchParams.get("page") as string)
+              : 0
+          }
+          totalPages={Math.ceil(
+            (data?.count ?? 10) /
+            (searchParams.get("limit")
+              ? parseInt(searchParams.get("limit") as string)
+              : 10),
+          )}
+          itemsPerPage={
+            searchParams.get("limit")
+              ? parseInt(searchParams.get("limit") as string)
+              : 10
+          }
         />
       </main>
     </div>

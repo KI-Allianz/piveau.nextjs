@@ -12,7 +12,7 @@ import React from "react";
 import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { parseDate } from "@/lib/utils";
+import { parseDate, UrlCollection } from "@/lib/utils";
 import { getCategoryIcon } from "@/lib/icons";
 import DatasetBreadcrumbs from "@/app/[locale]/dataset/[datasetId]/_components/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsFavouriteButton";
@@ -20,9 +20,14 @@ import DatasetDetailsFavouriteButton from "@/app/[locale]/dataset/[datasetId]/_c
 interface Props {
   dataset: StandardSchemaV1.InferOutput<typeof schemaDataset>;
   baseUrl: string;
+  urls: UrlCollection;
 }
 
-export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
+export default function DatasetDetailsHeader({
+  dataset,
+  baseUrl,
+  urls,
+}: Props) {
   const { locale, translateDict, translations } = useLocale();
   const router = useRouter();
 
@@ -40,7 +45,7 @@ export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
         <div className="space-x-2">
           <DatasetDetailsFavouriteButton dataset={dataset} />
           <ExampleCodePopover url={`${baseUrl}/de/dataset/${dataset.id}`} />
-          <DatasetDetailsExportButton id={dataset.id} />
+          <DatasetDetailsExportButton id={dataset.id} urls={urls} />
         </div>
       </div>
 

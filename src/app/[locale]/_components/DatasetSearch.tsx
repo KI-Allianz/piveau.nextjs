@@ -13,16 +13,17 @@ import SearchTabSwitcher, {
 import SearchPagination from "@/components/SearchPagination";
 import { useLocale } from "@/hooks/useLocale";
 import SortButton from "@/components/facets/SortButton";
-import { aiModelFormats } from "@/lib/utils";
+import { aiModelFormats, UrlCollection } from "@/lib/utils";
 import { schemaCatalog } from "@piveau/sdk-core/model";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import CatalogInfo from "@/app/[locale]/_components/CatalogInfo";
 
 interface Props {
   catalog?: StandardSchemaV1.InferOutput<typeof schemaCatalog>;
+  urls: UrlCollection;
 }
 
-export default function DatasetSearch({ catalog }: Props) {
+export default function DatasetSearch({ catalog, urls }: Props) {
   const searchParams = useSearchParams();
   const { translations } = useLocale();
   const [facets, setFacets] = useState<Record<string, string[]>>();
@@ -62,6 +63,7 @@ export default function DatasetSearch({ catalog }: Props) {
   };
 
   const { data, isPending } = useSearch({
+    url: urls.SEARCH,
     q: searchParams.get("q") || "",
     filter: "dataset",
     limit: searchParams.get("limit")

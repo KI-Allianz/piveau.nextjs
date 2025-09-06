@@ -1,5 +1,4 @@
-
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,28 +10,31 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {Menu} from "lucide-react";
+} from "@/components/ui/dropdown-menu";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
-import {StandardSchemaV1} from "@standard-schema/spec";
-import {schemaDataset} from "@piveau/sdk-core/model";
-import {useLocale} from "@/hooks/useLocale";
-import {dataTypes} from "@/lib/content";
+import { StandardSchemaV1 } from "@standard-schema/spec";
+import { schemaDataset } from "@piveau/sdk-core/model";
+import { useLocale } from "@/hooks/useLocale";
+import { dataTypes } from "@/lib/content";
+import { UrlCollection } from "@/lib/utils";
 
 interface Props {
-  id: NonNullable<StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]>[number]["id"]
+  id: NonNullable<
+    StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]
+  >[number]["id"];
+  urls: UrlCollection;
 }
 
-export default function DatasetDetailsExportButton({ id }: Props) {
+export default function DatasetDetailsExportButton({ id, urls }: Props) {
   const { translations } = useLocale();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline">
-          <Menu
-          />
+          <Menu />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -46,7 +48,7 @@ export default function DatasetDetailsExportButton({ id }: Props) {
                 {dataTypes.map((type) => (
                   <DropdownMenuItem key={type.value}>
                     <Link
-                      href={`https://piveau.hlrs.de/hub/repo/datasets/${id}${type.value}`}
+                      href={urls.REPO + `datasets/${id}${type.value}`}
                       key={type.value}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -63,5 +65,5 @@ export default function DatasetDetailsExportButton({ id }: Props) {
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

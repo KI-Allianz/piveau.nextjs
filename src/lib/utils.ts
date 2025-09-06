@@ -1,9 +1,9 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-import {parse, parseISO} from "date-fns";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { parse, parseISO } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function parseDate(dateString: string | undefined | null): Date | null {
@@ -21,12 +21,15 @@ export function parseDate(dateString: string | undefined | null): Date | null {
 
 export function formatString(str: string, ...replacements: string[]): string {
   return str.replace(/{(\d+)}/g, function(match, number) {
-    return typeof replacements[number] != 'undefined'
+    return typeof replacements[number] != "undefined"
       ? replacements[number]
       : match;
   });
 }
 
-export const aiModelFormats = [
-  "ONNX",
-];
+export const aiModelFormats = ["ONNX"];
+
+export type UrlCollection = {
+  SEARCH: string;
+  REPO: string;
+};
