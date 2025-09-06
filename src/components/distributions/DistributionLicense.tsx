@@ -6,20 +6,22 @@ import {
   MorphingDialogSubtitle,
   MorphingDialogClose,
   MorphingDialogContainer,
-} from '@/components/motion-primitives/morphing-dialog';
-import {StandardSchemaV1} from "@standard-schema/spec";
-import {schemaDataset} from "@piveau/sdk-core/model";
+} from "@/components/motion-primitives/morphing-dialog";
+import { StandardSchemaV1 } from "@standard-schema/spec";
+import { schemaDataset } from "@piveau/sdk-core/model";
 import Link from "next/link";
-import {Button} from "@/components/ui/button";
-import {Scale, SquareArrowOutUpRight} from "lucide-react";
-import {useLocale} from "@/hooks/useLocale";
+import { Button } from "@/components/ui/button";
+import { Scale, SquareArrowOutUpRight } from "lucide-react";
+import { useLocale } from "@/hooks/useLocale";
 
 interface Props {
-  license: NonNullable<StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]>[number]["license"]
+  license: NonNullable<
+    StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]
+  >[number]["license"];
 }
 
-export function DistributionLicense({license}: Props) {
-  const { translations } = useLocale()
+export function DistributionLicense({ license }: Props) {
+  const { translations } = useLocale();
 
   return (
     <MorphingDialog
@@ -31,17 +33,17 @@ export function DistributionLicense({license}: Props) {
     >
       <MorphingDialogTrigger
         style={{
-          borderRadius: '4px',
+          borderRadius: "4px",
         }}
-        className='border border-gray-200/60 bg-card'
+        className="border border-gray-200/60 bg-card"
       >
-        <div className='flex items-center space-x-3 p-3'>
-          <div className='flex flex-col items-start justify-center space-y-0'>
-            <MorphingDialogTitle className='text-[10px] font-medium text-black sm:text-xs flex gap-1'>
+        <div className="flex items-center space-x-3 p-3">
+          <div className="flex flex-col items-start justify-center space-y-0">
+            <MorphingDialogTitle className="text-[10px] font-medium sm:text-xs flex gap-1">
               <Scale size={15} />
               {translations.dataset.distribution.license}
             </MorphingDialogTitle>
-            <MorphingDialogSubtitle className='text-[10px] text-gray-600 sm:text-xs'>
+            <MorphingDialogSubtitle className="text-[10px] text-gray-600 sm:text-xs">
               {license?.label}
             </MorphingDialogSubtitle>
           </div>
@@ -50,23 +52,23 @@ export function DistributionLicense({license}: Props) {
       <MorphingDialogContainer>
         <MorphingDialogContent
           style={{
-            borderRadius: '12px',
+            borderRadius: "12px",
           }}
-          className='relative h-auto w-[500px] border border-gray-100 bg-card'
+          className="relative h-auto w-[500px] border border-gray-100 bg-card"
         >
-          <div className='relative p-6'>
-            <div className=''>
-              <span className='text-[10px] font-medium text-muted-foreground sm:text-xs flex gap-1'>
+          <div className="relative p-6">
+            <div className="">
+              <span className="text-[10px] font-medium text-muted-foreground sm:text-xs flex gap-1">
                 <Scale size={15} />
                 {translations.dataset.distribution.license}
               </span>
-              <MorphingDialogTitle className='text-black'>
+              <MorphingDialogTitle className="">
                 {license?.label}
               </MorphingDialogTitle>
-              <MorphingDialogSubtitle className='font-light text-gray-400'>
+              <MorphingDialogSubtitle className="font-light text-gray-400">
                 {license?.description}
               </MorphingDialogSubtitle>
-              <div className='mt-4 flex gap-2'>
+              <div className="mt-4 flex gap-2">
                 <Link
                   href={license?.resource ?? "#"}
                   className="text-blue-500 hover:underline"
@@ -76,9 +78,9 @@ export function DistributionLicense({license}: Props) {
                     {translations.open}
                   </Button>
                 </Link>
-                {(license as {la_url?: string}).la_url && (
+                {(license as { la_url?: string }).la_url && (
                   <Link
-                    href={(license as {la_url: string})?.la_url ?? "#"}
+                    href={(license as { la_url: string })?.la_url ?? "#"}
                     className="text-blue-500 hover:underline"
                   >
                     <Button variant={"outline"}>
@@ -90,7 +92,7 @@ export function DistributionLicense({license}: Props) {
               </div>
             </div>
           </div>
-          <MorphingDialogClose className='text-zinc-500' />
+          <MorphingDialogClose className="text-zinc-500" />
         </MorphingDialogContent>
       </MorphingDialogContainer>
     </MorphingDialog>

@@ -1,11 +1,12 @@
 import React from "react";
-import {LanguageProvider} from "@/hooks/useLocale";
-import {redirect} from "next/navigation";
-import {defaultLocale, supportedLocales, SupportedLocales} from "@/lib/lang";
+import { LanguageProvider } from "@/hooks/useLocale";
+import { redirect } from "next/navigation";
+import { defaultLocale, supportedLocales, SupportedLocales } from "@/lib/lang";
 import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
 import "../globals.css";
 import { Providers } from "@/components/Providers";
+import { ThemeProvider } from "next-themes";
 
 const nunitoSans = Nunito_Sans({
   variable: "--font-nunito-sans",
@@ -20,12 +21,12 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({
-                                     children, params
-                                   }: Readonly<{
+  children,
+  params,
+}: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ locale: supportedLocales }>
+  params: Promise<{ locale: supportedLocales }>;
 }>) {
-
   const { locale } = await params;
 
   if (!locale || !SupportedLocales.includes(locale)) {
@@ -33,14 +34,19 @@ export default async function RootLayout({
   }
   return (
     <html lang={locale}>
-      <body
-        className={`${nunitoSans.variable} antialiased`}
-      >
-        <div className="w-full bg-white">
-          <LanguageProvider language={locale}>
-            <Providers>{children}</Providers>
-          </LanguageProvider>
-        </div>
+      <body className={`${nunitoSans.variable} antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="w-full bg-white dark:bg-black">
+            <LanguageProvider language={locale}>
+              <Providers>{children}</Providers>
+            </LanguageProvider>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
