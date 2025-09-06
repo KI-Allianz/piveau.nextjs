@@ -41,7 +41,7 @@ export default function DistributionCard({ distribution, urls }: Props) {
             {translateDict(distribution.title)}
           </CardTitle>
           <CardDescription>
-            <ExpandableClamp collapsedHeight={120} backgroundColor="card">
+            <ExpandableClamp collapsedHeight={120}>
               <HtmlSnippet html={translateDict(distribution.description)} />
             </ExpandableClamp>
           </CardDescription>

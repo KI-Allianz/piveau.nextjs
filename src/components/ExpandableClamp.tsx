@@ -8,13 +8,11 @@ import React, {
   useState,
   type ReactNode,
 } from "react";
-import {Button} from "@/components/ui/button";
-import {useLocale} from "@/hooks/useLocale";
+import { Button } from "@/components/ui/button";
+import { useLocale } from "@/hooks/useLocale";
 
 interface ExpandableClampProps {
   children: ReactNode;
-
-  backgroundColor?: string;
 
   // Height when collapsed (in px). Default: 320
   collapsedHeight?: number;
@@ -27,12 +25,11 @@ interface ExpandableClampProps {
 }
 
 export function ExpandableClamp({
-                                  children,
-                                  backgroundColor = "background",
-                                  collapsedHeight = 320,
-                                  defaultExpanded = false,
-                                  onToggle,
-                                }: ExpandableClampProps) {
+  children,
+  collapsedHeight = 320,
+  defaultExpanded = false,
+  onToggle,
+}: ExpandableClampProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [canExpand, setCanExpand] = useState(false);
   const [contentHeight, setContentHeight] = useState<number>(0);
@@ -54,7 +51,7 @@ export function ExpandableClamp({
       setContentHeight(full);
       setCanExpand(full > collapsedHeight + 8); // tolerance
     },
-    [collapsedHeight]
+    [collapsedHeight],
   );
 
   // First measurement after mount and whenever children change
@@ -105,8 +102,8 @@ export function ExpandableClamp({
           className={[
             // Default gradient; adjust to your design system
             `pointer-events-none absolute inset-x-0 bottom-0 h-16`,
-            `bg-gradient-to-b from-transparent to-${backgroundColor}`,
-            "dark:from-neutral-900",
+            `bg-gradient-to-t to-transparent from-neutral-50`,
+            "dark:from-neutral-950",
           ]
             .filter(Boolean)
             .join(" ")}
@@ -114,29 +111,19 @@ export function ExpandableClamp({
       )}
 
       {canExpand &&
-        ( expanded ? (
-            <div className="mt-2 flex justify-end">
-              <Button
-                onClick={toggle}
-                variant={"outline"}
-                className={"z-10"}
-              >
-                {expanded ? translations.expand.less : translations.expand.more}
-              </Button>
-            </div>
-          ) : (
-            <div className="bottom-0 right-2 absolute flex justify-end">
-              <Button
-                onClick={toggle}
-                variant={"outline"}
-                className={""}
-              >
-                {expanded ? translations.expand.less : translations.expand.more}
-              </Button>
-            </div>
-          )
-
-        )}
+        (expanded ? (
+          <div className="mt-2 flex justify-end">
+            <Button onClick={toggle} variant={"outline"} className={"z-10"}>
+              {expanded ? translations.expand.less : translations.expand.more}
+            </Button>
+          </div>
+        ) : (
+          <div className="bottom-0 right-2 absolute flex justify-end">
+            <Button onClick={toggle} variant={"outline"} className={""}>
+              {expanded ? translations.expand.less : translations.expand.more}
+            </Button>
+          </div>
+        ))}
     </div>
   );
 }
