@@ -4,40 +4,28 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { BookOpenText, Code, Copy } from "lucide-react";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { docco, dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { customParsingExample, formatExample } from "@/lib/code/examples";
+import { Code } from "lucide-react";
+import {CodeExampleType, codeExampleTypesNames, getCodeExample, installationExample} from "@/lib/code/examples";
+import React, {useMemo} from "react";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useTheme } from "next-themes";
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {Label} from "@/components/ui/label";
+import {CodeBlock} from "@/components/dataset/CodeBlock";
 
 interface Props {
   url: string;
 }
 
 export default function ExampleCodePopover({ url }: Props) {
-  const exampleCode = formatExample(customParsingExample, url);
-  const { theme } = useTheme();
-
-  const copyExampleCode = () => {
-    navigator.clipboard
-      .writeText(exampleCode)
-      .then(() => {
-        console.log("Example code copied to clipboard");
-      })
-      .catch((err) => {
-        console.error("Failed to copy example code: ", err);
-      });
-  };
-
-  const openDocumentation = () => {
-    const docUrl = "https://github.com/maxbrzr/dcat-ap-hub";
-    window.open(docUrl, "_blank");
-  };
+  const [exampleType, setExampleType] = React.useState<CodeExampleType>(CodeExampleType.CUSTOM_PARSING);
+  const exampleCode = useMemo(() => getCodeExample(exampleType, url), [url, exampleType])
 
   return (
     <Popover>
@@ -47,47 +35,32 @@ export default function ExampleCodePopover({ url }: Props) {
           Code
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[450px]">
-        <div className="relative mt-4">
-          <SyntaxHighlighter
-            language="python"
-            style={theme == "dark" ? dracula : docco}
-            customStyle={{
-              borderRadius: "0.5rem",
-              background: theme == "dark" ? "#111111" : "#EEE",
-              padding: "1rem",
-            }}
-          >
-            {exampleCode}
-          </SyntaxHighlighter>
+      <PopoverContent className="w-[450px] rounded-2xl flex flex-col gap-4">
+        <CodeBlock code={installationExample} title={"Installation"} />
 
-          <div
-            className="absolute top-0 right-0 m-2"
-            onFocusCapture={(e) => e.stopPropagation()}
-          >
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" onClick={openDocumentation}>
-                  <BookOpenText />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Open Documentation</p>
-              </TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" onClick={copyExampleCode}>
-                  <Copy />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Copy Code</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
+        <div>
+          <Label className="text-muted-foreground mb-1 ml-1">
+            Parsers
+          </Label>
+          <Select defaultValue={exampleType} onValueChange={(value) => setExampleType(value as CodeExampleType)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a parser" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Parsers</SelectLabel>
+                {Object.values(CodeExampleType).map((type) => (
+                  <SelectItem value={type}>
+                    {codeExampleTypesNames[type]}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
+
+
+        <CodeBlock code={exampleCode} docUrl={"https://github.com/maxbrzr/dcat-ap-hub"} />
       </PopoverContent>
     </Popover>
   );
