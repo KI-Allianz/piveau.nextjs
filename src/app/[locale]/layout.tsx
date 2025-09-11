@@ -7,6 +7,8 @@ import { Nunito_Sans } from "next/font/google";
 import "../globals.css";
 import { Providers } from "@/components/Providers";
 import { ThemeProvider } from "next-themes";
+import {getLicenses} from "@/lib/license";
+import {LicenseProvider} from "@/hooks/useLicenses";
 
 const nunitoSans = Nunito_Sans({
   variable: "--font-nunito-sans",
@@ -32,6 +34,9 @@ export default async function RootLayout({
   if (!locale || !SupportedLocales.includes(locale)) {
     redirect("/" + defaultLocale);
   }
+
+  const licenses = await getLicenses();
+
   return (
     <html lang={locale}>
       <body className={`${nunitoSans.variable} antialiased`}>
@@ -43,7 +48,9 @@ export default async function RootLayout({
         >
           <div className="w-full bg-white dark:bg-black">
             <LanguageProvider language={locale}>
-              <Providers>{children}</Providers>
+              <LicenseProvider licenses={licenses} >
+                <Providers>{children}</Providers>
+              </LicenseProvider>
             </LanguageProvider>
           </div>
         </ThemeProvider>

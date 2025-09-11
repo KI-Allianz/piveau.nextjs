@@ -13,6 +13,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Scale, SquareArrowOutUpRight } from "lucide-react";
 import { useLocale } from "@/hooks/useLocale";
+import {useLicenses} from "@/hooks/useLicenses";
 
 interface Props {
   license: NonNullable<
@@ -22,6 +23,7 @@ interface Props {
 
 export function DistributionLicense({ license }: Props) {
   const { translations } = useLocale();
+  const { getLicense } = useLicenses();
 
   return (
     <MorphingDialog
@@ -41,10 +43,10 @@ export function DistributionLicense({ license }: Props) {
           <div className="flex flex-col items-start justify-center space-y-0">
             <MorphingDialogTitle className="text-[10px] font-medium sm:text-xs flex gap-1">
               <Scale size={15} />
-              {translations.dataset.distribution.license}
+              {getLicense(license?.resource).label}
             </MorphingDialogTitle>
-            <MorphingDialogSubtitle className="text-[10px] text-gray-600 sm:text-xs">
-              {license?.label}
+            <MorphingDialogSubtitle className="text-[10px] text-muted-foreground sm:text-xs">
+              {getLicense(license?.resource).usageType}
             </MorphingDialogSubtitle>
           </div>
         </div>
@@ -57,16 +59,16 @@ export function DistributionLicense({ license }: Props) {
           className="relative h-auto w-[500px] border border-gray-100 bg-card"
         >
           <div className="relative p-6">
-            <div className="">
+            <div className="flex flex-col gap-1">
               <span className="text-[10px] font-medium text-muted-foreground sm:text-xs flex gap-1">
                 <Scale size={15} />
                 {translations.dataset.distribution.license}
               </span>
               <MorphingDialogTitle className="">
-                {license?.label}
+                {getLicense(license?.resource).label}
               </MorphingDialogTitle>
               <MorphingDialogSubtitle className="font-light text-gray-400">
-                {license?.description}
+                {getLicense(license?.resource).usageType}
               </MorphingDialogSubtitle>
               <div className="mt-4 flex gap-2">
                 <Link

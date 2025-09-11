@@ -3,6 +3,7 @@ import {SelectAutoComplete} from "@/components/facets/SelectAutoComplete";
 import {useLocale} from "@/hooks/useLocale";
 import {useSearchParams} from "next/navigation";
 import {facetIds} from "@/lib/lang/facets";
+import {useLicenses} from "@/hooks/useLicenses";
 
 interface Props {
   facet: Facet
@@ -10,7 +11,15 @@ interface Props {
 
 export default function SelectFacet({ facet }: Props) {
   const { translateDict, translateFacet } = useLocale();
+  const { getLicenseOrUndefined } = useLicenses();
   const searchParams = useSearchParams();
+
+  if (facet.id === "license") {
+    facet.items = facet.items.map((item) => ({
+      ...item,
+      title: getLicenseOrUndefined(item.id)?.label || item.title,
+    }))
+  }
 
   return (
     <div className="flex flex-col gap-4 bg-card p-4 rounded-lg shadow">
