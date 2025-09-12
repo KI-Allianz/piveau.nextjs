@@ -3,6 +3,7 @@ import {rdfParser} from "rdf-parse"; // note: default import (not { rdfParser })
 import fs from "fs";
 import {DataFactory, Store, NamedNode, Literal, Quad_Subject} from "n3";
 import { Readable } from "stream";
+import path from "node:path";
 
 const { namedNode } = DataFactory;
 
@@ -97,14 +98,14 @@ async function quadsToStore(quadStream: Readable): Promise<Store> {
 
 // Main: parse licenses as a dict keyed by concept URI
 export async function getLicenses(options?: {
-  filePath?: string;                    // default: assets/licenses.rdf
   contentType?: string;                 // default: application/rdf+xml
   baseIRI?: string;                     // default: http://dcat-ap.de/def/licenses
   schemeIRI?: string;                   // default: http://dcat-ap.de/def/licenses
   langPrefs?: string[];                 // default: ["de","en",""]
 }): Promise<Record<string, LicenseEntry>> {
+
+  const filePath = path.join(process.cwd(), 'public', 'licenses.rdf');
   const {
-    filePath   = "assets/licenses.rdf",
     contentType= "application/rdf+xml",
     baseIRI    = "http://dcat-ap.de/def/licenses",
     schemeIRI  = "http://dcat-ap.de/def/licenses",
