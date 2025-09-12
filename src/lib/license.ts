@@ -104,7 +104,7 @@ export async function getLicenses(options?: {
   langPrefs?: string[];                 // default: ["de","en",""]
 }): Promise<Record<string, LicenseEntry>> {
 
-  const filePath = path.join(process.cwd(), 'public', 'licenses.rdf');
+  const filePath = path.join(process.cwd(), 'assets', 'licenses.rdf');
   const {
     contentType= "application/rdf+xml",
     baseIRI    = "http://dcat-ap.de/def/licenses",
