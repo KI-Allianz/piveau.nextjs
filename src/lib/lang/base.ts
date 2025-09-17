@@ -1,6 +1,6 @@
 import {facetTranslations} from "@/lib/lang/facets";
-import {SortMode} from "@/components/facets/SortButton";
 import {NavItemId} from "@/components/Header";
+import {SortMode} from "@/lib/utils";
 
 
 export type translations = {

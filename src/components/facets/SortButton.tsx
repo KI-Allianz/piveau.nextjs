@@ -10,21 +10,7 @@ import {
 } from "@/components/ui/menubar"
 import {ArrowDownWideNarrow, ArrowUpNarrowWide} from "lucide-react";
 import {useLocale} from "@/hooks/useLocale";
-
-export enum SortMode {
-  LAST_MODIFIED = "modified+desc, relevance+desc, title.en+asc",
-  RELEVANCE = "relevance+desc, modified+desc, title.en+asc",
-  NAME_ASC = "title.en+asc, relevance+desc, modified+desc",
-  NAME_DESC = "title.en+desc, relevance+desc, modified+desc",
-  LAST_ISSUED = "issued+desc, relevance+desc, title.en+asc",
-}
-const sortModeTypes = {
-  [SortMode.LAST_MODIFIED]: "desc",
-  [SortMode.RELEVANCE]: "desc",
-  [SortMode.NAME_ASC]: "asc",
-  [SortMode.NAME_DESC]: "desc",
-  [SortMode.LAST_ISSUED]: "desc",
-}
+import {SortMode, sortModeTypes} from "@/lib/utils";
 
 export default function SortButton() {
   const searchParams = useSearchParams();
@@ -65,7 +51,7 @@ export default function SortButton() {
     const sortModeType = sortModeTypes[mode];
     return (
       <span className="flex items-center gap-2">
-        {translations.search.sort[mode]}
+        {translations.search.sort[mode] }
         {sortModeType === "asc" ? (
           <ArrowUpNarrowWide className="h-4 w-4 text-muted-foreground" />
           ) : (

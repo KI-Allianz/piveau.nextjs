@@ -1,6 +1,6 @@
 import {translations} from "@/lib/lang/base";
-import {SortMode} from "@/components/facets/SortButton";
 import {NavItemId} from "@/components/Header";
+import {SortMode} from "@/lib/utils";
 
 
 export const en: translations = {
