@@ -86,7 +86,7 @@ export default function DatasetDetailsChatbot({ dataset, className }: Props) {
             if (e.key === "Enter") submitQuestion(dataset).then();
           }}
           placeholder={translations.dataset.assistant.placeholder}
-          className="flex-1 h-10 rounded-md border border-neutral-300 bg-white px-3 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none focus-visible:ring-0 rounded-r-none"
+          className="flex-1 h-10 rounded-md border border-neutral-300 bg-white px-3 text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 outline-none focus-visible:ring-0 rounded-r-none"
         />
 
         <Button
