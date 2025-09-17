@@ -16,6 +16,7 @@ import { parseDate, UrlCollection } from "@/lib/utils";
 import { getCategoryIcon } from "@/lib/icons";
 import DatasetBreadcrumbs from "@/app/[locale]/dataset/[datasetId]/_components/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsFavouriteButton";
+import PublisherPopover from "@/components/dataset/PublisherPopover";
 
 interface Props {
   dataset: StandardSchemaV1.InferOutput<typeof schemaDataset>;
@@ -58,8 +59,8 @@ export default function DatasetDetailsHeader({
       <div className="flex justify-center py-5">
         <div className="flex flex-row justify-between items-center gap-20 bg-card py-5 px-6 rounded-2xl w-fit">
           <Link
-            href={"/"}
-            className="flex items-center gap-2 group font-bold transition-all duration-200 hover:text-blue-800"
+            href={`/${locale}/catalogues/${dataset.catalog.id}`}
+            className="flex items-center gap-2 group font-bold transition-all duration-200 hover:bg-accent/30 cursor-pointer rounded-lg p-1"
           >
             <div className="bg-[#080efa] text-white p-1.5 rounded-xl w-fit group-hover:bg-blue-800 transition-all duration-200">
               <Archive size={18} />
@@ -78,15 +79,7 @@ export default function DatasetDetailsHeader({
                 : parseDate(dataset.issued)?.toLocaleDateString()}
             </span>
           </div>
-          <Link
-            href={"/"}
-            className="flex items-center gap-2 font-semibold group transition-all duration-200 hover:text-blue-800"
-          >
-            <div className="bg-black text-white p-1.5 rounded-xl w-fit group-hover:bg-black/80 transition-all duration-200">
-              <Users size={18} />
-            </div>
-            {dataset.publisher?.name}
-          </Link>
+          <PublisherPopover dataset={dataset} />
         </div>
       </div>
 
