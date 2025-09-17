@@ -16,7 +16,7 @@ export const de: translations = {
       notFound: "Keine {0} gefunden.",
     },
     placeholder: {
-      datasets: "Suche nach Datensätzen, Datenservices und KI-Modellen...",
+      datasets: "Suche nach Datensätzen, Datenschnittstellen und KI-Modellen...",
       catalogues: "Suche nach Kataloge...",
     },
     tabs: {
