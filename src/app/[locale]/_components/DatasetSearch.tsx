@@ -30,6 +30,8 @@ export default function DatasetSearch({ catalog, urls }: Props) {
 
   const fixFacets = (facets: Record<string, string[]> | undefined) => {
     const fixedFacets: Record<string, string[]> = {};
+
+    // If no facets are available, we set default values based on the current tab and catalog
     if (!facets || Object.keys(facets).length === 0) {
       if (searchParams.get("tab") === SearchTab.MODELS) {
         // If no facets are available, we set a default value for AI Models
@@ -43,6 +45,7 @@ export default function DatasetSearch({ catalog, urls }: Props) {
       return fixedFacets;
     }
 
+    // Otherwise, we copy the existing facets and fix specific ones if needed
     Object.entries(facets).forEach(([key, value]) => {
       if (
         value.length <= 0 &&
@@ -110,9 +113,23 @@ export default function DatasetSearch({ catalog, urls }: Props) {
 
       const params = new URLSearchParams(searchParams.toString());
       const newFacets: Record<string, string[]> = {};
-      data?.facets.map((facet) => {
-        newFacets[facet.id] = params.getAll(facet.id);
-      });
+
+      const nonFacetParams = ["q", "limit", "page", "sort", "tab"];
+      if (!data?.facets) {
+        // Force update of facets from URL if no facets are returned yet
+        params.forEach((value, key) => {
+          if (!nonFacetParams.includes(key)) {
+            if (!newFacets[key]) {
+              newFacets[key] = [];
+            }
+            newFacets[key].push(value);
+          }
+        });
+      } else {
+        data?.facets.map((facet) => {
+          newFacets[facet.id] = params.getAll(facet.id);
+        });
+      }
 
       setFacets(newFacets);
     };
