@@ -1,4 +1,6 @@
 import {translations} from "@/lib/lang/base";
+import {SortMode} from "@/components/facets/SortButton";
+import {NavItemId} from "@/components/Header";
 
 
 export const en: translations = {
@@ -21,6 +23,21 @@ export const en: translations = {
       datasets: 'Datasets',
       dataServices: 'Data Services',
       aiModels: 'AI Models'
+    },
+    page: "Page",
+    sort: {
+      [SortMode.LAST_MODIFIED]: "Last Modified",
+      [SortMode.RELEVANCE]: "Relevance",
+      [SortMode.NAME_ASC]: "Name Ascending",
+      [SortMode.NAME_DESC]: "Name Descending",
+      [SortMode.LAST_ISSUED]: "Last Issued",
+    },
+  },
+  header: {
+    navTitles: {
+      [NavItemId.DATASETS]: "Datasets",
+      [NavItemId.CATALOGUES]: "Catalogues",
+      [NavItemId.FAVOURITES]: "Favourites",
     }
   },
   dataset: {

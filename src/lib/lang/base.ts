@@ -1,4 +1,6 @@
 import {facetTranslations} from "@/lib/lang/facets";
+import {SortMode} from "@/components/facets/SortButton";
+import {NavItemId} from "@/components/Header";
 
 
 export type translations = {
@@ -21,8 +23,13 @@ export type translations = {
       datasets: string;
       dataServices: string;
       aiModels: string;
-    }
+    },
+    page: string;
+    sort: Record<SortMode, string>
   },
+  header: {
+    navTitles: Record<NavItemId, string>
+  }
   dataset: {
     distribution: {
       title: string;

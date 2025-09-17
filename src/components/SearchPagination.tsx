@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {useSearchParams} from "next/navigation";
+import {useLocale} from "@/hooks/useLocale";
 
 type PaginationProps = {
   currentPage: number
@@ -37,6 +38,7 @@ export default function SearchPagination({
     paginationItemsToDisplay,
   })
   const searchParams = useSearchParams()
+  const { translations } = useLocale();
 
   const getPageHref = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -51,7 +53,7 @@ export default function SearchPagination({
         className="text-muted-foreground flex-1 text-sm whitespace-nowrap"
         aria-live="polite"
       >
-        Page <span className="text-foreground">{currentPage}</span> of{" "}
+        {translations.search.page} <span className="text-foreground">{currentPage + 1}</span> von{" "}
         <span className="text-foreground">{totalPages}</span>
       </p>
 
@@ -139,10 +141,10 @@ export default function SearchPagination({
             <SelectValue placeholder="Select number of results" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="10">10 / page</SelectItem>
-            <SelectItem value="20">20 / page</SelectItem>
-            <SelectItem value="50">50 / page</SelectItem>
-            <SelectItem value="100">100 / page</SelectItem>
+            <SelectItem value="10">10 / {translations.search.page}</SelectItem>
+            <SelectItem value="20">20 / {translations.search.page}</SelectItem>
+            <SelectItem value="50">50 / {translations.search.page}</SelectItem>
+            <SelectItem value="100">100 / {translations.search.page}</SelectItem>
           </SelectContent>
         </Select>
       </div>

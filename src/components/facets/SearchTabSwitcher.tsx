@@ -1,5 +1,6 @@
 import {useSearchParams} from "next/navigation";
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import { useLocale } from "@/hooks/useLocale";
 
 export enum SearchTab {
   DATASETS = "datasets",
@@ -10,6 +11,7 @@ export enum SearchTab {
 
 export default function SearchTabSwitcher() {
   const searchParams = useSearchParams();
+  const { translations } = useLocale();
 
   const currentTab = (params: any) => {
     const tab = params.get("tab");
@@ -43,9 +45,9 @@ export default function SearchTabSwitcher() {
       }}
     >
       <TabsList>
-        <TabsTrigger value={SearchTab.DATASETS}>Datasets</TabsTrigger>
-        <TabsTrigger value={SearchTab.DATA_SERVICES}>Data Services</TabsTrigger>
-        <TabsTrigger value={SearchTab.MODELS}>AI Models</TabsTrigger>
+        <TabsTrigger value={SearchTab.DATASETS}>{translations.search.tabs.datasets}</TabsTrigger>
+        <TabsTrigger value={SearchTab.DATA_SERVICES}>{translations.search.tabs.dataServices}</TabsTrigger>
+        <TabsTrigger value={SearchTab.MODELS}>{translations.search.tabs.aiModels}</TabsTrigger>
       </TabsList>
     </Tabs>
   )

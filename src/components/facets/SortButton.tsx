@@ -9,6 +9,7 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar"
 import {ArrowDownWideNarrow, ArrowUpNarrowWide} from "lucide-react";
+import {useLocale} from "@/hooks/useLocale";
 
 export enum SortMode {
   LAST_MODIFIED = "modified+desc, relevance+desc, title.en+asc",
@@ -17,32 +18,18 @@ export enum SortMode {
   NAME_DESC = "title.en+desc, relevance+desc, modified+desc",
   LAST_ISSUED = "issued+desc, relevance+desc, title.en+asc",
 }
-const sortModes = {
-  [SortMode.LAST_MODIFIED]: {
-    label: "Last Modified",
-    type: "desc"
-  },
-  [SortMode.RELEVANCE]: {
-    label: "Relevance",
-    type: "desc"
-  },
-  [SortMode.NAME_ASC]: {
-    label: "Name Ascending",
-    type: "asc"
-  },
-  [SortMode.NAME_DESC]: {
-    label: "Name Descending",
-    type: "desc"
-  },
-  [SortMode.LAST_ISSUED]: {
-    label: "Last Issued",
-    type: "desc"
-  },
+const sortModeTypes = {
+  [SortMode.LAST_MODIFIED]: "desc",
+  [SortMode.RELEVANCE]: "desc",
+  [SortMode.NAME_ASC]: "asc",
+  [SortMode.NAME_DESC]: "desc",
+  [SortMode.LAST_ISSUED]: "desc",
 }
 
 
 export default function SortButton() {
   const searchParams = useSearchParams();
+  const { translations } = useLocale();
 
   const currentMode = (params: any) => {
     const mode = params.get("sort");
@@ -76,11 +63,11 @@ export default function SortButton() {
   }
 
   const buildSortButtonTrigger = (mode: SortMode) => {
-    const sortMode = sortModes[mode];
+    const sortModeType = sortModeTypes[mode];
     return (
       <span className="flex items-center gap-2">
-        {sortMode.label}
-        {sortMode.type === "asc" ? (
+        {translations.search.sort[mode]}
+        {sortModeType === "asc" ? (
           <ArrowUpNarrowWide className="h-4 w-4 text-muted-foreground" />
           ) : (
           <ArrowDownWideNarrow className="h-4 w-4 text-muted-foreground" />
@@ -103,7 +90,7 @@ export default function SortButton() {
               <MenubarItem
                 onClick={() => onChange(mode)}
               >
-                {sortModes[mode].label}
+                {translations.search.sort[mode]}
               </MenubarItem>
             </MenubarCheckboxItem>
           ))}

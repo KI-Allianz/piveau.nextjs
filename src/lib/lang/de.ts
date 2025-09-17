@@ -1,4 +1,6 @@
 import { translations } from "@/lib/lang/base";
+import {SortMode} from "@/components/facets/SortButton";
+import {NavItemId} from "@/components/Header";
 
 export const de: translations = {
   search: {
@@ -18,10 +20,25 @@ export const de: translations = {
       catalogues: "Suche nach Kataloge...",
     },
     tabs: {
-      datasets: "Datasets",
-      dataServices: "Data Services",
-      aiModels: "AI Models",
+      datasets: "Daten",
+      dataServices: "Schnittstellen",
+      aiModels: "Modelle",
     },
+    page: "Seite",
+    sort: {
+      [SortMode.LAST_MODIFIED]: "Zuletzt geändert",
+      [SortMode.RELEVANCE]: "Relevanz",
+      [SortMode.NAME_ASC]: "Name Aufsteigend",
+      [SortMode.NAME_DESC]: "Name Absteigend",
+      [SortMode.LAST_ISSUED]: "Zuletzt veröffentlicht",
+    },
+  },
+  header: {
+    navTitles: {
+      [NavItemId.DATASETS]: "Daten",
+      [NavItemId.CATALOGUES]: "Kataloge",
+      [NavItemId.FAVOURITES]: "Favoriten",
+    }
   },
   dataset: {
     distribution: {
