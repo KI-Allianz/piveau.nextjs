@@ -37,7 +37,7 @@ export default function DatasetDetailsHeader({
         <div className="flex space-x-2">
           <Button onClick={() => router.back()} variant="outline">
             <ChevronLeft />
-            Back
+            {translations.navigation.back}
           </Button>
           <DatasetBreadcrumbs dataset={dataset} />
         </div>

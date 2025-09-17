@@ -21,7 +21,7 @@ interface Props {
 }
 
 export default function DatasetBreadcrumbs({ dataset }: Props) {
-  const { locale, translateDict } = useLocale()
+  const { locale, translateDict, translations } = useLocale()
 
   return (
     <div className="w-fit space-y-3">
@@ -42,7 +42,7 @@ export default function DatasetBreadcrumbs({ dataset }: Props) {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>Dataset</BreadcrumbPage>
+            <BreadcrumbPage>{translations.search.tabs.datasets}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>

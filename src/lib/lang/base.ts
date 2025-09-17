@@ -25,10 +25,11 @@ export type translations = {
       aiModels: string;
     },
     page: string;
-    sort: Record<SortMode, string>
+    sort: Record<SortMode, string>;
   },
-  header: {
-    navTitles: Record<NavItemId, string>
+  navigation: {
+    navTitles: Record<NavItemId, string>;
+    back: string;
   }
   dataset: {
     distribution: {
@@ -45,7 +46,13 @@ export type translations = {
       header: string;
       placeholder: string;
       ask: string;
-    }
+      processing: string;
+      answer: string;
+    },
+    favourite: {
+      add: string;
+      remove: string;
+    },
     categories: string
     keywords: string;
     description: string;

@@ -5,6 +5,7 @@ import { schemaDataset } from "@piveau/sdk-core/model";
 import React, {useMemo} from "react";
 import {Star} from "lucide-react";
 import {Button} from "@/components/ui/button";
+import {useLocale} from "@/hooks/useLocale";
 
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 export default function DatasetDetailsFavouriteButton({ dataset }: Props) {
   const localStorageKey = `favourite_datasets`;
   const [rerender, setRerender] = React.useState(false);
+  const { translations } = useLocale();
 
 
   const isFavourite = useMemo(() => {
@@ -57,7 +59,7 @@ export default function DatasetDetailsFavouriteButton({ dataset }: Props) {
         <Star />
       )}
       <span>
-        {isFavourite ? "Remove from favourites" : "Add to favourites"}
+        {isFavourite ? translations.dataset.favourite.remove : translations.dataset.favourite.add}
       </span>
     </Button>
   )

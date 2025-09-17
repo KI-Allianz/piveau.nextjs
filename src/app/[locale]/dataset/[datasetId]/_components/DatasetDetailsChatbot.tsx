@@ -117,7 +117,7 @@ export default function DatasetDetailsChatbot({ dataset, className }: Props) {
               />
             </svg>
           )}
-          {isLoading ? "Processing..." : "Ask"}
+          {isLoading ? translations.dataset.assistant.processing : translations.dataset.assistant.ask}
         </Button>
       </div>
 
@@ -126,7 +126,7 @@ export default function DatasetDetailsChatbot({ dataset, className }: Props) {
         <Card className="pt-3">
           <CardContent>
             <h3 className="text-lg font-bold">
-              Answer
+              {translations.dataset.assistant.answer}
             </h3>
             <CardDescription>
               <p

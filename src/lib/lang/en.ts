@@ -33,12 +33,13 @@ export const en: translations = {
       [SortMode.LAST_ISSUED]: "Last Issued",
     },
   },
-  header: {
+  navigation: {
     navTitles: {
       [NavItemId.DATASETS]: "Datasets",
       [NavItemId.CATALOGUES]: "Catalogues",
       [NavItemId.FAVOURITES]: "Favourites",
-    }
+    },
+    back: "Back"
   },
   dataset: {
     distribution: {
@@ -54,7 +55,13 @@ export const en: translations = {
       title: "AI Data Assistant",
       header: "Ask about this dataset",
       placeholder: "E.g., What is the main topic of this dataset?",
-      ask: "Ask"
+      ask: "Ask",
+      processing: "Processing...",
+      answer: "Answer"
+    },
+    favourite: {
+      add: "Add to Favourites",
+      remove: "Remove from Favourites"
     },
     keywords: "Keywords",
     categories: "Categories",

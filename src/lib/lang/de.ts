@@ -33,12 +33,13 @@ export const de: translations = {
       [SortMode.LAST_ISSUED]: "Zuletzt veröffentlicht",
     },
   },
-  header: {
+  navigation: {
     navTitles: {
       [NavItemId.DATASETS]: "Daten",
       [NavItemId.CATALOGUES]: "Kataloge",
       [NavItemId.FAVOURITES]: "Favoriten",
-    }
+    },
+    back: "Zurück",
   },
   dataset: {
     distribution: {
@@ -54,7 +55,13 @@ export const de: translations = {
       title: "KI Datenassistent",
       header: "Frage zu diesem Datensatz",
       placeholder: "z.B. Was ist das Hauptthema dieses Datensatzes?",
-      ask: "Ask",
+      ask: "Fragen",
+      processing: "Verarbeite...",
+      answer: "Antwort",
+    },
+    favourite: {
+      add: "Zu Favoriten hinzufügen",
+      remove: "Von Favoriten entfernen",
     },
     keywords: "Keywords",
     categories: "Kategorien",
