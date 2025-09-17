@@ -26,7 +26,6 @@ const sortModeTypes = {
   [SortMode.LAST_ISSUED]: "desc",
 }
 
-
 export default function SortButton() {
   const searchParams = useSearchParams();
   const { translations } = useLocale();

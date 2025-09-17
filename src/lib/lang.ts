@@ -24,6 +24,8 @@ export function getTranslations(locale: supportedLocales) {
       return en;
     case "de":
       return de;
+    default:
+      return de;
   }
 }
 
