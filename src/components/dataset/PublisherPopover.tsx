@@ -3,21 +3,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import {Code, LinkIcon, Mail, MapPin, Phone, Users} from "lucide-react";
-import {CodeExampleType, codeExampleTypesNames, getCodeExample, installationExample} from "@/lib/code/examples";
-import React, {useMemo} from "react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {Label} from "@/components/ui/label";
-import {CodeBlock} from "@/components/dataset/CodeBlock";
+import {LinkIcon, Mail, MapPin, Phone, Users} from "lucide-react";
+import React from "react";
 import {StandardSchemaV1} from "@standard-schema/spec";
 import {schemaDataset} from "@piveau/sdk-core/model";
 import Link from "next/link";

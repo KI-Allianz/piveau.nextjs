@@ -6,7 +6,7 @@ import { useLocale } from "@/hooks/useLocale";
 import DatasetDetailsExportButton from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsExportButton";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Archive, ChevronLeft, Tag, Users } from "lucide-react";
+import { Archive, ChevronLeft, Tag } from "lucide-react";
 import DatasetDetailsDescription from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsDescription";
 import React from "react";
 import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
