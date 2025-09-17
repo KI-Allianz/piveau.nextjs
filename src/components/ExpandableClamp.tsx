@@ -16,6 +16,7 @@ interface ExpandableClampProps {
 
   // Height when collapsed (in px). Default: 320
   collapsedHeight?: number;
+  gradientName?: string;
 
   // Initially expanded. Default: false
   defaultExpanded?: boolean;
@@ -29,6 +30,7 @@ export function ExpandableClamp({
   collapsedHeight = 320,
   defaultExpanded = false,
   onToggle,
+  gradientName = "from-neutral-50 dark:from-neutral-950"
 }: ExpandableClampProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [canExpand, setCanExpand] = useState(false);
@@ -102,8 +104,7 @@ export function ExpandableClamp({
           className={[
             // Default gradient; adjust to your design system
             `pointer-events-none absolute inset-x-0 bottom-0 h-16`,
-            `bg-gradient-to-t to-transparent from-neutral-50`,
-            "dark:from-neutral-950",
+            `bg-gradient-to-t to-transparent ${gradientName}`,
           ]
             .filter(Boolean)
             .join(" ")}
