@@ -1,6 +1,3 @@
-import { getResourceById } from "@piveau/sdk-core";
-import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaDataset } from "@piveau/sdk-core/model";
 import DatasetDetailsHeader from "./_components/DatasetDetailsHeader";
 import DatasetDetailsDistributions from "./_components/DatasetDetailsDistributions";
 import Header from "@/components/Header";
@@ -18,6 +15,7 @@ import DatasetDetailsChatbot from "@/app/[locale]/dataset/[datasetId]/_component
 import { redirect } from "next/navigation";
 import { headers as getHeaders } from "next/headers";
 import { dataTypes, pickBestDataType } from "@/lib/content";
+import {getDataset, getDatasetDirect} from "@/lib/dataset/api";
 
 interface Props {
   params: Promise<{ datasetId: string; locale: supportedLocales }>;
@@ -41,20 +39,16 @@ export default async function DatasetPage({ params }: Props) {
   }
 
   const translations = getTranslations(locale);
-  const response = await getResourceById<
-    StandardSchemaV1.InferOutput<typeof schemaDataset>
-  >({
-    baseUrl: urls.SEARCH,
-    resource: "datasets",
-    id: datasetId,
-  });
+  //await getDatasetDirect(datasetId, urls)
+  const response = await getDataset(datasetId, urls);
+  // console.log(response);
 
   return (
     <div className="bg-background w-full max-w-[1920px] mx-auto shadow-[0_0_12px_rgba(0,0,0,0.17)]">
       <Header />
       <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
         <DatasetDetailsHeader
-          dataset={response.result}
+          dataset={response}
           baseUrl={process.env.DOMAIN || ""}
           urls={urls}
         />
@@ -70,7 +64,7 @@ export default async function DatasetPage({ params }: Props) {
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
               <DatasetDetailsDistributions
-                dataset={response.result}
+                dataset={response}
                 urls={urls}
               />
             </AccordionContent>
@@ -80,16 +74,16 @@ export default async function DatasetPage({ params }: Props) {
               {translations.dataset.assistant.title}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsChatbot dataset={response.result} />
+              <DatasetDetailsChatbot dataset={response} />
             </AccordionContent>
           </AccordionItem>
-          {response.result.spatial && (
+          {response.spatial && (
             <AccordionItem value={"map"} className="py-2">
               <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
                 {translations.dataset.map.title}
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground pb-2">
-                <MapComponent geoJsonData={response.result.spatial} />
+                <MapComponent geoJsonData={response.spatial} />
               </AccordionContent>
             </AccordionItem>
           )}
