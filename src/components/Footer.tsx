@@ -15,7 +15,7 @@ export default function Footer() {
       <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
         <div className="flex flex-col items-center bg-white dark:bg-black rounded-2xl px-10 pb-10 pt-16">
           <div className="max-w-2xl flex flex-col gap-5">
-            <h2 className="text-4xl font-bold mb-2">Gefördert von</h2>
+            <h2 className="text-4xl font-bold mb-2">Ein Ergebnis des Projektes "Datenplattform der KI-Allianz Baden-Württemberg"</h2>
             <p className="text-lg">
               Die KI-Allianz Baden-Württemberg eG und die verbundenen Projekte
               sind eine Initiative, die darauf abzielt, die Entwicklung und
