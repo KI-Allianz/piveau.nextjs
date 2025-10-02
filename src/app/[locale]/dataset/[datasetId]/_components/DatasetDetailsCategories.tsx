@@ -1,14 +1,13 @@
 "use client";
 
-import {StandardSchemaV1} from "@standard-schema/spec";
-import {schemaDataset} from "@piveau/sdk-core/model";
 import {Badge} from "@/components/ui/badge";
 import Link from "next/link";
 import {useLocale} from "@/hooks/useLocale";
+import { Dataset } from "@/lib/utils";
 
 
 interface Props {
-  dataset: StandardSchemaV1.InferOutput<typeof schemaDataset>;
+  dataset: Dataset;
 }
 
 export default function DatasetDetailsCategories({ dataset }: Props) {

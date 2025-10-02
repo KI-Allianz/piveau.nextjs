@@ -7,18 +7,15 @@ import {
   MorphingDialogClose,
   MorphingDialogContainer,
 } from "@/components/motion-primitives/morphing-dialog";
-import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaDataset } from "@piveau/sdk-core/model";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Scale, SquareArrowOutUpRight } from "lucide-react";
 import { useLocale } from "@/hooks/useLocale";
 import {useLicenses} from "@/hooks/useLicenses";
+import { Dataset } from "@/lib/utils";
 
 interface Props {
-  license: NonNullable<
-    StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]
-  >[number]["license"];
+  license: NonNullable<Dataset["distributions"]>[number]["license"];
 }
 
 export function DistributionLicense({ license }: Props) {

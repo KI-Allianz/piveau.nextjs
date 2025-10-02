@@ -1,14 +1,10 @@
 import { getResourceById } from "@piveau/sdk-core";
-import {schemaDataset} from "@piveau/sdk-core/model";
-import {StandardSchemaV1} from "@standard-schema/spec";
-import {UrlCollection} from "@/lib/utils";
+import {Dataset, UrlCollection} from "@/lib/utils";
 import {parseRawDCAT} from "@/lib/dataset/parse";
 
 
-export async function getDataset(datasetId: string, urls: UrlCollection): Promise<StandardSchemaV1.InferOutput<typeof schemaDataset>> {
-  const response = await getResourceById<
-    StandardSchemaV1.InferOutput<typeof schemaDataset>
-  >({
+export async function getDataset(datasetId: string, urls: UrlCollection): Promise<Dataset> {
+  const response = await getResourceById<Dataset>({
     baseUrl: urls.SEARCH,
     resource: "datasets",
     id: datasetId,

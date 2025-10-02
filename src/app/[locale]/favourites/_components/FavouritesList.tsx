@@ -2,11 +2,10 @@
 
 import SortButton from "@/components/facets/SortButton";
 import {useMemo} from "react";
-import {StandardSchemaV1} from "@standard-schema/spec";
-import {schemaDataset} from "@piveau/sdk-core/model";
 import {useLocale} from "@/hooks/useLocale";
 import DatasetCard from "@/app/[locale]/_components/DatasetCard";
 import {useSearchParams} from "next/navigation";
+import {Dataset} from "@/lib/utils";
 
 
 export default function FavouritesList() {
@@ -19,7 +18,7 @@ export default function FavouritesList() {
     const favs = localStorage.getItem(localStorageKey);
 
     if (favs) {
-      const favMap = JSON.parse(favs) as Record<string, StandardSchemaV1.InferOutput<typeof schemaDataset>>
+      const favMap = JSON.parse(favs) as Record<string, Dataset>
       const favList = Object.values(favMap);
 
       // Sort

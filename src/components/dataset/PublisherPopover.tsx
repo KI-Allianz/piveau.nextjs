@@ -5,12 +5,11 @@ import {
 } from "@/components/ui/popover";
 import {LinkIcon, Mail, MapPin, Phone, Users} from "lucide-react";
 import React from "react";
-import {StandardSchemaV1} from "@standard-schema/spec";
-import {schemaDataset} from "@piveau/sdk-core/model";
 import Link from "next/link";
+import { Dataset } from "@piveau/sdk-core";
 
 interface Props {
-  dataset: StandardSchemaV1.InferOutput<typeof schemaDataset>;
+  dataset: Dataset;
 }
 
 export default function PublisherPopover({ dataset }: Props) {

@@ -4,9 +4,8 @@ import React, { useCallback, useMemo, useState } from "react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {useLocale} from "@/hooks/useLocale";
-import {StandardSchemaV1} from "@standard-schema/spec";
-import {schemaDataset} from "@piveau/sdk-core/model";
 import {Card, CardContent, CardDescription} from "@/components/ui/card";
+import {Dataset} from "@/lib/utils";
 
 type ApiResponse =
   | { response?: string; [k: string]: any }
@@ -14,7 +13,7 @@ type ApiResponse =
   | null;
 
 type Props = {
-  dataset: StandardSchemaV1.InferOutput<typeof schemaDataset>;
+  dataset: Dataset;
   className?: string;
 };
 
@@ -37,7 +36,7 @@ export default function DatasetDetailsChatbot({ dataset, className }: Props) {
   }, [response]);
 
   const submitQuestion = useCallback(
-    async (ds: StandardSchemaV1.InferOutput<typeof schemaDataset>) => {
+    async (ds: Dataset) => {
       if (!userInput.trim() || isLoading) return;
 
       setIsLoading(true);

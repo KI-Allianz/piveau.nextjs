@@ -17,16 +17,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Link from "next/link";
-import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaDataset } from "@piveau/sdk-core/model";
 import { useLocale } from "@/hooks/useLocale";
 import { dataTypes } from "@/lib/content";
-import { UrlCollection } from "@/lib/utils";
+import {Dataset, UrlCollection} from "@/lib/utils";
 
 interface Props {
-  id: NonNullable<
-    StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]
-  >[number]["id"];
+  id: NonNullable<Dataset["distributions"]>[number]["id"];
   urls: UrlCollection;
 }
 

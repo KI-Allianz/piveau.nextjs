@@ -9,19 +9,15 @@ import {
 } from "@/components/ui/card";
 import { DistributionDownloadButton } from "@/components/distributions/DistributionDownloadButton";
 import { DistributionLinkedDataButton } from "@/components/distributions/DistributionLinkedDataButton";
-import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaDataset } from "@piveau/sdk-core/model";
 import { useLocale } from "@/hooks/useLocale";
 import { DistributionLicense } from "@/components/distributions/DistributionLicense";
 import { format } from "date-fns";
 import HtmlSnippet from "@/components/HTMLSnippet";
 import { ExpandableClamp } from "@/components/ExpandableClamp";
-import { UrlCollection } from "@/lib/utils";
+import {Dataset, UrlCollection} from "@/lib/utils";
 
 interface Props {
-  distribution: NonNullable<
-    StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]
-  >[number];
+  distribution: NonNullable<Dataset["distributions"]>[number];
   urls: UrlCollection;
 }
 

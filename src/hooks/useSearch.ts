@@ -2,13 +2,10 @@
 
 // hooks/useDatasetSearch.ts
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { schemaDataset } from "@piveau/sdk-core/model";
 import { SearchParams, searchResource, SearchResult } from "@piveau/sdk-core";
-import { StandardSchemaV1 } from "@standard-schema/spec";
+import { Dataset } from "@/lib/utils";
 
-type DatasetResult = SearchResult<
-  StandardSchemaV1.InferOutput<typeof schemaDataset>
->["result"]; // gives { facets: …; results: … }
+type DatasetResult = SearchResult<Dataset>["result"]; // gives { facets: …; results: … }
 
 interface Props extends SearchParams {
   wait?: number; // optional wait time for debugging
@@ -29,9 +26,7 @@ export function useSearch(
         await new Promise((resolve) => setTimeout(resolve, params.wait));
       }
 
-      const res = await searchResource<
-        SearchResult<StandardSchemaV1.InferOutput<typeof schemaDataset>>
-      >({
+      const res = await searchResource<SearchResult<Dataset>>({
         baseUrl: params.url,
         params,
       });

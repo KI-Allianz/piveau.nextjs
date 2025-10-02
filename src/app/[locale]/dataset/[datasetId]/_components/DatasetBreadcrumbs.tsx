@@ -1,7 +1,5 @@
 "use client";
 
-import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaDataset } from "@piveau/sdk-core/model";
 import { useLocale } from "@/hooks/useLocale";
 import React from "react";
 
@@ -14,10 +12,11 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import {Archive, SearchIcon} from "lucide-react";
+import { Dataset } from "@/lib/utils";
 
 
 interface Props {
-  dataset: StandardSchemaV1.InferOutput<typeof schemaDataset>;
+  dataset: Dataset;
 }
 
 export default function DatasetBreadcrumbs({ dataset }: Props) {

@@ -1,7 +1,5 @@
 "use client";
 
-import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaDataset } from "@piveau/sdk-core/model";
 import { useLocale } from "@/hooks/useLocale";
 import DatasetDetailsExportButton from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsExportButton";
 import { Button } from "@/components/ui/button";
@@ -12,14 +10,14 @@ import React from "react";
 import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { parseDate, UrlCollection } from "@/lib/utils";
+import {Dataset, parseDate, UrlCollection } from "@/lib/utils";
 import { getCategoryIcon } from "@/lib/icons";
 import DatasetBreadcrumbs from "@/app/[locale]/dataset/[datasetId]/_components/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsFavouriteButton";
 import PublisherPopover from "@/components/dataset/PublisherPopover";
 
 interface Props {
-  dataset: StandardSchemaV1.InferOutput<typeof schemaDataset>;
+  dataset: Dataset;
   baseUrl: string;
   urls: UrlCollection;
 }

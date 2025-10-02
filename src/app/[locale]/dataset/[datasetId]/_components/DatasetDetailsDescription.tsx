@@ -2,13 +2,12 @@
 
 import { useLocale } from "@/hooks/useLocale";
 import HtmlSnippet from "@/components/HTMLSnippet";
-import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaDataset } from "@piveau/sdk-core/model";
 import {ExpandableClamp} from "@/components/ExpandableClamp";
+import { Dataset } from "@/lib/utils";
 
 
 interface Props {
-  description: StandardSchemaV1.InferOutput<typeof schemaDataset>["description"];
+  description: Dataset["description"];
 }
 
 export default function DatasetDetailsDescription({ description }: Props) {

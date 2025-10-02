@@ -17,18 +17,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Link from "next/link";
-import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaDataset } from "@piveau/sdk-core/model";
 import { SquareArrowOutUpRight } from "lucide-react";
 import { useLocale } from "@/hooks/useLocale";
+import {Dataset} from "@/lib/utils";
 
 interface Props {
-  access_urls: NonNullable<
-    StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]
-  >[number]["access_url"];
-  download_urls: NonNullable<
-    StandardSchemaV1.InferOutput<typeof schemaDataset>["distributions"]
-  >[number]["download_url"];
+  access_urls: NonNullable<Dataset["distributions"]>[number]["access_url"];
+  download_urls: NonNullable<Dataset["distributions"]>[number]["download_url"];
 }
 
 export function DistributionDownloadButton({

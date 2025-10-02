@@ -1,10 +1,8 @@
-import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaDataset } from "@piveau/sdk-core/model";
 import DistributionCard from "@/components/distributions/DistributionCard";
-import { UrlCollection } from "@/lib/utils";
+import {Dataset, UrlCollection } from "@/lib/utils";
 
 interface Props {
-  dataset: StandardSchemaV1.InferOutput<typeof schemaDataset>;
+  dataset: Dataset;
   urls: UrlCollection;
 }
 

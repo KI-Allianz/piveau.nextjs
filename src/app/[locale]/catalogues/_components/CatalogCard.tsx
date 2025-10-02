@@ -1,14 +1,12 @@
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import HtmlSnippet from "@/components/HTMLSnippet";
 import {Badge} from "@/components/ui/badge";
-import {StandardSchemaV1} from "@standard-schema/spec";
-import {schemaDataset} from "@piveau/sdk-core/model";
 import {useLocale} from "@/hooks/useLocale";
 import Link from "next/link";
-import {parseDate} from "@/lib/utils";
+import {Dataset, parseDate} from "@/lib/utils";
 
 interface Props {
-  catalog: StandardSchemaV1.InferOutput<typeof schemaDataset>;
+  catalog: Dataset;
 }
 
 export default function CatalogCard({catalog}: Props) {

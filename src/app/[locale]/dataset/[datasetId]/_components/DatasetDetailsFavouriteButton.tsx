@@ -1,15 +1,14 @@
 "use client";
 
-import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaDataset } from "@piveau/sdk-core/model";
 import React, {useMemo} from "react";
 import {Star} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {useLocale} from "@/hooks/useLocale";
+import {Dataset} from "@/lib/utils";
 
 
 interface Props {
-  dataset: StandardSchemaV1.InferOutput<typeof schemaDataset>;
+  dataset: Dataset;
 }
 
 export default function DatasetDetailsFavouriteButton({ dataset }: Props) {
@@ -23,7 +22,7 @@ export default function DatasetDetailsFavouriteButton({ dataset }: Props) {
     const favourites = localStorage.getItem(localStorageKey);
 
     if (favourites) {
-      const favouriteMap = JSON.parse(favourites) as Record<string, StandardSchemaV1.InferOutput<typeof schemaDataset>>;
+      const favouriteMap = JSON.parse(favourites) as Record<string, Dataset>;
       return favouriteMap[dataset.id] !== undefined;
     }
     return false;
@@ -33,10 +32,10 @@ export default function DatasetDetailsFavouriteButton({ dataset }: Props) {
   const toggle = () => {
     if (typeof window === "undefined") return;
     const favourites = localStorage.getItem(localStorageKey);
-    let favouriteMap: Record<string, StandardSchemaV1.InferOutput<typeof schemaDataset>> = {};
+    let favouriteMap: Record<string, Dataset> = {};
 
     if (favourites) {
-      favouriteMap = JSON.parse(favourites) as Record<string, StandardSchemaV1.InferOutput<typeof schemaDataset>>;
+      favouriteMap = JSON.parse(favourites) as Record<string, Dataset>;
     }
 
     if (favouriteMap[dataset.id] !== undefined) {
