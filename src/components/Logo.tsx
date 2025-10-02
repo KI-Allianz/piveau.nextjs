@@ -3,9 +3,9 @@
 export default function Logo() {
   return (
 <svg
-   width="415.15646mm"
-   height="64.099327mm"
-   viewBox="0 0 415.15646 64.099327"
+   width="480"
+   height="80"
+   viewBox="0 -5 420 75"
    version="1.1"
    id="svg1"
 >
