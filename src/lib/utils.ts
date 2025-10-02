@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { parse, parseISO } from "date-fns";
+import {StandardSchemaV1} from "@standard-schema/spec";
+import {schemaDataset} from "@piveau/sdk-core/model";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -27,7 +29,24 @@ export function formatString(str: string, ...replacements: string[]): string {
   });
 }
 
+export type Dataset = StandardSchemaV1.InferOutput<typeof schemaDataset>
+
 export const aiModelFormats = ["ONNX"];
+export const aiModelKeywords = ["ai-model"];
+
+export function isAIModel(dataset: Dataset): boolean {
+
+  if (dataset.keywords && dataset.keywords?.map((keyword) => keyword.id)
+    .filter((keyword) => keyword && aiModelKeywords.includes(keyword))?.length > 0) {
+    return true
+  }
+  else if (dataset.distributions && dataset.distributions?.map((dist) => dist.format?.id)
+    .filter((format) => format && aiModelFormats.includes(format))?.length > 0) {
+    return true
+  }
+
+  return false
+}
 
 export type UrlCollection = {
   SEARCH: string;

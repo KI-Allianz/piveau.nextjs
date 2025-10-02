@@ -13,7 +13,7 @@ import SearchTabSwitcher, {
 import SearchPagination from "@/components/SearchPagination";
 import { useLocale } from "@/hooks/useLocale";
 import SortButton from "@/components/facets/SortButton";
-import { aiModelFormats, UrlCollection } from "@/lib/utils";
+import {aiModelKeywords, UrlCollection} from "@/lib/utils";
 import { schemaCatalog } from "@piveau/sdk-core/model";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import CatalogInfo from "@/app/[locale]/_components/CatalogInfo";
@@ -35,7 +35,7 @@ export default function DatasetSearch({ catalog, urls }: Props) {
     if (!facets || Object.keys(facets).length === 0) {
       if (searchParams.get("tab") === SearchTab.MODELS) {
         // If no facets are available, we set a default value for AI Models
-        fixedFacets["format"] = aiModelFormats;
+        fixedFacets["keywords"] = aiModelKeywords;
       }
       if (catalog) {
         // If no facets are available, we set a default value for the catalog
@@ -49,14 +49,14 @@ export default function DatasetSearch({ catalog, urls }: Props) {
     Object.entries(facets).forEach(([key, value]) => {
       if (
         value.length <= 0 &&
-        key === "format" &&
+        key === "keywords" &&
         searchParams.get("tab") === SearchTab.MODELS
       ) {
         // If the format facet is empty, we set a default value for AI Models
-        fixedFacets[key] = aiModelFormats;
+        fixedFacets[key] = aiModelKeywords;
       } else if (catalog && key === "catalog") {
         // If no facets are available, we set a default value for the catalog
-        fixedFacets["catalog"] = [catalog.id];
+        fixedFacets[key] = [catalog.id];
       } else {
         fixedFacets[key] = value;
       }
