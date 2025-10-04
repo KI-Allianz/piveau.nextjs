@@ -22,6 +22,8 @@ export function DistributionLicense({ license }: Props) {
   const { translations } = useLocale();
   const { getLicense } = useLicenses();
 
+  console.log(license, getLicense(license))
+
   return (
     <MorphingDialog
       transition={{
@@ -40,10 +42,10 @@ export function DistributionLicense({ license }: Props) {
           <div className="flex flex-col items-start justify-center space-y-0">
             <MorphingDialogTitle className="text-[10px] font-medium sm:text-xs flex gap-1">
               <Scale size={15} />
-              {getLicense(license?.resource).label}
+              {getLicense(license).label}
             </MorphingDialogTitle>
             <MorphingDialogSubtitle className="text-[10px] text-muted-foreground sm:text-xs">
-              {getLicense(license?.resource).usageType}
+              {getLicense(license).usageType}
             </MorphingDialogSubtitle>
           </div>
         </div>
@@ -62,10 +64,10 @@ export function DistributionLicense({ license }: Props) {
                 {translations.dataset.distribution.license}
               </span>
               <MorphingDialogTitle className="">
-                {getLicense(license?.resource).label}
+                {getLicense(license).label}
               </MorphingDialogTitle>
               <MorphingDialogSubtitle className="font-light text-gray-400">
-                {getLicense(license?.resource).usageType}
+                {getLicense(license).usageType}
               </MorphingDialogSubtitle>
               <div className="mt-4 flex gap-2">
                 <Link

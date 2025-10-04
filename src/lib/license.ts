@@ -96,21 +96,12 @@ async function quadsToStore(quadStream: Readable): Promise<Store> {
   return store;
 }
 
-// Main: parse licenses as a dict keyed by concept URI
-export async function getLicenses(options?: {
-  contentType?: string;                 // default: application/rdf+xml
-  baseIRI?: string;                     // default: http://dcat-ap.de/def/licenses
-  schemeIRI?: string;                   // default: http://dcat-ap.de/def/licenses
-  langPrefs?: string[];                 // default: ["de","en",""]
-}): Promise<Record<string, LicenseEntry>> {
-
-  const filePath = path.join(process.cwd(), 'assets', 'licenses.rdf');
-  const {
-    contentType= "application/rdf+xml",
+export async function getDCATLicenses(): Promise<Record<string, LicenseEntry>> {
+  const filePath = path.join(process.cwd(), 'assets', 'licenses-dcat.rdf');
+  const contentType= "application/rdf+xml",
     baseIRI    = "http://dcat-ap.de/def/licenses",
     schemeIRI  = "http://dcat-ap.de/def/licenses",
-    langPrefs  = ["de", "en", ""],
-  } = options || {};
+    langPrefs  = ["de", "en", ""]
 
   // 1) Parse RDF/XML into RDFJS quad stream
   const textStream = fs.createReadStream(filePath);
@@ -163,4 +154,78 @@ export async function getLicenses(options?: {
   }
 
   return result;
+}
+
+export async function getEuropeLicenses(): Promise<Record<string, LicenseEntry>> {
+  const filePath = path.join(process.cwd(), 'assets', 'licenses-skos.rdf');
+  const contentType = "application/rdf+xml";
+  const baseIRI = "http://publications.europa.eu/resource/authority/licence";
+  const schemeIRI = "http://publications.europa.eu/resource/authority/licence";
+  const langPrefs = ["de", "en", ""];
+
+  // 1) Parse RDF/XML into RDFJS quad stream
+  const textStream = fs.createReadStream(filePath);
+  const quadStream = rdfParser.parse(textStream as any, { contentType, baseIRI }) as unknown as Readable;
+
+  // 2) Load into N3 store
+  const store = await quadsToStore(quadStream);
+
+  // 3) Select all skos:Concepts in this scheme
+  const scheme = namedNode(schemeIRI);
+  const candidateSubjects = store
+    .getQuads(null, namedNode(SKOS + "inScheme"), scheme, null)
+    .map(q => q.subject);
+
+  // 4) Build result
+  const result: Record<string, LicenseEntry> = {};
+
+  for (const s of candidateSubjects) {
+    const uri = s.value;
+
+    // identifier: use skos:notation, then dc:identifier
+    const identifier =
+      getLiteralValues(store, s, SKOS + "notation")[0]?.value ??
+      getLiteralValues(store, s, DC + "identifier")[0]?.value ??
+      getLiteralValues(store, s, DCT + "identifier")[0]?.value;
+
+    // altLabels: multilingual
+    const altLabels = getLiteralValues(store, s, SKOS + "altLabel")
+      .sort((a, b) => (a.language || "").localeCompare(b.language || ""))
+      .map(l => l.value);
+
+    // label: best prefLabel
+    const label = bestLabel(store, s, langPrefs);
+
+    // external matches (similar to dct:references)
+    const references = getIriValues(store, s, SKOS + "exactMatch");
+
+    const inScheme = getIriValues(store, s, SKOS + "inScheme")[0];
+    const topConceptOf = getIriValues(store, s, SKOS + "topConceptOf");
+    const types = getIriValues(store, s, RDF + "type");
+
+    for (const reference of references) {
+      result[reference] = {
+        uri,
+        identifier,
+        label,
+        altLabels,
+        references, // external links like SPDX or OSI
+        inScheme,
+        topConceptOf,
+        types,
+      };
+    }
+  }
+
+  return result;
+}
+
+
+// Main: parse licenses as a dict keyed by concept URI
+export async function getLicenses(): Promise<Record<string, LicenseEntry>> {
+  const licenses = await getDCATLicenses();
+  const europeLicenses = await getEuropeLicenses();
+  // Merge Europe licenses (may overwrite DCAT ones if same URI)
+  Object.assign(licenses, europeLicenses);
+  return licenses;
 }

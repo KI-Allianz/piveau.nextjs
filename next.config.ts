@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   outputFileTracingIncludes: {
     // adjust the route path to the one that needs the file
-    '/': ['./assets/licenses.rdf'],
+    '/': ['./assets/licenses-dcat.rdf', './assets/licenses-skos.rdf'],
   },
 };
 

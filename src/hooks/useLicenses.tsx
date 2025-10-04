@@ -32,15 +32,20 @@ export function useLicenses() {
 
   return {
     licenses: context.licenses,
-    getLicenseOrUndefined: (licenseId?: string | null) => context.licenses[licenseId?.toLowerCase() || ""],
-    getLicense: (licenseId?: string | null) => context.licenses[licenseId?.toLowerCase() || ""] || {
-      uri: licenseId,
-      identifier: "unknown",
-      label: "Unknown License",
+    getLicenseOrUndefined: (licenseId?: string | null) => context.licenses[licenseId || ""],
+    getLicense: (license?: {
+      label?: string | null
+      resource?: string | null
+      id?: string | null
+      description?: string | null
+    } | null) => context.licenses[license?.resource || ""] || {
+      uri: license?.resource,
+      identifier: license?.id || "unknown",
+      label: license?.label || "Unknown License",
       altLabels: [],
       homepage: undefined,
       references: [],
-      usageType: "unknown",
+      usageType: "",
     } as LicenseEntry
   }
 }
