@@ -34,6 +34,7 @@ export type translations = {
   dataset: {
     distribution: {
       title: string;
+      titleWeights: string;
       license: string;
       licensingAssistant: string
       placeholder: string;

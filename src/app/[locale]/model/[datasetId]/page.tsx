@@ -1,9 +1,7 @@
-import DatasetDetailsHeader from "../../../../components/dataset/DatasetDetailsHeader";
 import DatasetDetailsDistributions from "../../../../components/dataset/DatasetDetailsDistributions";
 import Header from "@/components/Header";
 import React from "react";
 import Footer from "@/components/Footer";
-import MapComponent from "@/components/MapComponent";
 import {
   Accordion,
   AccordionContent,
@@ -11,17 +9,17 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { getTranslations, supportedLocales } from "@/lib/lang";
-import DatasetDetailsChatbot from "@/components/dataset/DatasetDetailsChatbot";
 import { redirect } from "next/navigation";
 import { headers as getHeaders } from "next/headers";
 import { dataTypes, pickBestDataType } from "@/lib/content";
-import {getDataset} from "@/lib/dataset/api";
+import {getDataset, getDatasetDirect} from "@/lib/dataset/api";
+import ModelDetailsHeader from "@/components/dataset/ModelDetailsHeader";
 
 interface Props {
   params: Promise<{ datasetId: string; locale: supportedLocales }>;
 }
 
-export default async function DatasetPage({ params }: Props) {
+export default async function ModelPage({ params }: Props) {
   const { datasetId, locale } = await params;
   const headers = await getHeaders();
 
@@ -39,7 +37,7 @@ export default async function DatasetPage({ params }: Props) {
   }
 
   const translations = getTranslations(locale);
-  //await getDatasetDirect(datasetId, urls)
+  await getDatasetDirect(datasetId, urls)
   const response = await getDataset(datasetId, urls);
   // console.log(response);
 
@@ -47,7 +45,7 @@ export default async function DatasetPage({ params }: Props) {
     <div className="bg-background w-full max-w-[1920px] mx-auto shadow-[0_0_12px_rgba(0,0,0,0.17)]">
       <Header />
       <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
-        <DatasetDetailsHeader
+        <ModelDetailsHeader
           dataset={response}
           baseUrl={process.env.DOMAIN || ""}
           urls={urls}
@@ -56,11 +54,11 @@ export default async function DatasetPage({ params }: Props) {
         <Accordion
           type="multiple"
           className="w-full"
-          defaultValue={["distributions", "assistant", "map"]}
+          defaultValue={["distributions"]}
         >
           <AccordionItem value={"distributions"} className="py-2">
             <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-              {translations.dataset.distribution.title}
+              {translations.dataset.distribution.titleWeights}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
               <DatasetDetailsDistributions
@@ -69,24 +67,6 @@ export default async function DatasetPage({ params }: Props) {
               />
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value={"assistant"} className="py-2">
-            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-              {translations.dataset.assistant.title}
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsChatbot dataset={response} />
-            </AccordionContent>
-          </AccordionItem>
-          {response.spatial && (
-            <AccordionItem value={"map"} className="py-2">
-              <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-                {translations.dataset.map.title}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground pb-2">
-                <MapComponent geoJsonData={response.spatial} />
-              </AccordionContent>
-            </AccordionItem>
-          )}
         </Accordion>
       </div>
       <Footer />

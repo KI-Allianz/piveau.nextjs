@@ -1,9 +1,4 @@
-import { z } from "zod";
-
-const dcatSchema = z.object({
-  "@graph": z.array(z.object({})), // Simplified for brevity
-  "@context": z.any(),
-})
+import * as jsonld from 'jsonld';
 
 interface DCATRoot {
   "@graph": DCATModel[];
@@ -24,18 +19,29 @@ interface DCATEntry {
 }
 
 
-export function parseRawDCAT(data: DCATRoot) {
-  if (!data || !data["@graph"] || !Array.isArray(data["@graph"])) {
-    throw new Error("Invalid DCAT data: Missing or malformed '@graph' property.");
-  }
+export async function parseRawDCAT(data: DCATRoot) {
 
-  let parsed = {}
 
-  const graph = data["@graph"];
-
-  for (const item of graph) {
-
-  }
-
-  return parsed;
+  const framed = await jsonld.frame(data, {
+    "@context": {
+      "@vocab": "http://purl.org/dc/terms/",
+      //"dct": "http://purl.org/dc/terms/",
+      "dt": "http://www.w3.org/ns/dcat#",
+      "dp": "http://dcat-ap.de/def/dcatde/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "f": "http://xmlns.com/foaf/0.1/",
+      "vc": "http://www.w3.org/2006/vcard/ns#"
+    },
+    "@type": "dt:Dataset",
+    "creator": {
+      "@embed": "@always"
+    },
+    "temporal": {
+      "@embed": "@always"
+    },
+    "dt:distribution": {
+      "@embed": "@always"
+    }
+  });
+  console.log("Framed DCAT:", JSON.stringify(framed, null, 2));
 }

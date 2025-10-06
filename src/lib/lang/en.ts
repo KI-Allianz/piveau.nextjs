@@ -44,6 +44,7 @@ export const en: translations = {
   dataset: {
     distribution: {
       title: "Available Data",
+      titleWeights: "Available Weights",
       license: "License",
       licensingAssistant: "Licensing Assistant",
       placeholder: "Search urls..."
