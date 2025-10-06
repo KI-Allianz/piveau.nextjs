@@ -1,19 +1,19 @@
 "use client";
 
 import { useLocale } from "@/hooks/useLocale";
-import DatasetDetailsExportButton from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsExportButton";
+import DatasetDetailsExportButton from "@/components/dataset/DatasetDetailsExportButton";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Archive, ChevronLeft, Tag } from "lucide-react";
-import DatasetDetailsDescription from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsDescription";
+import DatasetDetailsDescription from "@/components/dataset/DatasetDetailsDescription";
 import React from "react";
 import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import {Dataset, parseDate, UrlCollection } from "@/lib/utils";
 import { getCategoryIcon } from "@/lib/icons";
-import DatasetBreadcrumbs from "@/app/[locale]/dataset/[datasetId]/_components/DatasetBreadcrumbs";
-import DatasetDetailsFavouriteButton from "@/app/[locale]/dataset/[datasetId]/_components/DatasetDetailsFavouriteButton";
+import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
+import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFavouriteButton";
 import PublisherPopover from "@/components/dataset/PublisherPopover";
 
 interface Props {

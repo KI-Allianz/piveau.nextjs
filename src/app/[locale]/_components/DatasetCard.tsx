@@ -12,8 +12,10 @@ interface Props {
 export default function DatasetCard({dataset}: Props) {
   const { translateDict, translations, locale } = useLocale();
 
+  const isModel = isAIModel(dataset)
+
   return (
-    <Link href={`/${locale}/dataset/${dataset.id}`} className="w-full" >
+    <Link href={`/${locale}/${isModel ? "model" : "dataset"}/${dataset.id}`} className="w-full" >
       <Card
         className="w-full hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer"
       >
