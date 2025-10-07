@@ -13,6 +13,8 @@ export default function DatasetCard({dataset}: Props) {
   const { translateDict, translations, locale } = useLocale();
 
   const isModel = isAIModel(dataset)
+  const date = parseDate(dataset.modified) || parseDate(dataset.issued)
+  const age = date ? Math.floor(Math.abs((new Date()).getTime() - date.getTime()) / (1000 * 60 * 60 * 24)) : null
 
   return (
     <Link href={`/${locale}/${isModel ? "model" : "dataset"}/${dataset.id}`} className="w-full" >
@@ -43,8 +45,13 @@ export default function DatasetCard({dataset}: Props) {
                 </Badge>
               )}
               <Badge variant={"outline"}>
-                {dataset.modified ? parseDate(dataset.modified)?.toLocaleDateString() : parseDate(dataset.issued)?.toLocaleDateString()}
+                {date?.toLocaleDateString()}
               </Badge>
+              {(parseDate(dataset.modified) || parseDate(dataset.issued)) != null && (
+                <Badge variant={"outline"}>
+                  {age} Tage alt
+                </Badge>
+              )}
               {[... new Set(dataset.distributions
                 ?.map((keyword) => keyword.format?.label)
                 .filter((format) => format))]
