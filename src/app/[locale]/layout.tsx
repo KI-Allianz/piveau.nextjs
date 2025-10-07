@@ -39,14 +39,18 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${nunitoSans.variable} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="w-full bg-white dark:bg-black">
+      <head>
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+      </head>
+    <body className={`${nunitoSans.variable} antialiased`}>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+    <div className="w-full bg-white dark:bg-black">
             <LanguageProvider language={locale}>
               <LicenseProvider licenses={licenses} >
                 <Providers>{children}</Providers>

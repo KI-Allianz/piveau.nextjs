@@ -37,7 +37,7 @@ export default async function ModelPage({ params }: Props) {
   }
 
   const translations = getTranslations(locale);
-  await getDatasetDirect(datasetId, urls)
+  // await getDatasetDirect(datasetId, urls)
   const response = await getDataset(datasetId, urls);
   // console.log(response);
 

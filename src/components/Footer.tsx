@@ -33,7 +33,7 @@ export default function Footer() {
               decoding="async"
               width="800"
               height="398"
-              src="https://ki-allianz.de/wp-content/uploads/2025/01/logo_bw-gefoerdert.svg"
+              src="/logo_bw-gefoerdert.svg"
               className="attachment-large size-large wp-image-12052 dark:invert"
               alt="LOGO Baden-Württemberg, Ministerium für Arbeit und Tourismus"
             />
