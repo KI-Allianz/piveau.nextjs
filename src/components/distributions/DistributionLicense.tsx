@@ -72,7 +72,6 @@ export function DistributionLicense({ license }: Props) {
               <div className="mt-4 flex gap-2">
                 <Link
                   href={license?.resource ?? "#"}
-                  className="text-blue-500 hover:underline"
                 >
                   <Button variant={"outline"}>
                     <SquareArrowOutUpRight />
@@ -82,7 +81,6 @@ export function DistributionLicense({ license }: Props) {
                 {(license as { la_url?: string }).la_url && (
                   <Link
                     href={(license as { la_url: string })?.la_url ?? "#"}
-                    className="text-blue-500 hover:underline"
                   >
                     <Button variant={"outline"}>
                       <SquareArrowOutUpRight />

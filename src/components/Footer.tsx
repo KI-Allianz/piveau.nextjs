@@ -49,10 +49,10 @@ export default function Footer() {
 
           <div className="flex flex-wrap gap-3">
             <Link href={"https://www.hlrs.de/de/impressum"}>
-              <span className="hover:text-blue-600">Impressum</span>
+              <span className="hover:text-muted-foreground">Impressum</span>
             </Link>
             <Link href={"https://www.hlrs.de/de/datenschutzerklaerung"}>
-              <span className="hover:text-blue-600">Datenschutz</span>
+              <span className="hover:text-muted-foreground">Datenschutz</span>
             </Link>
           </div>
 
