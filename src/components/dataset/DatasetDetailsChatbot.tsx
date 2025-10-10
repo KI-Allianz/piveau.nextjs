@@ -91,7 +91,7 @@ export default function DatasetDetailsChatbot({ dataset, className }: Props) {
         <Button
           onClick={() => submitQuestion(dataset)}
           disabled={isLoading || !userInput.trim()}
-          className="inline-flex items-center justify-center h-10 whitespace-nowrap rounded-md bg-blue-600 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-600/90 disabled:cursor-not-allowed disabled:opacity-60 rounded-l-none px-6"
+          className="inline-flex items-center justify-center h-10 whitespace-nowrap rounded-md bg-[var(--main-accent)] text-sm font-medium text-white shadow-sm transition-colors hover:bg-[var(--main-accent)]/90 disabled:cursor-not-allowed disabled:opacity-60 rounded-l-none px-6"
         >
           {isLoading && (
             <svg

@@ -18,7 +18,7 @@ export default function PublisherPopover({ dataset }: Props) {
     <Popover>
       <PopoverTrigger asChild>
         <div
-          className="flex items-center gap-2 font-semibold group transition-all duration-200 hover:bg-accent/30 cursor-pointer rounded-lg p-1"
+          className="flex items-center gap-2 font-semibold group transition-all duration-200 hover:bg-secondary cursor-pointer rounded-lg p-1"
         >
           <div className="bg-black text-white p-1.5 rounded-xl w-fit group-hover:bg-black/80 transition-all duration-200">
             <Users size={18} />

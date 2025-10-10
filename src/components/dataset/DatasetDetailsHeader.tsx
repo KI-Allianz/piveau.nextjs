@@ -58,9 +58,9 @@ export default function DatasetDetailsHeader({
         <div className="flex flex-row justify-between items-center gap-20 bg-card py-5 px-6 rounded-2xl w-fit">
           <Link
             href={`/${locale}/catalogues/${dataset.catalog.id}`}
-            className="flex items-center gap-2 group font-bold transition-all duration-200 hover:bg-accent/30 cursor-pointer rounded-lg p-1"
+            className="flex items-center gap-2 group font-bold transition-all duration-200 hover:bg-secondary cursor-pointer rounded-lg p-1"
           >
-            <div className="bg-[#080efa] text-white p-1.5 rounded-xl w-fit group-hover:bg-blue-800 transition-all duration-200">
+            <div className="bg-[var(--main-accent)] text-white p-1.5 rounded-xl w-fit group-hover:bg-[var(--main-accent)]/80 transition-all duration-200">
               <Archive size={18} />
             </div>
             {translateDict(dataset.catalog.title)}
