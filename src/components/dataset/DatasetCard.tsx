@@ -40,7 +40,7 @@ export default function DatasetCard({dataset}: Props) {
             </CardDescription>
             <div className="flex flex-wrap gap-2 flex-1/3">
               {isAIModel(dataset) && (
-                <Badge variant={"outline"} className="bg-amber-100 text-amber-800 border-amber-500">
+                <Badge variant={"outline"} className="bg-amber-100 dark:bg-amber-500 text-amber-800 dark:text-black border-amber-300">
                   {translations.dataset.aiModel}
                 </Badge>
               )}

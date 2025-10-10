@@ -3,7 +3,7 @@
 import SortButton from "@/components/facets/SortButton";
 import {useMemo} from "react";
 import {useLocale} from "@/hooks/useLocale";
-import DatasetCard from "@/app/[locale]/_components/DatasetCard";
+import DatasetCard from "@/components/dataset/DatasetCard";
 import {useSearchParams} from "next/navigation";
 import {Dataset} from "@/lib/utils";
 

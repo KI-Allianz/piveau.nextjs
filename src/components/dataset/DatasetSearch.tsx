@@ -16,7 +16,7 @@ import SortButton from "@/components/facets/SortButton";
 import {aiModelKeywords, UrlCollection} from "@/lib/utils";
 import { schemaCatalog } from "@piveau/sdk-core/model";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import CatalogInfo from "@/app/[locale]/_components/CatalogInfo";
+import CatalogInfo from "@/components/dataset/CatalogInfo";
 
 interface Props {
   catalog?: StandardSchemaV1.InferOutput<typeof schemaCatalog>;
