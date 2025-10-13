@@ -2,6 +2,7 @@ import DatasetSearch from "../../components/dataset/DatasetSearch";
 import React, { Suspense } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SupportSection from "@/components/SupportSection";
 
 export default async function Home() {
   const urls = {
@@ -17,6 +18,9 @@ export default async function Home() {
           <DatasetSearch urls={urls} />
         </Suspense>
       </div>
+
+      <SupportSection />
+
       <Footer />
     </div>
   );
