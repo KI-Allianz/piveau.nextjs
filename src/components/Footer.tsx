@@ -8,7 +8,7 @@ import Image from "next/image";
 import { ThemeToggle } from "./ThemeToggle";
 
 export default function Footer() {
-  const { locale } = useLocale();
+  const { locale, translations } = useLocale();
 
   return (
     <footer className="">
@@ -49,10 +49,10 @@ export default function Footer() {
 
           <div className="flex flex-wrap gap-3">
             <Link href={"https://www.hlrs.de/de/impressum"}>
-              <span className="hover:text-muted-foreground">Impressum</span>
+              <span className="hover:text-muted-foreground">{translations.footer.imprint}</span>
             </Link>
             <Link href={"https://www.hlrs.de/de/datenschutzerklaerung"}>
-              <span className="hover:text-muted-foreground">Datenschutz</span>
+              <span className="hover:text-muted-foreground">{translations.footer.privacy}</span>
             </Link>
           </div>
 

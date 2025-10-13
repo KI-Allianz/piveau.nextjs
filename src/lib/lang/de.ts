@@ -71,6 +71,7 @@ export const de: translations = {
     aiModel: "KI Modell",
     lastModified: "Zuletzt geändert",
     issuedOn: "Ausgestellt am",
+    daysOld: "Tage alt",
   },
   catalogue: {
     title: "Titel",
@@ -87,6 +88,10 @@ export const de: translations = {
   expand: {
     more: "Mehr anzeigen",
     less: "Weniger anzeigen",
+  },
+  footer: {
+    imprint: "Impressum",
+    privacy: "Datenschutz",
   },
   facets: {
     dataScope: "Datensatzbereich",

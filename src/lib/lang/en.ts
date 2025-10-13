@@ -71,6 +71,7 @@ export const en: translations = {
     aiModel: "AI Model",
     lastModified: "Last Modified",
     issuedOn: "Issued On",
+    daysOld: "days old",
   },
   catalogue: {
     title: "Title",
@@ -87,6 +88,10 @@ export const en: translations = {
   expand: {
     more: "Show more",
     less: "Show less"
+  },
+  footer: {
+    imprint: "Imprint",
+    privacy: "Privacy",
   },
   facets: {
     dataScope: "Data Scope",

@@ -61,6 +61,7 @@ export type translations = {
     aiModel: string;
     lastModified: string;
     issuedOn: string;
+    daysOld: string;
   },
   catalogue: {
     title: string,
@@ -78,6 +79,10 @@ export type translations = {
     more: string;
     less: string;
   },
+  footer: {
+    imprint: string;
+    privacy: string;
+  }
   facets: facetTranslations;
   open: string;
   languages: string;

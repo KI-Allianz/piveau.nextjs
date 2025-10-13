@@ -49,7 +49,7 @@ export default function DatasetCard({dataset}: Props) {
               </Badge>
               {(parseDate(dataset.modified) || parseDate(dataset.issued)) != null && (
                 <Badge variant={"outline"}>
-                  {age} Tage alt
+                  {age} {translations.dataset.daysOld}
                 </Badge>
               )}
               {[... new Set(dataset.distributions
