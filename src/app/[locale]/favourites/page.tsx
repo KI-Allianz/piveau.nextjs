@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import FavouritesList from "./_components/FavouritesList";
+import FavouritesList from "../../../components/favourites/FavouritesList";
 
 export default async function FavouritesPage() {
 

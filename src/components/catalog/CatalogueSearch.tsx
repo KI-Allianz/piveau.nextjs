@@ -29,7 +29,7 @@ export default function CatalogueSearch({ urls }: { urls: UrlCollection }) {
   const { data, isPending } = useSearch({
     url: urls.SEARCH,
     q: searchParams.get("q") || "",
-    filter: "catalogue",
+    filters: "catalogue",
     limit: searchParams.get("limit")
       ? parseInt(searchParams.get("limit") as string)
       : 10,
@@ -99,7 +99,7 @@ export default function CatalogueSearch({ urls }: { urls: UrlCollection }) {
               : 0
           }
           totalPages={Math.ceil(
-            (data?.count ?? 10) /
+            ((data?.count as number | undefined) ?? 10) /
             (searchParams.get("limit")
               ? parseInt(searchParams.get("limit") as string)
               : 10),

@@ -1,4 +1,4 @@
-import CatalogueSearch from "./_components/CatalogueSearch";
+import CatalogueSearch from "../../../components/catalog/CatalogueSearch";
 import React, { Suspense } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";

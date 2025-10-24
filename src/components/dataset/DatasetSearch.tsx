@@ -68,7 +68,7 @@ export default function DatasetSearch({ catalog, urls }: Props) {
   const { data, isPending } = useSearch({
     url: urls.SEARCH,
     q: searchParams.get("q") || "",
-    filter: "dataset",
+    filters: "dataset",
     limit: searchParams.get("limit")
       ? parseInt(searchParams.get("limit") as string)
       : 10,
@@ -168,7 +168,7 @@ export default function DatasetSearch({ catalog, urls }: Props) {
               : 0
           }
           totalPages={Math.ceil(
-            (data?.count ?? 10) /
+            ((data?.count as number | undefined) ?? 10) /
             (searchParams.get("limit")
               ? parseInt(searchParams.get("limit") as string)
               : 10),
