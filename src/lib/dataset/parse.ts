@@ -1,5 +1,4 @@
 import * as jsonld from 'jsonld';
-import {Dataset} from "@/lib/utils";
 import { NodeObject } from 'jsonld';
 
 interface DCATRoot {
@@ -54,7 +53,7 @@ export async function parseRawDCAT(data: DCATRoot) {
   return framed
 }
 
-export function parseIntoDataset(schema: NodeObject): Dataset {
+export function parseIntoDataset(schema: NodeObject) {
   schema = fixLanguages(schema);
 
   console.log("Fixed DCAT:", JSON.stringify(schema, null, 2));
