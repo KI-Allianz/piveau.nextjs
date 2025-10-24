@@ -1,6 +1,6 @@
 import { getResourceById } from "@piveau/sdk-core";
 import {Dataset, UrlCollection} from "@/lib/utils";
-import {parseRawDCAT} from "@/lib/dataset/parse";
+import {parseIntoDataset, parseRawDCAT} from "@/lib/dataset/parse";
 
 
 export async function getDataset(datasetId: string, urls: UrlCollection): Promise<Dataset> {
@@ -23,9 +23,10 @@ export async function getDatasetDirect(datasetId: string, urls: UrlCollection): 
   }
   const data = await res.json();
 
-  const schema = parseRawDCAT(data);
+  let schema = await parseRawDCAT(data);
+  const dataset = parseIntoDataset(schema);
 
-  console.log(schema)
+  // console.log(dataset)
 
-  return schema;
+  return dataset;
 }
