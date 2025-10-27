@@ -21,16 +21,47 @@ interface DCATEntry {
 }
 
 const LocalizedStringSchema = z.record(z.string(), z.string())
+const MultipleLocalizedStringSchema = z.record(z.string(), z.array(z.string()))
+  .transform((obj) => {
+    const languages = Object.keys(obj);
+    if (languages.length === 0) return [];
+
+    // Find maximum length (in case languages have uneven arrays)
+    const maxLength = Math.max(...languages.map((lang) => obj[lang].length));
+
+    const result: Record<string, string>[] = [];
+
+    for (let i = 0; i < maxLength; i++) {
+      const item: Record<string, string> = {};
+      for (const lang of languages) {
+        const value = obj[lang][i];
+        if (value) item[lang] = value;
+      }
+      result.push(item);
+    }
+
+    return result;
+  });
+const DateStringSchema = z
+  .string()
+  .refine(
+    (val) => !isNaN(Date.parse(val)),
+    { message: "Invalid date format. Expected ISO 8601 string." }
+  )
+  .transform((val) => new Date(val));
+const IntegerStringSchema = z
+  .union([z.string(), z.number()])
+  .transform((val) => (typeof val === "string" ? Number(val) : val));
 const RawDatasetScheme = z.object({
   creator: z.object({
-    name: z.string(),
+    name: LocalizedStringSchema,
     // TODO: homepage
   }),
   description: LocalizedStringSchema,
   id: z.string(),
   title: LocalizedStringSchema,
-  // TODO: issued
-  // TODO: modified
+  issued: DateStringSchema,
+  modified: DateStringSchema,
   language: z.object({
     prefLabel: LocalizedStringSchema
   }),
@@ -56,14 +87,15 @@ const RawDatasetScheme = z.object({
     }),
     id: z.string(),
     title: LocalizedStringSchema,
-    // TODO: issued
-    // TODO: modified
+    issued: DateStringSchema,
+    modified: DateStringSchema,
     license: z.object({
-      prefLabel: LocalizedStringSchema
+      prefLabel: MultipleLocalizedStringSchema
     }),
-    // TODO: accessURL, byteSize
+    accessUrl: z.url(),
+    // TODO: byteSize: IntegerStringSchema,
   }),
-  keyword: LocalizedStringSchema,
+  keyword: MultipleLocalizedStringSchema,
   // TODO: landingPage,
   theme: z.object({
     prefLabel: LocalizedStringSchema,
@@ -76,7 +108,8 @@ const RawDatasetScheme = z.object({
   interactionStatistic: z.array(
     z.object({
       uiLabel: LocalizedStringSchema,
-      // TODO: userInteractionCount,
+      userInteractionCount: IntegerStringSchema,
+      // TODO: interactionType,
     })
   )
 })
@@ -101,23 +134,29 @@ export async function parseRawDCAT(data: DCATRoot) {
 
       id: "identifier",
       distribution: "dt:distribution",
+      title: { "@id": "title", "@container": "@language" },
+      description: { "@id": "description", "@container": "@language" },
 
-      label: "rdfs:label",
-      uiLabel: "s:name",
-      prefLabel: "skos:prefLabel",
-      note: "skos:note",
-      name: "f:name",
+      label: { "@id": "rdfs:label", "@container": "@language" },
+      uiLabel: { "@id": "s:name", "@container": "@language" },
+      prefLabel: { "@id": "skos:prefLabel", "@container": "@language" },
+      note: { "@id": "skos:note", "@container": "@language" },
+      name: { "@id": "f:name", "@container": "@language" },
       fullName: "vc:fn",
       contact: "dt:contactPoint",
-      accessURL: "dt:accessURL",
-      keyword: "dt:keyword",
-      landingPage: "dt:landingPage",
+      keyword: { "@id": "dt:keyword", "@container": "@language" },
       theme: "dt:theme",
 
       interactionStatistic: "s:interactionStatistic",
       interactionType: "s:interactionType",
-      userInteractionCount: "s:userInteractionCount",
-      page: "f:page"
+      userInteractionCount: { "@id": "s:userInteractionCount", "@type": "xml:integer" },
+      page: "f:page",
+      accessURL: { "@id": "dt:accessURL", "@type": "@id" },
+      landingPage: { "@id": "dt:landingPage", "@type": "@id" },
+      byteSize: { "@id": "dt:byteSize", "@type": "xml:integer" },
+
+      modified: { "@id": "modified", "@type": "xml:dateTime" },
+      issued: { "@id": "issued", "@type": "xml:dateTime" },
     },
     "@type": "dt:Dataset",
     creator: {
@@ -128,7 +167,7 @@ export async function parseRawDCAT(data: DCATRoot) {
     },
     distribution: {
       "@embed": "@always"
-    }
+    },
   });
   // console.log("Framed DCAT:", JSON.stringify(framed, null, 2));
 
@@ -136,7 +175,7 @@ export async function parseRawDCAT(data: DCATRoot) {
 }
 
 export function parseIntoDataset(schema: NodeObject) {
-  schema = fixLanguages(schema);
+  // schema = fixLanguages(schema);
   console.log("Fixed DCAT:", JSON.stringify(schema, null, 2));
   const parsed = RawDatasetScheme.parse(schema);
 
