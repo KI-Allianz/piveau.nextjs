@@ -92,10 +92,10 @@ const RawDatasetScheme = z.object({
     license: z.object({
       prefLabel: MultipleLocalizedStringSchema
     }),
-    accessUrl: z.url(),
+    accessURL: z.url(),
     // TODO: byteSize: IntegerStringSchema,
   }),
-  keyword: MultipleLocalizedStringSchema,
+  keyword: z.record(z.string(), z.array(z.string())),
   // TODO: landingPage,
   theme: z.object({
     prefLabel: LocalizedStringSchema,
