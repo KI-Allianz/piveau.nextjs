@@ -17,6 +17,8 @@ import {aiModelKeywords, UrlCollection} from "@/lib/utils";
 import { schemaCatalog } from "@piveau/sdk-core/model";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import CatalogInfo from "@/components/dataset/CatalogInfo";
+import {Card, CardContent} from "@/components/ui/card";
+import {BadgeQuestionMark} from "lucide-react";
 
 interface Props {
   catalog?: StandardSchemaV1.InferOutput<typeof schemaCatalog>;
@@ -157,28 +159,45 @@ export default function DatasetSearch({ catalog, urls }: Props) {
           ? [...Array(10).keys()].map((index) => (
             <DatasetCardSkeleton key={"dss" + index} />
           ))
-          : data?.results.map((result) => (
-            <DatasetCard key={"ds" + result.id} dataset={result} />
-          ))}
-
-        <SearchPagination
-          currentPage={
-            searchParams.get("page")
-              ? parseInt(searchParams.get("page") as string)
-              : 0
-          }
-          totalPages={Math.ceil(
-            ((data?.count as number | undefined) ?? 10) /
-            (searchParams.get("limit")
-              ? parseInt(searchParams.get("limit") as string)
-              : 10),
+          : (
+            <div className="w-full">
+              {data && data.results.length > 0 ? (
+                <div className="flex flex-col gap-4">
+                  {data?.results.map((result) => (
+                    <DatasetCard key={"ds" + result.id} dataset={result} />
+                  ))}
+                </div>
+              ) : (
+                <Card className="grow">
+                  <CardContent className="w-full flex gap-3 justify-center text-muted-foreground">
+                    <BadgeQuestionMark />
+                    No results found.
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           )}
-          itemsPerPage={
-            searchParams.get("limit")
-              ? parseInt(searchParams.get("limit") as string)
-              : 10
-          }
-        />
+
+        {data && data.results.length > 0 && (
+          <SearchPagination
+            currentPage={
+              searchParams.get("page")
+                ? parseInt(searchParams.get("page") as string)
+                : 0
+            }
+            totalPages={Math.ceil(
+              ((data?.count as number | undefined) ?? 10) /
+              (searchParams.get("limit")
+                ? parseInt(searchParams.get("limit") as string)
+                : 10),
+            )}
+            itemsPerPage={
+              searchParams.get("limit")
+                ? parseInt(searchParams.get("limit") as string)
+                : 10
+            }
+          />
+        )}
       </main>
     </div>
   );
