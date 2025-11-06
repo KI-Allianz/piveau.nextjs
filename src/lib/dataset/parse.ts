@@ -1,6 +1,7 @@
 import * as jsonld from 'jsonld';
-import { NodeObject } from 'jsonld';
+import {ContextDefinition, NodeObject} from 'jsonld';
 import {z} from "zod";
+import {Frame} from "jsonld/jsonld-spec";
 
 interface DCATRoot {
   "@graph": DCATModel[];
@@ -55,7 +56,7 @@ const IntegerStringSchema = z
 const RawDatasetScheme = z.object({
   creator: z.object({
     name: LocalizedStringSchema,
-    // TODO: homepage
+    homepage: z.url(),
   }),
   description: LocalizedStringSchema,
   id: z.string(),
@@ -70,14 +71,16 @@ const RawDatasetScheme = z.object({
   }),
   publisher: z.object({
     name: LocalizedStringSchema,
-    // TODO: homepage
+    homepage: z.url(),
   }),
   spatial: z.object({
     prefLabel: LocalizedStringSchema
   }),
   contact: z.object({
     fullName: z.string(),
-    // TODO: hasEmail, hasTelephone, hasURL
+    hasEmail: z.string().optional(),
+    hasTelephone: z.string().optional(),
+    hasURL: z.string().optional(),
   }),
   distribution: z.object({
     description: LocalizedStringSchema,
@@ -85,7 +88,7 @@ const RawDatasetScheme = z.object({
       label: LocalizedStringSchema,
       note: LocalizedStringSchema,
     }),
-    id: z.string(),
+    itemId: z.string(),
     title: LocalizedStringSchema,
     issued: DateStringSchema,
     modified: DateStringSchema,
@@ -93,10 +96,12 @@ const RawDatasetScheme = z.object({
       prefLabel: MultipleLocalizedStringSchema
     }),
     accessURL: z.url(),
-    // TODO: byteSize: IntegerStringSchema,
+    byteSize: IntegerStringSchema,
   }),
   keyword: z.record(z.string(), z.array(z.string())),
-  // TODO: landingPage,
+  landingPage: z.object({
+    id: z.url()
+  }),
   theme: z.object({
     prefLabel: LocalizedStringSchema,
   }),
@@ -109,7 +114,7 @@ const RawDatasetScheme = z.object({
     z.object({
       uiLabel: LocalizedStringSchema,
       userInteractionCount: IntegerStringSchema,
-      // TODO: interactionType,
+      interactionType: z.enum(["s:LikeAction", "s:ViewAction", "s:DownloadAction"]),
     })
   )
 })
@@ -117,8 +122,7 @@ const RawDatasetScheme = z.object({
 
 export async function parseRawDCAT(data: DCATRoot) {
 
-
-  const framed = await jsonld.frame(data, {
+  const frame = {
     "@context": {
       "@vocab": "http://purl.org/dc/terms/",
       //"dct": "http://purl.org/dc/terms/",
@@ -132,7 +136,8 @@ export async function parseRawDCAT(data: DCATRoot) {
       xml: "http://www.w3.org/2001/XMLSchema#",
       s: "https://schema.org/",
 
-      id: "identifier",
+      itemId: "identifier",
+      id: "@id",
       distribution: "dt:distribution",
       title: { "@id": "title", "@container": "@language" },
       description: { "@id": "description", "@container": "@language" },
@@ -148,15 +153,21 @@ export async function parseRawDCAT(data: DCATRoot) {
       theme: "dt:theme",
 
       interactionStatistic: "s:interactionStatistic",
-      interactionType: "s:interactionType",
+      interactionType: { "@id": "s:interactionType", "@type": "@id" },
       userInteractionCount: { "@id": "s:userInteractionCount", "@type": "xml:integer" },
       page: "f:page",
       accessURL: { "@id": "dt:accessURL", "@type": "@id" },
-      landingPage: { "@id": "dt:landingPage", "@type": "@id" },
-      byteSize: { "@id": "dt:byteSize", "@type": "xml:integer" },
+      homepage: { "@id": "f:homepage", "@type": "@id" },
+      landingPage: "dt:landingPage",
+      byteSize: { "@id": "dt:byteSize", "@type": "xml:nonNegativeInteger" },
 
       modified: { "@id": "modified", "@type": "xml:dateTime" },
       issued: { "@id": "issued", "@type": "xml:dateTime" },
+
+      hasEmail: { "@id": "vc:hasEmail", "@type": "@id" },
+      hasTelephone: { "@id": "vc:hasTelephone", "@type": "@id" },
+      hasURL: { "@id": "vc:hasURL", "@type": "@id" },
+
     },
     "@type": "dt:Dataset",
     creator: {
@@ -168,48 +179,23 @@ export async function parseRawDCAT(data: DCATRoot) {
     distribution: {
       "@embed": "@always"
     },
-  });
-  // console.log("Framed DCAT:", JSON.stringify(framed, null, 2));
+  }
 
-  return framed
+  const framed = await jsonld.frame(data, frame as Frame);
+  // console.log("Framed DCAT:", JSON.stringify(framed, null, 2));
+  return jsonld.compact(framed, frame['@context'] as ContextDefinition)
 }
 
 export function parseIntoDataset(schema: NodeObject) {
-  // schema = fixLanguages(schema);
-  console.log("Fixed DCAT:", JSON.stringify(schema, null, 2));
+  schema = fixLanguages(schema);
+  // console.log("Fixed DCAT:", JSON.stringify(schema, null, 2));
   const parsed = RawDatasetScheme.parse(schema);
 
-  console.log("Parsed DCAT:", JSON.stringify(parsed, null, 2));
+  // console.log("Parsed DCAT:", JSON.stringify(parsed, null, 2));
 
   return parsed
 }
 
 export function fixLanguages(schema: NodeObject): NodeObject {
-  // Iterate over all properties and fix language tags
-  for (const key in schema) {
-    const value = schema[key];
-    if (Array.isArray(value)) {
-      let newDict: {[key: string] : string} = {};
-
-      // Transform array of language-tagged values into a dictionary
-      for (const item of value) {
-        if (typeof item === 'object' && item !== null && '@language' in item && '@value' in item && item['@language'] && typeof item['@language'] === 'string' && item['@value'] && typeof item['@value'] === 'string') {
-          newDict[item['@language']] = item['@value'];
-        } else if (typeof item === 'object' && item !== null) {
-          schema[key] = fixLanguages(schema[key] as NodeObject);
-        }
-      }
-
-      // Only assign if newDict is not empty
-      if (Object.keys(newDict).length > 0) {
-        schema[key] = newDict;
-      }
-    }
-    else if (typeof value === 'object' && value !== null) {
-      // Recursively fix nested objects
-      schema[key] = fixLanguages(value as NodeObject);
-    }
-  }
-
-  return schema;
+  return JSON.parse(JSON.stringify(schema).replaceAll("@none", "de"));
 }
