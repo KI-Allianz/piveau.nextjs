@@ -43,6 +43,17 @@ const MultipleLocalizedStringSchema = z.record(z.string(), z.array(z.string()))
 
     return result;
   });
+
+const FormatSchema = z.union([
+  z.object({
+    label: LocalizedStringSchema,
+    note: LocalizedStringSchema.optional(),
+  }),
+  z.string().transform((val) => ({
+    label: LocalizedStringSchema.parse({ de: val }),
+  })),
+])
+
 const DateStringSchema = z
   .string()
   .refine(
@@ -53,74 +64,93 @@ const DateStringSchema = z
 const IntegerStringSchema = z
   .union([z.string(), z.number()])
   .transform((val) => (typeof val === "string" ? Number(val) : val));
-const RawDatasetScheme = z.object({
-  creator: z.object({
-    name: LocalizedStringSchema,
-    homepage: z.url(),
-  }),
+
+const RawDistributionScheme = z.object({
+  itemId: z.string(),
+  id: z.url(),
+  title: LocalizedStringSchema,
   description: LocalizedStringSchema,
+  issued: DateStringSchema,
+  modified: DateStringSchema,
+  accessURL: z.url(),
+  byteSize: IntegerStringSchema,
+  format: FormatSchema,
+  license: z.object({
+    id: z.url(),
+    prefLabel: MultipleLocalizedStringSchema.optional()
+  }),
+})
+
+const RawDatasetScheme = z.object({
+  itemId: z.string(),
   id: z.string(),
   title: LocalizedStringSchema,
+  description: LocalizedStringSchema,
   issued: DateStringSchema,
   modified: DateStringSchema,
   language: z.object({
-    prefLabel: LocalizedStringSchema
-  }),
+    id: z.url(),
+    prefLabel: LocalizedStringSchema.optional()
+  }).optional(),
   provenance: z.object({
     label: LocalizedStringSchema
-  }),
+  }).optional(),
   publisher: z.object({
+    id: z.url(),
     name: LocalizedStringSchema,
-    homepage: z.url(),
+    homepage: z.url().optional(),
+  }),
+  maintainer: z.object({
+    name: LocalizedStringSchema,
+    homepage: z.url().optional(),
+    mail: z.string().optional(),
+  }).optional(),
+  creator: z.object({
+    name: LocalizedStringSchema,
+    homepage: z.url().optional(),
+    mail: z.string().optional(),
   }),
   spatial: z.object({
-    prefLabel: LocalizedStringSchema
-  }),
+    id: z.url(),
+    prefLabel: LocalizedStringSchema.optional()
+  }).optional(),
   contact: z.object({
     fullName: z.string(),
     hasEmail: z.string().optional(),
     hasTelephone: z.string().optional(),
     hasURL: z.string().optional(),
   }),
-  distribution: z.object({
-    description: LocalizedStringSchema,
-    format: z.object({
-      label: LocalizedStringSchema,
-      note: LocalizedStringSchema,
-    }),
-    itemId: z.string(),
-    title: LocalizedStringSchema,
-    issued: DateStringSchema,
-    modified: DateStringSchema,
-    license: z.object({
-      prefLabel: MultipleLocalizedStringSchema
-    }),
-    accessURL: z.url(),
-    byteSize: IntegerStringSchema,
-  }),
+  distributions: z.array(
+    RawDistributionScheme
+  ),
   keyword: z.record(z.string(), z.array(z.string())),
   landingPage: z.object({
     id: z.url()
   }),
-  theme: z.object({
-    prefLabel: LocalizedStringSchema,
-  }),
+  theme: z.array(z.object({
+    id: z.url(),
+    prefLabel: LocalizedStringSchema.optional(),
+  })),
   page: z.object({
     description: LocalizedStringSchema,
     title: LocalizedStringSchema,
     label: LocalizedStringSchema,
-  }),
+  }).optional(),
   interactionStatistic: z.array(
     z.object({
       uiLabel: LocalizedStringSchema,
       userInteractionCount: IntegerStringSchema,
       interactionType: z.enum(["s:LikeAction", "s:ViewAction", "s:DownloadAction"]),
     })
-  )
+  ).optional(),
 })
 
 
 export async function parseRawDCAT(data: DCATRoot) {
+
+  // Fix xml:decimal / xml:nonNegativeInteger types
+  const fixedData = JSON.parse(JSON.stringify(data)
+    .replaceAll('"@type":"xml:nonNegativeInteger"', '"@type":"xml:decimal"'))
 
   const frame = {
     "@context": {
@@ -138,7 +168,7 @@ export async function parseRawDCAT(data: DCATRoot) {
 
       itemId: "identifier",
       id: "@id",
-      distribution: "dt:distribution",
+      distributions: { "@id": "dt:distribution", "@container": "@set" },
       title: { "@id": "title", "@container": "@language" },
       description: { "@id": "description", "@container": "@language" },
 
@@ -150,7 +180,7 @@ export async function parseRawDCAT(data: DCATRoot) {
       fullName: "vc:fn",
       contact: "dt:contactPoint",
       keyword: { "@id": "dt:keyword", "@container": "@language" },
-      theme: "dt:theme",
+      theme: { "@id": "dt:theme", "@container": "@set" },
 
       interactionStatistic: "s:interactionStatistic",
       interactionType: { "@id": "s:interactionType", "@type": "@id" },
@@ -159,11 +189,13 @@ export async function parseRawDCAT(data: DCATRoot) {
       accessURL: { "@id": "dt:accessURL", "@type": "@id" },
       homepage: { "@id": "f:homepage", "@type": "@id" },
       landingPage: "dt:landingPage",
-      byteSize: { "@id": "dt:byteSize", "@type": "xml:nonNegativeInteger" },
+      byteSize: { "@id": "dt:byteSize", "@type":"xml:decimal" },
 
       modified: { "@id": "modified", "@type": "xml:dateTime" },
       issued: { "@id": "issued", "@type": "xml:dateTime" },
 
+      maintainer: "dp:maintainer",
+      mail: "f:mbox",
       hasEmail: { "@id": "vc:hasEmail", "@type": "@id" },
       hasTelephone: { "@id": "vc:hasTelephone", "@type": "@id" },
       hasURL: { "@id": "vc:hasURL", "@type": "@id" },
@@ -181,17 +213,17 @@ export async function parseRawDCAT(data: DCATRoot) {
     },
   }
 
-  const framed = await jsonld.frame(data, frame as Frame);
+  const framed = await jsonld.frame(fixedData, frame as Frame);
   // console.log("Framed DCAT:", JSON.stringify(framed, null, 2));
   return jsonld.compact(framed, frame['@context'] as ContextDefinition)
 }
 
 export function parseIntoDataset(schema: NodeObject) {
   schema = fixLanguages(schema);
-  // console.log("Fixed DCAT:", JSON.stringify(schema, null, 2));
+  console.log("Fixed DCAT:", JSON.stringify(schema, null, 2));
   const parsed = RawDatasetScheme.parse(schema);
 
-  // console.log("Parsed DCAT:", JSON.stringify(parsed, null, 2));
+  console.log("Parsed DCAT:", JSON.stringify(parsed, null, 2));
 
   return parsed
 }
