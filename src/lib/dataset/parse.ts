@@ -150,7 +150,7 @@ export async function parseRawDCAT(data: DCATRoot) {
 
   // Fix xml:decimal / xml:nonNegativeInteger types
   const fixedData = JSON.parse(JSON.stringify(data)
-    .replaceAll('"@type":"xml:nonNegativeInteger"', '"@type":"xml:decimal"'))
+    .replaceAll('nonNegativeInteger', 'decimal'))
 
   const frame = {
     "@context": {
