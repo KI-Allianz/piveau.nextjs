@@ -1,24 +1,21 @@
 "use client";
 
-import { useSearch } from "@/hooks/useSearch";
-import Facets from "@/components/facets/Facets";
-import SearchFacet from "@/components/facets/SearchFacet";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import DatasetCard from "./DatasetCard";
-import DatasetCardSkeleton from "./DatasetCardSkeleton";
-import SearchTabSwitcher, {
-  SearchTab,
-} from "@/components/facets/SearchTabSwitcher";
-import SearchPagination from "@/components/SearchPagination";
-import { useLocale } from "@/hooks/useLocale";
-import SortButton from "@/components/facets/SortButton";
-import {aiModelKeywords, UrlCollection} from "@/lib/utils";
-import { schemaCatalog } from "@piveau/sdk-core/model";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import CatalogInfo from "@/components/dataset/CatalogInfo";
-import {Card, CardContent} from "@/components/ui/card";
-import {BadgeQuestionMark} from "lucide-react";
+import {schemaCatalog} from "@piveau/sdk-core/model";
+
+import {aiModelKeywords, UrlCollection} from "@/lib/utils";
+import { useLocale } from "@/hooks/useLocale";
+import { useSearch } from "@/hooks/useSearch";
+
+import BaseSearch from "@/components/BaseSearch";
+import SearchTabSwitcher, { SearchTab } from "@/components/facets/SearchTabSwitcher";
+import DatasetCard from "@/components/dataset/DatasetCard";
+import DatasetCardSkeleton from "@/components/dataset/DatasetCardSkeleton";
+import SortButton from "@/components/facets/SortButton";
+import SearchFacet from "@/components/facets/SearchFacet";
+
 
 interface Props {
   catalog?: StandardSchemaV1.InferOutput<typeof schemaCatalog>;
@@ -140,65 +137,29 @@ export default function DatasetSearch({ catalog, urls }: Props) {
   }, [searchParams]);
 
   return (
-    <div className="flex gap-5 pb-10">
-      <div className="flex flex-col gap-6">
-        {catalog && <CatalogInfo catalog={catalog} />}
-
-        <Facets facets={data?.facets} />
-      </div>
-      <main className="flex flex-col gap-6 row-start-2 items-center sm:items-start w-full">
+    <BaseSearch
+      isPending={isPending}
+      data={data}
+      catalog={catalog}
+      renderItem={(item) => (
+        <DatasetCard key={"ds" + item.id} dataset={item} />
+      )}
+      placeholder={
+        [...Array(10).keys()].map((index) => (
+          <DatasetCardSkeleton key={"dss" + index} />
+        ))
+      }
+      searchBar={
         <div className="flex flex-col w-full gap-2">
           <SearchFacet placeholder={translations.search.placeholder.datasets} />
+
           <div className="flex justify-between">
             <SearchTabSwitcher />
             <SortButton />
           </div>
         </div>
-
-        {isPending
-          ? [...Array(10).keys()].map((index) => (
-            <DatasetCardSkeleton key={"dss" + index} />
-          ))
-          : (
-            <div className="w-full">
-              {data && data.results.length > 0 ? (
-                <div className="flex flex-col gap-4">
-                  {data?.results.map((result) => (
-                    <DatasetCard key={"ds" + result.id} dataset={result} />
-                  ))}
-                </div>
-              ) : (
-                <Card className="grow">
-                  <CardContent className="w-full flex gap-3 justify-center text-muted-foreground">
-                    <BadgeQuestionMark />
-                    No results found.
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          )}
-
-        {data && data.results.length > 0 && (
-          <SearchPagination
-            currentPage={
-              searchParams.get("page")
-                ? parseInt(searchParams.get("page") as string)
-                : 0
-            }
-            totalPages={Math.ceil(
-              ((data?.count as number | undefined) ?? 10) /
-              (searchParams.get("limit")
-                ? parseInt(searchParams.get("limit") as string)
-                : 10),
-            )}
-            itemsPerPage={
-              searchParams.get("limit")
-                ? parseInt(searchParams.get("limit") as string)
-                : 10
-            }
-          />
-        )}
-      </main>
-    </div>
-  );
+      }
+    />
+  )
 }
+

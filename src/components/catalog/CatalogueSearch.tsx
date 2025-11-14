@@ -1,20 +1,24 @@
 "use client";
 
-import { useSearch } from "@/hooks/useSearch";
-import Facets from "@/components/facets/Facets";
-import SearchFacet from "@/components/facets/SearchFacet";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import CatalogCard from "./CatalogCard";
-import CatalogCardSkeleton from "./CatalogCardSkeleton";
-import { SearchTab } from "@/components/facets/SearchTabSwitcher";
-import SearchPagination from "@/components/SearchPagination";
+
+import { useSearch } from "@/hooks/useSearch";
 import { useLocale } from "@/hooks/useLocale";
 import { UrlCollection } from "@/lib/utils";
-import {Card, CardContent} from "@/components/ui/card";
-import {BadgeQuestionMark} from "lucide-react";
 
-export default function CatalogueSearch({ urls }: { urls: UrlCollection }) {
+import CatalogCard from "@/components/catalog/CatalogCard";
+import CatalogCardSkeleton from "@/components/catalog/CatalogCardSkeleton";
+import BaseSearch from "@/components/BaseSearch";
+import { SearchTab } from "@/components/facets/SearchTabSwitcher";
+import SearchFacet from "@/components/facets/SearchFacet";
+
+
+interface Props {
+  urls: UrlCollection
+}
+
+export default function CatalogueSearch({ urls }: Props) {
   const searchParams = useSearchParams();
   const { translations } = useLocale();
   const [facets, setFacets] = useState<Record<string, string[]>>();
@@ -77,59 +81,22 @@ export default function CatalogueSearch({ urls }: { urls: UrlCollection }) {
   }, [searchParams]);
 
   return (
-    <div className="flex gap-5 pb-10">
-      <Facets facets={data?.facets} />
-      <main className="flex flex-col gap-6 row-start-2 items-center sm:items-start w-full">
+    <BaseSearch
+      isPending={isPending}
+      data={data}
+      renderItem={(item) => (
+        <CatalogCard key={"ct" + item.id} catalog={item} />
+      )}
+      placeholder={
+        [...Array(10).keys()].map((index) => (
+          <CatalogCardSkeleton key={"dss" + index} />
+        ))
+      }
+      searchBar={
         <div className="flex flex-col w-full gap-2">
-          <SearchFacet
-            placeholder={translations.search.placeholder.catalogues}
-          />
+          <SearchFacet placeholder={translations.search.placeholder.catalogues} />
         </div>
-
-        {isPending
-          ? [...Array(10).keys()].map((index) => (
-            <CatalogCardSkeleton key={"dss" + index} />
-          ))
-          : (
-            <div className="w-full">
-              {data && data.results.length > 0 ? (
-                <div className="flex flex-col gap-4">
-                  {data?.results.map((result) => (
-                    <CatalogCard key={"ds" + result.id} catalog={result} />
-                  ))}
-                </div>
-              ) : (
-                <Card className="grow">
-                  <CardContent className="w-full flex gap-3 justify-center text-muted-foreground">
-                    <BadgeQuestionMark />
-                    No results found.
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          )}
-
-        {data && data.results.length > 0 && (
-          <SearchPagination
-            currentPage={
-              searchParams.get("page")
-                ? parseInt(searchParams.get("page") as string)
-                : 0
-            }
-            totalPages={Math.ceil(
-              ((data?.count as number | undefined) ?? 10) /
-              (searchParams.get("limit")
-                ? parseInt(searchParams.get("limit") as string)
-                : 10),
-            )}
-            itemsPerPage={
-              searchParams.get("limit")
-                ? parseInt(searchParams.get("limit") as string)
-                : 10
-            }
-          />
-          )}
-      </main>
-    </div>
-  );
+      }
+    />
+  )
 }
