@@ -29,7 +29,7 @@ export default function CatalogueSearch({ urls }: Props) {
       return fixedFacets;
     }
 
-    return fixedFacets;
+    return facets;
   };
 
   const { data, isPending } = useSearch({

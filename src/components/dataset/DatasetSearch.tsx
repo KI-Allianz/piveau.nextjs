@@ -3,9 +3,9 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import {schemaCatalog} from "@piveau/sdk-core/model";
+import { schemaCatalog } from "@piveau/sdk-core/model";
 
-import {aiModelKeywords, UrlCollection} from "@/lib/utils";
+import { UrlCollection } from "@/lib/utils";
 import { useLocale } from "@/hooks/useLocale";
 import { useSearch } from "@/hooks/useSearch";
 
@@ -15,6 +15,7 @@ import DatasetCard from "@/components/dataset/DatasetCard";
 import DatasetCardSkeleton from "@/components/dataset/DatasetCardSkeleton";
 import SortButton from "@/components/facets/SortButton";
 import SearchFacet from "@/components/facets/SearchFacet";
+import fixDatasetFacets from "@/lib/search";
 
 
 interface Props {
@@ -26,43 +27,6 @@ export default function DatasetSearch({ catalog, urls }: Props) {
   const searchParams = useSearchParams();
   const { translations } = useLocale();
   const [facets, setFacets] = useState<Record<string, string[]>>();
-
-  const fixFacets = (facets: Record<string, string[]> | undefined) => {
-    const fixedFacets: Record<string, string[]> = {};
-
-    // If no facets are available, we set default values based on the current tab and catalog
-    if (!facets || Object.keys(facets).length === 0) {
-      if (searchParams.get("tab") === SearchTab.MODELS) {
-        // If no facets are available, we set a default value for AI Models
-        fixedFacets["keywords"] = aiModelKeywords;
-      }
-      if (catalog) {
-        // If no facets are available, we set a default value for the catalog
-        fixedFacets["catalog"] = [catalog.id];
-      }
-
-      return fixedFacets;
-    }
-
-    // Otherwise, we copy the existing facets and fix specific ones if needed
-    Object.entries(facets).forEach(([key, value]) => {
-      if (
-        value.length <= 0 &&
-        key === "keywords" &&
-        searchParams.get("tab") === SearchTab.MODELS
-      ) {
-        // If the format facet is empty, we set a default value for AI Models
-        fixedFacets[key] = aiModelKeywords;
-      } else if (catalog && key === "catalog") {
-        // If no facets are available, we set a default value for the catalog
-        fixedFacets[key] = [catalog.id];
-      } else {
-        fixedFacets[key] = value;
-      }
-    });
-
-    return fixedFacets;
-  };
 
   const { data, isPending } = useSearch({
     url: urls.SEARCH,
@@ -96,7 +60,7 @@ export default function DatasetSearch({ catalog, urls }: Props) {
       "publisher",
     ],
     facets: {
-      ...fixFacets(facets),
+      ...fixDatasetFacets(facets, searchParams.get("tab") as SearchTab, catalog),
     },
 
     //Debugging
