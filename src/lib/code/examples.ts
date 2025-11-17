@@ -22,7 +22,7 @@ json_ld_metadata = "{url}"
 metadata = download_data(json_ld_metadata)
 df = parse_with_pandas(metadata)`
 
-export const installationExample = `pip install git+https://github.com/maxbrzr/dcat-ap-hub.git`
+export const installationExample = `pip install dcat-ap-hub`
 
 export function getRawCodeExample(type: CodeExampleType) {
   switch (type) {
