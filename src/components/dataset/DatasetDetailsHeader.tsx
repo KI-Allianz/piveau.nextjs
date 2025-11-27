@@ -10,7 +10,7 @@ import React from "react";
 import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import {Dataset, parseDate, UrlCollection } from "@/lib/utils";
+import { Dataset, isAIModel, parseDate, UrlCollection } from "@/lib/utils";
 import { getCategoryIcon } from "@/lib/icons";
 import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFavouriteButton";
@@ -47,6 +47,7 @@ export default function DatasetDetailsHeader({
           <ExampleCodePopover
             url={`${baseUrl}/de/dataset/${dataset.id}`}
             customParser={extractParserRepository(dataset, translateDict)}
+            isAIModel={isAIModel(dataset)}
           />
           <DatasetDetailsExportButton id={dataset.id} urls={urls} />
         </div>

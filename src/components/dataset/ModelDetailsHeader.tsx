@@ -9,11 +9,12 @@ import DatasetDetailsDescription from "@/components/dataset/DatasetDetailsDescri
 import React from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import {Dataset, parseDate, UrlCollection } from "@/lib/utils";
+import {Dataset, isAIModel, parseDate, UrlCollection } from "@/lib/utils";
 import { getCategoryIcon } from "@/lib/icons";
 import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFavouriteButton";
 import PublisherPopover from "@/components/dataset/PublisherPopover";
+import ExampleCodePopover from "./ExampleCodePopover";
 
 interface Props {
   dataset: Dataset;
@@ -28,6 +29,8 @@ export default function ModelDetailsHeader({
   const { locale, translateDict, translations } = useLocale();
   const router = useRouter();
 
+  const jsonldurl = urls.REPO + `datasets/${dataset.id}.jsonld`
+
   return (
     <div className="w-full space-y-3">
       <div className="flex flex-row gap-5 justify-between">
@@ -41,6 +44,7 @@ export default function ModelDetailsHeader({
 
         <div className="space-x-2">
           <DatasetDetailsFavouriteButton dataset={dataset} />
+          <ExampleCodePopover url={jsonldurl} isAIModel={isAIModel(dataset)} />
           <DatasetDetailsExportButton id={dataset.id} urls={urls} />
         </div>
       </div>

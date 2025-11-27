@@ -49,7 +49,6 @@ export default async function DatasetPage({ params }: Props) {
       <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
         <DatasetDetailsHeader
           dataset={response}
-          baseUrl={process.env.DOMAIN || ""}
           urls={urls}
         />
 

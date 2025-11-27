@@ -31,7 +31,7 @@ export function formatString(str: string, ...replacements: string[]): string {
 
 export type Dataset = StandardSchemaV1.InferOutput<typeof schemaDataset>
 
-export const aiModelFormats = ["ONNX"];
+export const aiModelFormats = ["ONNX", "Hugging Face Hub format"];
 export const aiModelKeywords = ["ai-model"];
 
 export function isAIModel(dataset: Dataset): boolean {
