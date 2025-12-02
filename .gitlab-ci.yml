@@ -61,7 +61,7 @@ deploy-to-vm:
       docker pull $CI_REGISTRY_IMAGE:latest &&
       docker stop my-app-container || true &&
       docker rm my-app-container || true &&
-      docker run -d --restart unless-stopped --name my-app-container -p 3000:3000 $CI_REGISTRY_IMAGE:latest &&
+      docker run -d --restart unless-stopped --name my-app-container --network host $CI_REGISTRY_IMAGE:latest &&
       docker image prune -f"
   rules:
     - if: $CI_COMMIT_BRANCH == "hammerhai"
