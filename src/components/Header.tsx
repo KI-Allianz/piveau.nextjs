@@ -15,7 +15,7 @@ export enum NavItemId {
 const navItems = [
   {
     id: NavItemId.DATASETS,
-    href: "/",
+    href: "/dataset",
     external: false,
   },
   {
