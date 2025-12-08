@@ -27,11 +27,11 @@ export default async function RootLayout({
   params,
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ locale: supportedLocales }>;
+  params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
 
-  if (!locale || !SupportedLocales.includes(locale)) {
+  if (!locale || !SupportedLocales.includes(locale as supportedLocales)) {
     redirect("/" + defaultLocale);
   }
 
@@ -51,7 +51,7 @@ export default async function RootLayout({
       disableTransitionOnChange
     >
     <div className="w-full bg-white dark:bg-black">
-            <LanguageProvider language={locale}>
+            <LanguageProvider language={locale as supportedLocales}>
               <LicenseProvider licenses={licenses} >
                 <Providers>{children}</Providers>
               </LicenseProvider>
