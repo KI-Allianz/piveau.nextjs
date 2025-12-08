@@ -11,9 +11,6 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    "/de/dataset/:path*",
-    "/de/catalogues/:path*",
-    "/de/favourites/:path*",
-    "/de/model/:path*",
+    "/:lang/:protected(dataset|catalogues|favourites|model)/:path*",
   ]
 }
