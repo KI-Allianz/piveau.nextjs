@@ -88,7 +88,7 @@ export default function ExampleCodePopover({
         <CodeBlock
           code={exampleCode}
           title={"Code Snippet"}
-          docUrl={"https://github.com/maxbrzr/dcat-ap-hub"}
+          docUrl={"https://pypi.org/project/dcat-ap-hub/"}
         />
       </PopoverContent>
     </Popover>

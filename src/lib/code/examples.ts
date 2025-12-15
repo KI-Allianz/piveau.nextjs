@@ -14,29 +14,32 @@ export const codeExampleTypesNames: Record<
   string
 > = {
   [CodeExampleType.LOAD_DATASET]: "Load dataset",
-  [CodeExampleType.PARSE_DATASET]: "Parse dataset",
+  [CodeExampleType.PARSE_DATASET]: "Process dataset",
   [ModelExampleType.LOAD_HF_MODEL]: "Load Hugging Face model",
 };
 
-export const loadDatasetExample = `from dcat_ap_hub import download_data, load_data
+export const loadDatasetExample = `from dcat_ap_hub import Dataset
 
 url = "{url}"
 
-dataset_dir = download_data(url, base_dir="./datasets")
-data = load_data(dataset_dir, summarize=True, lazy=True)`;
+ds = Dataset.from_url(url)
+files = ds.download(data_dir="./data")`;
 
-export const parseDatasetExample = `from dcat_ap_hub import download_data, parse_data
-
-url = "{url}"
-
-dataset_dir = download_data(url, base_dir="./datasets")
-data = parse_data(dataset_dir, summarize=True, lazy=True)`;
-
-export const loadHfModelExample = `from dcat_ap_hub import load_hf_model
+export const processDatasetExample = `from dcat_ap_hub import Dataset
 
 url = "{url}"
 
-model, processor, metadata = load_hf_model(url)`;
+ds = Dataset.from_url(url)
+ds.download(data_dir="./data")
+files = ds.process(processed_dir="./processed")`;
+
+export const loadHfModelExample = `from dcat_ap_hub import Dataset
+
+url = "{url}"
+
+ds = Dataset.from_url(url)
+ds.download(data_dir="./data")
+model, processor, metadata = ds.load_model(model_dir="./models")`;
 
 export const installationExample = `pip install dcat-ap-hub`;
 
@@ -45,7 +48,7 @@ export function getRawCodeExample(type: CodeExampleType | ModelExampleType) {
     case CodeExampleType.LOAD_DATASET:
       return loadDatasetExample;
     case CodeExampleType.PARSE_DATASET:
-      return parseDatasetExample;
+      return processDatasetExample;
     case ModelExampleType.LOAD_HF_MODEL:
       return loadHfModelExample;
     default:
