@@ -40,6 +40,8 @@ export const de: translations = {
       [NavItemId.FAVOURITES]: "Favoriten",
     },
     back: "Zurück",
+    signIn: "Anmelden",
+    signOut: "Abmelden",
   },
   dataset: {
     distribution: {

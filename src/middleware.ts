@@ -1,10 +1,12 @@
 import { withAuth } from "next-auth/middleware";
 
 export default withAuth(
-  function proxy(req) {},
+  function middleware(req) {
+  },
   {
+    // Optional: custom sign-in page
     pages: {
-      signIn: "/auth/signin", // internal alias
+      signIn: "/auth/signin",
     },
   }
 );
@@ -12,5 +14,5 @@ export default withAuth(
 export const config = {
   matcher: [
     "/:lang/:protected(dataset|catalogues|favourites|model)/:path*",
-  ]
-}
+  ],
+};

@@ -39,7 +39,9 @@ export const en: translations = {
       [NavItemId.CATALOGUES]: "Catalogues",
       [NavItemId.FAVOURITES]: "Favourites",
     },
-    back: "Back"
+    back: "Back",
+    signIn: "Sign In",
+    signOut: "Sign Out",
   },
   dataset: {
     distribution: {

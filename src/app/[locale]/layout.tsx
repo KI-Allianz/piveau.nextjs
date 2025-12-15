@@ -9,6 +9,7 @@ import { Providers } from "@/components/Providers";
 import { ThemeProvider } from "next-themes";
 import {getLicenses} from "@/lib/license";
 import {LicenseProvider} from "@/hooks/useLicenses";
+import {AuthProviders} from "@/components/AuthProvider";
 
 const nunitoSans = Nunito_Sans({
   variable: "--font-nunito-sans",
@@ -43,21 +44,23 @@ export default async function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
       </head>
-    <body className={`${nunitoSans.variable} antialiased`}>
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-    <div className="w-full bg-white dark:bg-black">
-            <LanguageProvider language={locale as supportedLocales}>
-              <LicenseProvider licenses={licenses} >
-                <Providers>{children}</Providers>
-              </LicenseProvider>
-            </LanguageProvider>
+      <body className={`${nunitoSans.variable} antialiased`}>
+      <AuthProviders>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="w-full bg-white dark:bg-black">
+              <LanguageProvider language={locale as supportedLocales}>
+                <LicenseProvider licenses={licenses} >
+                  <Providers>{children}</Providers>
+                </LicenseProvider>
+              </LanguageProvider>
           </div>
         </ThemeProvider>
+      </AuthProviders>
       </body>
     </html>
   );

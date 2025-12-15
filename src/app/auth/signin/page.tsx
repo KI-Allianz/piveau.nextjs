@@ -1,17 +1,47 @@
 "use client";
 
-import {useEffect} from "react";
+import "@/app/globals.css";
+import { useEffect } from "react";
+import {useSearchParams} from "next/navigation";
+import {ThemeProvider} from "next-themes";
+import {Nunito_Sans} from "next/font/google";
 import {signIn} from "next-auth/react";
 
+const nunitoSans = Nunito_Sans({
+  variable: "--font-nunito-sans",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
+});
 
 export default function SignInPage() {
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    signIn("keycloak").then()
+    signIn(
+      "keycloak",
+      {
+        callbackUrl: searchParams.get("callbackUrl") || "/",
+      }
+    ).then();
   }, []);
 
   return (
-    <div>
-    </div>
+    <html style={{ minHeight: "100vh" }}>
+      <body style={{ minHeight: "100vh" }} className={`${nunitoSans.variable} antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="w-full h-svh flex flex-col items-center justify-center bg-white dark:bg-black">
+            <div className="text-2xl">
+              Redirecting to login…
+            </div>
+          </div>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }

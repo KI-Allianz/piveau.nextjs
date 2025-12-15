@@ -30,6 +30,8 @@ export type translations = {
   navigation: {
     navTitles: Record<NavItemId, string>;
     back: string;
+    signIn: string;
+    signOut: string;
   }
   dataset: {
     distribution: {

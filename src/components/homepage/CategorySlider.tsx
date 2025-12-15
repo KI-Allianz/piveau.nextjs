@@ -11,7 +11,6 @@ interface Props {
 }
 
 export async function CategorySlider({ locale }: Props) {
-
   const res = await searchResource<SearchResult<Dataset>>({
     baseUrl: process.env.SEARCH_HUB_URL!,
     params: {
