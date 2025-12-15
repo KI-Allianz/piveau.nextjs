@@ -82,7 +82,7 @@ export default function Header() {
                 <div className="flex items-center justify-center gap-2">
                   <Avatar>
                     <AvatarImage src={session.data.user?.image ?? ""} alt="@shadcn" />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarFallback>{session.data.user?.name?.split(" ").map((name) => name.at(0)).join("") ?? "?"}</AvatarFallback>
                   </Avatar>
                   <span className="font-bold text-[1.1rem] ">
                   {session.data.user?.name}
