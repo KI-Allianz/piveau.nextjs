@@ -1,13 +1,12 @@
 version: 2
 updates:
-  # Keep npm dependencies up-to-date (TypeScript, JavaScript, etc.)
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
-
-  # Ensure Docker dependencies remain updated
-  - package-ecosystem: "docker"
+      interval: "daily"
+    lockfile-only: true
+  - package-ecosystem: "pnpm"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "daily"
+    lockfile-only: true
