@@ -13,7 +13,7 @@ export default function SearchFacet({placeholder}: Props) {
   useEffect(() => {
     const timer = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
-      if (params.get("q") !== query) {
+      if ((params.get("q") || "") !== query) {
         if (query) {
           params.set("q", query);
         } else {
