@@ -33,7 +33,7 @@ This project reimagines the web UI for the [Piveau](https://www.piveau.de/) plat
 
 ```bash
 git clone https://gitlab.kit.edu/kit/ki-allianz/datenplattform-core/piveau-hub/piveau.nextjs.git
-cd piveau-web
+cd piveau.nextjs
 pnpm i
 ```
 
