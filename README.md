@@ -46,12 +46,15 @@ DOMAIN="http://localhost:3000"
 SEARCH_HUB_URL="https://DOMAIN_OF_PIVEAU_BACKEND/hub/search/"
 REPO_HUB_URL="https://DOMAIN_OF_PIVEAU_BACKEND/hub/repo/"
 
-NEXTAUTH_URL=${DOMAIN}
+# Auth configuration
 AUTH_SECRET=<your secret>  # Added by `npx auth secret`. Read more: https://cli.authjs.dev
 AUTH_KEYCLOAK_ID=<keycloak client id>
 AUTH_KEYCLOAK_SECRET=<keycloak secret>
 AUTH_KEYCLOAK_ISSUER=<keycloak issuer url>
+AUTH_DISABLED="false" # Set to true to disable authentication, AUTH_SECRET needs to still have a value.
 
+NEXTAUTH_URL=${DOMAIN}
+NEXT_PUBLIC_AUTH_DISABLED=${AUTH_DISABLED}
 NEXT_PUBLIC_AUTH_URL=${DOMAIN}
 NEXT_PUBLIC_AUTH_KEYCLOAK_ID=${AUTH_KEYCLOAK_ID}
 NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER=${AUTH_KEYCLOAK_SECRET}

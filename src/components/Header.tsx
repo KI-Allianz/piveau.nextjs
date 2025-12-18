@@ -8,6 +8,7 @@ import { useLocale } from "@/hooks/useLocale";
 import {signIn, signOut, useSession} from "next-auth/react";
 import {Avatar, AvatarFallback, AvatarImage} from "./ui/avatar";
 import {User} from "lucide-react";
+import { AUTH_DISABLED } from "@/lib/auth-config";
 
 export enum NavItemId {
   DATASETS = "datasets",
@@ -32,6 +33,8 @@ const navItems = [
     external: false,
   },
 ];
+
+
 
 export default function Header() {
   const pathname = usePathname();
@@ -69,46 +72,48 @@ export default function Header() {
               </ul>
             </div>
           </div>
-          <div className="h-[80px] bg-white dark:bg-black rounded-2xl px-4 flex">
-            {session.status === "authenticated" ? (
-              <button
-                onClick={() => {
-                  signOut({
-                    callbackUrl: `/${locale}/`
-                  }).then()
-                }}
-                className="flex items-center justify-center h-full hover:text-red-500 transition-all duration-150 cursor-pointer"
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <Avatar>
-                    <AvatarImage src={session.data.user?.image ?? ""} alt="@shadcn" />
-                    <AvatarFallback>{session.data.user?.name?.split(" ").map((name) => name.at(0)).join("") ?? "?"}</AvatarFallback>
-                  </Avatar>
-                  <span className="font-bold text-[1.1rem] ">
+          {!AUTH_DISABLED && (
+            <div className="h-[80px] bg-white dark:bg-black rounded-2xl px-4 flex">
+              {session.status === "authenticated" ? (
+                <button
+                  onClick={() => {
+                    signOut({
+                      callbackUrl: `/${locale}/`
+                    }).then()
+                  }}
+                  className="flex items-center justify-center h-full hover:text-red-500 transition-all duration-150 cursor-pointer"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Avatar>
+                      <AvatarImage src={session.data.user?.image ?? ""} alt="@shadcn" />
+                      <AvatarFallback>{session.data.user?.name?.split(" ").map((name) => name.at(0)).join("") ?? "?"}</AvatarFallback>
+                    </Avatar>
+                    <span className="font-bold text-[1.1rem] ">
                   {session.data.user?.name}
                 </span>
-                </div>
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  signIn("keycloak").then()
-                }}
-                className="flex items-center justify-center h-full hover:text-muted-foreground transition-all duration-150 cursor-pointer"
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <Avatar>
-                    <AvatarFallback>
-                      <User />
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="font-bold text-[1.1rem] ">
+                  </div>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    signIn("keycloak").then()
+                  }}
+                  className="flex items-center justify-center h-full hover:text-muted-foreground transition-all duration-150 cursor-pointer"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Avatar>
+                      <AvatarFallback>
+                        <User />
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="font-bold text-[1.1rem] ">
                     {translations.navigation.signIn}
                   </span>
-                </div>
-              </button>
-            )}
-          </div>
+                  </div>
+                </button>
+              )}
+            </div>
+          )}
         </nav>
       </div>
     </header>

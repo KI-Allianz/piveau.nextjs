@@ -1,5 +1,7 @@
 import { withAuth } from "next-auth/middleware";
 
+const AUTH_DISABLED = process.env.AUTH_DISABLED === "true";
+
 export default withAuth(
   function middleware(req) {
   },
@@ -7,6 +9,15 @@ export default withAuth(
     // Optional: custom sign-in page
     pages: {
       signIn: "/auth/signin",
+    },
+    callbacks: {
+      authorized: ({ token }) => {
+        if (AUTH_DISABLED) {
+          return true;
+        }
+
+        return !!token; // normal behavior
+      },
     },
   }
 );
