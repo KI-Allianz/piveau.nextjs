@@ -1,16 +1,17 @@
 # Piveau (Next.js)
 
 The **Next.js-based web version of Piveau**, a modern open-source data portal built for discoverability, accessibility, and performance.  
-This project reimagines the web UI for the [Piveau](https://www.piveau.de/) platform, offering the full functionality of the original site — plus enhanced user experience, favorites, example code blocks, and AI-chat.
+This project reimagines the web UI for the [Piveau](https://www.piveau.de/) platform, offering the full functionality of the original site — plus enhanced user experience, favorites, example code blocks, and AI-chat. The test instance is available under [ki-daten.hlrs.de](https://ki-daten.hlrs.de)
 
 <img width="60%" alt="KI-Allianz data plattform" src="https://github.com/user-attachments/assets/68405841-ef2e-49b2-90ae-e50aafa10edc" />
 
 
 <img width="60%" height="1104" alt="KI-Allianz data plattform-Datensatz Seite" src="https://github.com/user-attachments/assets/bc2775e5-767a-4a28-9a1c-cd29e78dabc2" />
 
-### Demos
-- [KI-Allianz Datenplattform](https://next-piveau.vercel.app/de/)
-- [Hammerhai Datenplattform](https://next-piveau-git-hammerhai-felixsmtts-projects.vercel.app/en)
+
+### Development instances
+- [KI-Allianz](https://next-piveau.vercel.app/de/)
+- [HammerHAI](https://next-piveau-git-hammerhai-felixsmtts-projects.vercel.app/en)
 
 ---
 
