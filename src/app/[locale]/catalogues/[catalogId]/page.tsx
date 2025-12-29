@@ -1,5 +1,6 @@
-import DatasetSearch from "../../../../components/dataset/DatasetSearch";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
+
+import DatasetSearch from "@/components/dataset/DatasetSearch";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getResourceById } from "@piveau/sdk-core";
@@ -14,15 +15,10 @@ interface Props {
 export default async function CatalogPage({ params }: Props) {
   const { catalogId } = await params;
 
-  const urls = {
-    SEARCH: process.env.SEARCH_HUB_URL!,
-    REPO: process.env.REPO_HUB_URL!,
-  };
-
   const response = await getResourceById<
     StandardSchemaV1.InferOutput<typeof schemaCatalog>
   >({
-    baseUrl: urls.SEARCH,
+    baseUrl: process.env.SEARCH_HUB_URL!,
     resource: "catalogues",
     id: catalogId,
   });
@@ -32,7 +28,7 @@ export default async function CatalogPage({ params }: Props) {
       <Header />
       <div className="px-10 pt-20 w-full max-w-7xl mx-auto">
         <Suspense>
-          <DatasetSearch catalog={response.result} urls={urls} />
+          <DatasetSearch catalog={response.result} />
         </Suspense>
       </div>
       <Footer />

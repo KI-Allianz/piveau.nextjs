@@ -5,11 +5,11 @@ import { defaultLocale, supportedLocales, SupportedLocales } from "@/lib/lang";
 import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
 import "../globals.css";
-import { Providers } from "@/components/Providers";
 import { ThemeProvider } from "next-themes";
 import {getLicenses} from "@/lib/license";
 import {LicenseProvider} from "@/hooks/useLicenses";
 import {AuthProviders} from "@/components/AuthProvider";
+import Provider from "../_trpc/Provider";
 
 const nunitoSans = Nunito_Sans({
   variable: "--font-nunito-sans",
@@ -55,7 +55,7 @@ export default async function RootLayout({
           <div className="w-full bg-white dark:bg-black">
               <LanguageProvider language={locale as supportedLocales}>
                 <LicenseProvider licenses={licenses} >
-                  <Providers>{children}</Providers>
+                  <Provider>{children}</Provider>
                 </LicenseProvider>
               </LanguageProvider>
           </div>

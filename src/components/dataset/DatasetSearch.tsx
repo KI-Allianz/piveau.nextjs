@@ -5,9 +5,7 @@ import { useEffect, useState } from "react";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import { schemaCatalog } from "@piveau/sdk-core/model";
 
-import { UrlCollection } from "@/lib/utils";
 import { useLocale } from "@/hooks/useLocale";
-import { useSearch } from "@/hooks/useSearch";
 
 import BaseSearch from "@/components/BaseSearch";
 import SearchTabSwitcher, { SearchTab } from "@/components/facets/SearchTabSwitcher";
@@ -16,20 +14,19 @@ import DatasetCardSkeleton from "@/components/dataset/DatasetCardSkeleton";
 import SortButton from "@/components/facets/SortButton";
 import SearchFacet from "@/components/facets/SearchFacet";
 import fixDatasetFacets from "@/lib/search";
+import { trpc } from "@/app/_trpc/client";
 
 
 interface Props {
   catalog?: StandardSchemaV1.InferOutput<typeof schemaCatalog>;
-  urls: UrlCollection;
 }
 
-export default function DatasetSearch({ catalog, urls }: Props) {
+export default function DatasetSearch({ catalog }: Props) {
   const searchParams = useSearchParams();
   const { translations } = useLocale();
   const [facets, setFacets] = useState<Record<string, string[]>>();
 
-  const { data, isPending } = useSearch({
-    url: urls.SEARCH,
+  const search = trpc.search.useQuery({
     q: searchParams.get("q") || "",
     filters: "dataset",
     limit: searchParams.get("limit")
@@ -40,7 +37,8 @@ export default function DatasetSearch({ catalog, urls }: Props) {
       : 0,
     dataServices: searchParams.get("tab") == SearchTab.DATA_SERVICES,
     sort:
-      searchParams.get("sort") || "relevance+desc, modified+desc, title.en+asc",
+      searchParams.get("sort") ||
+      "relevance+desc, modified+desc, title.en+asc",
     includes: [
       "id",
       "title",
@@ -60,11 +58,18 @@ export default function DatasetSearch({ catalog, urls }: Props) {
       "publisher",
     ],
     facets: {
-      ...fixDatasetFacets(facets, searchParams.get("tab") as SearchTab, catalog),
+      ...fixDatasetFacets(
+        facets,
+        searchParams.get("tab") as SearchTab,
+        catalog
+      ),
     },
-
-    //Debugging
-    //wait: 2000
+  },
+  {
+    // nice-to-have flags
+    // enabled: !!params.q,          // don’t fire until a term is present
+    staleTime: 1000 * 60 * 5, // 5 min fresh cache
+    retry: false, // or a number/function
   });
 
   useEffect(() => {
@@ -78,7 +83,7 @@ export default function DatasetSearch({ catalog, urls }: Props) {
       const newFacets: Record<string, string[]> = {};
 
       const nonFacetParams = ["q", "limit", "page", "sort", "tab"];
-      if (!data?.facets) {
+      if (!search.data?.facets) {
         // Force update of facets from URL if no facets are returned yet
         params.forEach((value, key) => {
           if (!nonFacetParams.includes(key)) {
@@ -89,7 +94,7 @@ export default function DatasetSearch({ catalog, urls }: Props) {
           }
         });
       } else {
-        data?.facets.map((facet) => {
+        search.data?.facets.map((facet) => {
           newFacets[facet.id] = params.getAll(facet.id);
         });
       }
@@ -102,8 +107,8 @@ export default function DatasetSearch({ catalog, urls }: Props) {
 
   return (
     <BaseSearch
-      isPending={isPending}
-      data={data}
+      isPending={search.isPending}
+      data={search.data}
       catalog={catalog}
       renderItem={(item) => (
         <DatasetCard key={"ds" + item.id} dataset={item} />
