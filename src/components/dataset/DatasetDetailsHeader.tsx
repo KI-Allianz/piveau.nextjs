@@ -15,6 +15,7 @@ import { getCategoryIcon } from "@/lib/icons";
 import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFavouriteButton";
 import PublisherPopover from "@/components/dataset/PublisherPopover";
+import { extractParserRepository } from "@/lib/code/examples";
 
 interface Props {
   dataset: Dataset;
@@ -43,7 +44,10 @@ export default function DatasetDetailsHeader({
 
         <div className="space-x-2">
           <DatasetDetailsFavouriteButton dataset={dataset} />
-          <ExampleCodePopover url={`${baseUrl}/de/dataset/${dataset.id}`} />
+          <ExampleCodePopover
+            url={`${baseUrl}/de/dataset/${dataset.id}`}
+            customParser={extractParserRepository(dataset, translateDict)}
+          />
           <DatasetDetailsExportButton id={dataset.id} urls={urls} />
         </div>
       </div>
@@ -60,7 +64,7 @@ export default function DatasetDetailsHeader({
             href={`/${locale}/catalogues/${dataset.catalog.id}`}
             className="flex items-center gap-2 group font-bold transition-all duration-200 hover:bg-secondary cursor-pointer rounded-lg p-1"
           >
-            <div className="bg-[var(--main-accent)] text-white p-1.5 rounded-xl w-fit group-hover:bg-[var(--main-accent)]/80 transition-all duration-200">
+            <div className="bg-(--main-accent) text-white p-1.5 rounded-xl w-fit group-hover:bg-(--main-accent)/80 transition-all duration-200">
               <Archive size={18} />
             </div>
             {translateDict(dataset.catalog.title)}

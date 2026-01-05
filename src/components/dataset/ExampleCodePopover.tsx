@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Code } from "lucide-react";
-import {CodeExampleType, codeExampleTypesNames, getCodeExample, installationExample} from "@/lib/code/examples";
+import {CodeExampleType, codeExampleTypesNames, getCodeExample, getInstallationExample} from "@/lib/code/examples";
 import React, {useMemo} from "react";
 import {
   Select,
@@ -21,11 +21,16 @@ import {CodeBlock} from "@/components/dataset/CodeBlock";
 
 interface Props {
   url: string;
+  customParser?: string;
 }
 
-export default function ExampleCodePopover({ url }: Props) {
+export default function ExampleCodePopover({ url, customParser }: Props) {
   const [exampleType, setExampleType] = React.useState<CodeExampleType>(CodeExampleType.CUSTOM_PARSING);
-  const exampleCode = useMemo(() => getCodeExample(exampleType, url), [url, exampleType])
+  const exampleCode = useMemo(() => getCodeExample(exampleType, url), [url, exampleType]);
+  const installationCode = useMemo(
+    () => getInstallationExample(customParser, exampleType),
+    [customParser, exampleType]
+  );
 
   return (
     <Popover>
@@ -36,13 +41,12 @@ export default function ExampleCodePopover({ url }: Props) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[450px] rounded-2xl flex flex-col gap-4">
-        <CodeBlock code={installationExample} title={"Installation"} />
-
         <div>
-          <Label className="text-muted-foreground mb-1 ml-1">
-            Parsers
-          </Label>
-          <Select defaultValue={exampleType} onValueChange={(value) => setExampleType(value as CodeExampleType)}>
+          <Label className="text-muted-foreground mb-1 ml-1">Parsers</Label>
+          <Select
+            defaultValue={exampleType}
+            onValueChange={(value) => setExampleType(value as CodeExampleType)}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select a parser" />
             </SelectTrigger>
@@ -59,8 +63,13 @@ export default function ExampleCodePopover({ url }: Props) {
           </Select>
         </div>
 
+        <CodeBlock code={installationCode} title={"Installation"} />
 
-        <CodeBlock code={exampleCode} docUrl={"https://github.com/maxbrzr/dcat-ap-hub"} />
+        <CodeBlock
+          code={exampleCode}
+          docUrl={"https://github.com/maxbrzr/dcat-ap-hub"}
+          title={"Example"}
+        />
       </PopoverContent>
     </Popover>
   );
