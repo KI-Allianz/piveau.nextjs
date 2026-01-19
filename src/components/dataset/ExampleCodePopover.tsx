@@ -5,8 +5,14 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Code } from "lucide-react";
-import {CodeExampleType, codeExampleTypesNames, getCodeExample, getInstallationExample} from "@/lib/code/examples";
-import React, {useMemo} from "react";
+import {
+  CodeExampleType,
+  codeExampleTypesNames,
+  getCodeExample,
+  getInstallationExample,
+  ModelExampleType,
+} from "@/lib/code/examples";
+import React, { useMemo } from "react";
 import {
   Select,
   SelectContent,
@@ -15,21 +21,31 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import {Label} from "@/components/ui/label";
-import {CodeBlock} from "@/components/dataset/CodeBlock";
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { CodeBlock } from "@/components/dataset/CodeBlock";
 
 interface Props {
   url: string;
+  isAIModel: boolean;
   customParser?: string;
 }
 
-export default function ExampleCodePopover({ url, customParser }: Props) {
-  const [exampleType, setExampleType] = React.useState<CodeExampleType>(CodeExampleType.CUSTOM_PARSING);
-  const exampleCode = useMemo(() => getCodeExample(exampleType, url), [url, exampleType]);
+export default function ExampleCodePopover({
+  url,
+  isAIModel,
+  customParser,
+}: Props) {
+  const [exampleType, setExampleType] = React.useState<
+    CodeExampleType | ModelExampleType
+  >(isAIModel ? ModelExampleType.LOAD_HF_MODEL : CodeExampleType.LOAD_DATASET);
+  const exampleCode = useMemo(
+    () => getCodeExample(exampleType, url),
+    [url, exampleType],
+  );
   const installationCode = useMemo(
     () => getInstallationExample(customParser, exampleType),
-    [customParser, exampleType]
+    [customParser, exampleType],
   );
 
   return (
@@ -45,16 +61,20 @@ export default function ExampleCodePopover({ url, customParser }: Props) {
           <Label className="text-muted-foreground mb-1 ml-1">Parsers</Label>
           <Select
             defaultValue={exampleType}
-            onValueChange={(value) => setExampleType(value as CodeExampleType)}
+            onValueChange={(value) =>
+              setExampleType(value as CodeExampleType | ModelExampleType)
+            }
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[220px]">
               <SelectValue placeholder="Select a parser" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Parsers</SelectLabel>
-                {Object.values(CodeExampleType).map((type) => (
-                  <SelectItem value={type}>
+                {Object.values(
+                  isAIModel ? ModelExampleType : CodeExampleType,
+                ).map((type: CodeExampleType | ModelExampleType) => (
+                  <SelectItem key={type} value={type}>
                     {codeExampleTypesNames[type]}
                   </SelectItem>
                 ))}
@@ -67,8 +87,8 @@ export default function ExampleCodePopover({ url, customParser }: Props) {
 
         <CodeBlock
           code={exampleCode}
-          docUrl={"https://github.com/maxbrzr/dcat-ap-hub"}
-          title={"Example"}
+          title={"Code Snippet"}
+          docUrl={"https://pypi.org/project/dcat-ap-hub/"}
         />
       </PopoverContent>
     </Popover>

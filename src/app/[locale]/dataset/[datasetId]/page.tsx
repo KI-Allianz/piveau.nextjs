@@ -15,7 +15,7 @@ import DatasetDetailsChatbot from "@/components/dataset/DatasetDetailsChatbot";
 import { redirect } from "next/navigation";
 import { headers as getHeaders } from "next/headers";
 import { dataTypes, pickBestDataType } from "@/lib/content";
-import {getDataset} from "@/lib/dataset/api";
+import { getDataset } from "@/lib/dataset/api";
 
 interface Props {
   params: Promise<{ datasetId: string; locale: supportedLocales }>;
@@ -49,7 +49,7 @@ export default async function DatasetPage({ params }: Props) {
       <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
         <DatasetDetailsHeader
           dataset={response}
-          baseUrl={process.env.DOMAIN || ""}
+          baseUrl={`${process.env.DOMAIN || "http://localhost:3000"}`}
           urls={urls}
         />
 
@@ -63,10 +63,7 @@ export default async function DatasetPage({ params }: Props) {
               {translations.dataset.distribution.title}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsDistributions
-                dataset={response}
-                urls={urls}
-              />
+              <DatasetDetailsDistributions dataset={response} urls={urls} />
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value={"assistant"} className="py-2">

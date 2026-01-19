@@ -1,51 +1,75 @@
 import { Dataset } from "../utils";
 
 export enum CodeExampleType {
-  CUSTOM_PARSING = "CUSTOM_PARSING",
-  PANDAS_PARSING = "PANDAS_PARSING",
+  LOAD_DATASET = "LOAD_DATASET",
+  PARSE_DATASET = "PARSE_DATASET",
 }
 
-export const codeExampleTypesNames: Record<CodeExampleType, string> = {
-  [CodeExampleType.CUSTOM_PARSING]: "Custom parsing",
-  [CodeExampleType.PANDAS_PARSING]: "Pandas parsing",
+export enum ModelExampleType {
+  LOAD_HF_MODEL = "LOAD_HF_MODEL",
 }
 
-export const customParsingExample = `from dcat_ap_hub import download_data, apply_parsing
+export const codeExampleTypesNames: Record<
+  CodeExampleType | ModelExampleType,
+  string
+> = {
+  [CodeExampleType.LOAD_DATASET]: "Load dataset",
+  [CodeExampleType.PARSE_DATASET]: "Process dataset",
+  [ModelExampleType.LOAD_HF_MODEL]: "Load Hugging Face model",
+};
 
-json_ld_metadata = "{url}"
-metadata = download_data(json_ld_metadata)
-df = apply_parsing(metadata)`
+export const loadDatasetExample = `from dcat_ap_hub import Dataset
 
-export const pandasParsingExample = `from dcat_ap_hub import download_data, parse_with_pandas
+url = "{url}"
 
-json_ld_metadata = "{url}"
-metadata = download_data(json_ld_metadata)
-df = parse_with_pandas(metadata)`
+ds = Dataset.from_url(url)
+files = ds.download(data_dir="./data")`;
 
-export const installationExample = `pip install dcat-ap-hub`
+export const processDatasetExample = `from dcat_ap_hub import Dataset
 
-export function getRawCodeExample(type: CodeExampleType) {
+url = "{url}"
+
+ds = Dataset.from_url(url)
+ds.download(data_dir="./data")
+files = ds.process(processed_dir="./processed")`;
+
+export const loadHfModelExample = `from dcat_ap_hub import Dataset
+
+url = "{url}"
+
+ds = Dataset.from_url(url)
+ds.download(data_dir="./data")
+model, processor, metadata = ds.load_model(model_dir="./models")`;
+
+export const installationExample = `pip install dcat-ap-hub`;
+
+export function getRawCodeExample(type: CodeExampleType | ModelExampleType) {
   switch (type) {
-    case CodeExampleType.CUSTOM_PARSING:
-      return customParsingExample;
-    case CodeExampleType.PANDAS_PARSING:
-      return pandasParsingExample;
+    case CodeExampleType.LOAD_DATASET:
+      return loadDatasetExample;
+    case CodeExampleType.PARSE_DATASET:
+      return processDatasetExample;
+    case ModelExampleType.LOAD_HF_MODEL:
+      return loadHfModelExample;
     default:
-      return customParsingExample;
+      return loadDatasetExample;
   }
 }
 
 export function extractParserRepository(
   dataset: Dataset,
-  translateDict: (item?: string | Record<string, string> | null) => string
+  translateDict: (item?: string | Record<string, string> | null) => string,
 ): string | undefined {
   return dataset.distributions
     ?.find((d) => translateDict(d.title).toLowerCase() === "parser repository")
     ?.access_url?.at(0);
 }
 
-export function getInstallationExample(customParser: string | undefined, exampleType: CodeExampleType) {
-  if (customParser && exampleType === CodeExampleType.CUSTOM_PARSING) {
+export function getInstallationExample(
+  customParser: string | undefined,
+  exampleType: CodeExampleType | ModelExampleType,
+) {
+  if (customParser && exampleType === CodeExampleType.PARSE_DATASET) {
     var example = installationExample;
 
     if (customParser.startsWith("https://")) {
@@ -62,7 +86,10 @@ export function getInstallationExample(customParser: string | undefined, example
   return installationExample;
 }
 
-export function getCodeExample(type: CodeExampleType, url: string) {
+export function getCodeExample(
+  type: CodeExampleType | ModelExampleType,
+  url: string,
+) {
   const rawExample = getRawCodeExample(type);
   return formatExample(rawExample, url);
 }
