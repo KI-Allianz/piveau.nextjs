@@ -1,8 +1,5 @@
-import {Skeleton} from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function FacetSkeleton() {
-
-  return (
-    <Skeleton className="h-[110px] w-full rounded-lg flex" />
-  )
+  return <Skeleton className="h-[110px] w-60 rounded-lg flex" />;
 }

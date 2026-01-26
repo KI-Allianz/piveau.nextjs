@@ -1,22 +1,22 @@
-import {useLocale} from "@/hooks/useLocale";
+import { useLocale } from "@/hooks/useLocale";
 import { Facet } from "./Facets";
-import {Label} from "@/components/ui/label";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {useSearchParams} from "next/navigation";
-import {Badge} from "@/components/ui/badge";
-import {facetIds} from "@/lib/lang/facets";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSearchParams } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { facetIds } from "@/lib/lang/facets";
 
 function facetContains(facet: Facet, key: string): boolean {
   if (!facet || !facet.items || facet.items.length === 0) {
     return false;
   }
 
-  const items = facet.items.map((item) => item.title)
+  const items = facet.items.map((item) => item.title);
   return items.includes(key);
 }
 
 interface Props {
-  facet: Facet
+  facet: Facet;
 }
 
 export default function BoolFacet({ facet }: Props) {
@@ -25,10 +25,18 @@ export default function BoolFacet({ facet }: Props) {
 
   return (
     <div className=" p-4 rounded-lg shadow">
-      <div className="bg-card flex flex-col gap-4 justify-between">
-        <Label htmlFor="airplane-mode">{translateFacet(facet.id as facetIds) || translateDict(facet.title)}</Label>
+      <div className="bg-card flex flex-col gap-4 justify-between w-60">
+        <Label htmlFor="airplane-mode">
+          {translateFacet(facet.id as facetIds) || translateDict(facet.title)}
+        </Label>
         <Tabs
-          defaultValue={searchParams.get(facet.id) == "true" ? "show" : searchParams.get(facet.id) == "false" ? "hide" : "ignore"}
+          defaultValue={
+            searchParams.get(facet.id) == "true"
+              ? "show"
+              : searchParams.get(facet.id) == "false"
+                ? "hide"
+                : "ignore"
+          }
           className=""
           onValueChange={(value) => {
             const params = new URLSearchParams(window.location.search);
@@ -49,8 +57,17 @@ export default function BoolFacet({ facet }: Props) {
           }}
         >
           <TabsList>
-            <TabsTrigger value="ignore">{translations.search.facets.ignore}</TabsTrigger>
-            <TabsTrigger disabled={(!searchParams.get(facet.id) || searchParams.get(facet.id) == "ignore") && !facetContains(facet, "false")} value="hide">
+            <TabsTrigger value="ignore">
+              {translations.search.facets.ignore}
+            </TabsTrigger>
+            <TabsTrigger
+              disabled={
+                (!searchParams.get(facet.id) ||
+                  searchParams.get(facet.id) == "ignore") &&
+                !facetContains(facet, "false")
+              }
+              value="hide"
+            >
               {facet.items.filter((item) => item.id === "false").length > 0 ? (
                 <Badge>
                   {facet.items.find((item) => item.id === "false")?.count}
@@ -58,7 +75,14 @@ export default function BoolFacet({ facet }: Props) {
               ) : null}
               {translations.search.facets.hide}
             </TabsTrigger>
-            <TabsTrigger disabled={(!searchParams.get(facet.id) || searchParams.get(facet.id) == "ignore") && !facetContains(facet, "true")} value="show">
+            <TabsTrigger
+              disabled={
+                (!searchParams.get(facet.id) ||
+                  searchParams.get(facet.id) == "ignore") &&
+                !facetContains(facet, "true")
+              }
+              value="show"
+            >
               {facet.items.filter((item) => item.id === "true").length > 0 ? (
                 <Badge>
                   {facet.items.find((item) => item.id === "true")?.count}
@@ -70,5 +94,5 @@ export default function BoolFacet({ facet }: Props) {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }

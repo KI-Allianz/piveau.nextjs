@@ -1,25 +1,34 @@
 import { useSearchParams } from "next/navigation";
 import { ReactNode } from "react";
-import {BadgeQuestionMark} from "lucide-react";
-import {Catalog} from "@piveau/sdk-core/model";
+import { BadgeQuestionMark } from "lucide-react";
+import { Catalog } from "@piveau/sdk-core/model";
 import { SearchResult } from "@piveau/sdk-core";
 
-import Facets from "@/components/facets/Facets";
+import Facets, { Facet } from "@/components/facets/Facets";
 import SearchPagination from "@/components/SearchPagination";
 import CatalogInfo from "@/components/dataset/CatalogInfo";
-import {Card, CardContent} from "@/components/ui/card";
-
+import { Card, CardContent } from "@/components/ui/card";
 
 interface BaseSearchProps<T> {
   isPending: boolean;
   data?: SearchResult<T>["result"];
-  catalog?: Catalog
+  facets: Facet[];
+
+  catalog?: Catalog;
   renderItem: (item: T) => ReactNode;
   placeholder: ReactNode;
   searchBar: ReactNode;
 }
 
-export default function BaseSearch<T>({ isPending, data, catalog, renderItem, placeholder, searchBar }: BaseSearchProps<T>) {
+export default function BaseSearch<T>({
+  isPending,
+  data,
+  facets,
+  catalog,
+  renderItem,
+  placeholder,
+  searchBar,
+}: BaseSearchProps<T>) {
   const searchParams = useSearchParams();
 
   return (
@@ -27,29 +36,29 @@ export default function BaseSearch<T>({ isPending, data, catalog, renderItem, pl
       <div className="flex flex-col gap-6">
         {catalog && <CatalogInfo catalog={catalog} />}
 
-        <Facets facets={data?.facets} />
+        <Facets facets={facets} isPending={isPending} />
       </div>
       <main className="flex flex-col gap-6 row-start-2 items-center sm:items-start w-full">
         {searchBar}
 
-        {isPending
-          ? placeholder
-          : (
-            <div className="w-full">
-              {data && data.results.length > 0 ? (
-                <div className="flex flex-col gap-4">
-                  {data?.results.map((result) => renderItem(result))}
-                </div>
-              ) : (
-                <Card className="grow">
-                  <CardContent className="w-full flex gap-3 justify-center text-muted-foreground">
-                    <BadgeQuestionMark />
-                    No results found.
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          )}
+        {isPending ? (
+          placeholder
+        ) : (
+          <div className="w-full">
+            {data && data.results.length > 0 ? (
+              <div className="flex flex-col gap-4">
+                {data?.results.map((result) => renderItem(result))}
+              </div>
+            ) : (
+              <Card className="grow">
+                <CardContent className="w-full flex gap-3 justify-center text-muted-foreground">
+                  <BadgeQuestionMark />
+                  No results found.
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
 
         {data && data.results.length > 0 && (
           <SearchPagination
@@ -60,9 +69,9 @@ export default function BaseSearch<T>({ isPending, data, catalog, renderItem, pl
             }
             totalPages={Math.ceil(
               ((data?.count as number | undefined) ?? 10) /
-              (searchParams.get("limit")
-                ? parseInt(searchParams.get("limit") as string)
-                : 10),
+                (searchParams.get("limit")
+                  ? parseInt(searchParams.get("limit") as string)
+                  : 10),
             )}
             itemsPerPage={
               searchParams.get("limit")

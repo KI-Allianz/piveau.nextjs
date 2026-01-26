@@ -112,6 +112,7 @@ export default function DatasetSearch({ catalog }: Props) {
     <BaseSearch
       isPending={search.isPending}
       data={search.data}
+      facets={search.data?.facets || []}
       catalog={catalog}
       renderItem={(item) => <DatasetCard key={"ds" + item.id} dataset={item} />}
       placeholder={[...Array(10).keys()].map((index) => (
