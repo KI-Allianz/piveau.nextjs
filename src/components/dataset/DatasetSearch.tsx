@@ -1,13 +1,11 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import { schemaCatalog } from "@piveau/sdk-core/model";
 
 import { useLocale } from "@/hooks/useLocale";
 import { trpc } from "@/app/_trpc/client";
-import fixDatasetFacets from "@/lib/search";
 
 import BaseSearch from "@/components/BaseSearch";
 import SearchTabSwitcher, {
@@ -17,6 +15,7 @@ import SortButton from "@/components/facets/SortButton";
 import SearchFacet from "@/components/facets/SearchFacet";
 import DatasetCard from "@/components/dataset/DatasetCard";
 import DatasetCardSkeleton from "@/components/dataset/DatasetCardSkeleton";
+import { buildDatasetFacets, extendReturnedFacets } from "@/lib/search";
 
 interface Props {
   catalog?: StandardSchemaV1.InferOutput<typeof schemaCatalog>;
@@ -25,7 +24,6 @@ interface Props {
 export default function DatasetSearch({ catalog }: Props) {
   const searchParams = useSearchParams();
   const { translations } = useLocale();
-  const [facets, setFacets] = useState<Record<string, string[]>>();
 
   const search = trpc.search.useQuery(
     {
@@ -60,11 +58,7 @@ export default function DatasetSearch({ catalog }: Props) {
         "publisher",
       ],
       facets: {
-        ...fixDatasetFacets(
-          facets,
-          searchParams.get("tab") as SearchTab,
-          catalog,
-        ),
+        ...buildDatasetFacets(searchParams, catalog),
       },
     },
     {
@@ -75,44 +69,15 @@ export default function DatasetSearch({ catalog }: Props) {
     },
   );
 
-  useEffect(() => {
-    const updateFacets = () => {
-      console.log(
-        "Updating facets with search params:",
-        searchParams.toString(),
-      );
-
-      const params = new URLSearchParams(searchParams.toString());
-      const newFacets: Record<string, string[]> = {};
-
-      const nonFacetParams = ["q", "limit", "page", "sort", "tab"];
-      if (!search.data?.facets) {
-        // Force update of facets from URL if no facets are returned yet
-        params.forEach((value, key) => {
-          if (!nonFacetParams.includes(key)) {
-            if (!newFacets[key]) {
-              newFacets[key] = [];
-            }
-            newFacets[key].push(value);
-          }
-        });
-      } else {
-        search.data?.facets.map((facet) => {
-          newFacets[facet.id] = params.getAll(facet.id);
-        });
-      }
-
-      setFacets(newFacets);
-    };
-
-    updateFacets();
-  }, [searchParams]);
-
   return (
     <BaseSearch
       isPending={search.isPending}
       data={search.data}
-      facets={search.data?.facets || []}
+      facets={extendReturnedFacets(
+        search.data?.facets || [],
+        searchParams,
+        catalog,
+      )}
       catalog={catalog}
       renderItem={(item) => <DatasetCard key={"ds" + item.id} dataset={item} />}
       placeholder={[...Array(10).keys()].map((index) => (

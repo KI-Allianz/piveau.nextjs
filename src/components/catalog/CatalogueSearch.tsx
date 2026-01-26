@@ -11,20 +11,11 @@ import CatalogCard from "@/components/catalog/CatalogCard";
 import CatalogCardSkeleton from "@/components/catalog/CatalogCardSkeleton";
 import { SearchTab } from "@/components/facets/SearchTabSwitcher";
 import SearchFacet from "@/components/facets/SearchFacet";
+import { rebuildFromSearchParams } from "@/lib/search";
 
 export default function CatalogueSearch() {
   const searchParams = useSearchParams();
   const { translations } = useLocale();
-  const [facets, setFacets] = useState<Record<string, string[]>>();
-
-  const fixFacets = (facets: Record<string, string[]> | undefined) => {
-    const fixedFacets: Record<string, string[]> = {};
-    if (!facets || Object.keys(facets).length === 0) {
-      return fixedFacets;
-    }
-
-    return facets;
-  };
 
   const search = trpc.search.useQuery(
     {
@@ -48,7 +39,7 @@ export default function CatalogueSearch() {
         "count",
       ],
       facets: {
-        ...fixFacets(facets),
+        ...rebuildFromSearchParams(searchParams),
       },
     },
     {
@@ -59,29 +50,11 @@ export default function CatalogueSearch() {
     },
   );
 
-  useEffect(() => {
-    const updateFacets = () => {
-      console.log(
-        "Updating facets with search params:",
-        searchParams.toString(),
-      );
-
-      const params = new URLSearchParams(searchParams.toString());
-      const newFacets: Record<string, string[]> = {};
-      search.data?.facets.map((facet) => {
-        newFacets[facet.id] = params.getAll(facet.id);
-      });
-
-      setFacets(newFacets);
-    };
-
-    updateFacets();
-  }, [searchParams]);
-
   return (
     <BaseSearch
       isPending={search.isPending}
       data={search.data}
+      facets={search.data?.facets || []}
       renderItem={(item) => <CatalogCard key={"ct" + item.id} catalog={item} />}
       placeholder={[...Array(10).keys()].map((index) => (
         <CatalogCardSkeleton key={"dss" + index} />
