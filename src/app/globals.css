@@ -208,6 +208,6 @@
   @apply mb-2;
 }
 
-.snippet li>p>strong {
+.snippet li > p > strong {
   @apply hidden;
 }

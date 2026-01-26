@@ -5,9 +5,9 @@ import Logo from "@/components/Logo";
 import { usePathname } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import { useLocale } from "@/hooks/useLocale";
-import {signIn, signOut, useSession} from "next-auth/react";
-import {Avatar, AvatarFallback, AvatarImage} from "./ui/avatar";
-import {User} from "lucide-react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { User } from "lucide-react";
 import { AUTH_DISABLED } from "@/lib/auth-config";
 
 export enum NavItemId {
@@ -34,12 +34,10 @@ const navItems = [
   },
 ];
 
-
-
 export default function Header() {
   const pathname = usePathname();
   const { locale, translations } = useLocale();
-  const session = useSession()
+  const session = useSession();
 
   return (
     <header className="">
@@ -61,7 +59,7 @@ export default function Header() {
                         href={(item.external ? "" : "/" + locale) + item.href}
                         data-active={item.href === pathname}
                         className={
-                          "pt-[4px] block mx-6 font-bold text-[1.1rem] transition-[padding-bottom] duration-300 pb-[3px] border-b-2 border-b-black dark:border-b-white hover:text-[#000AFA] hover:border-b-[#000AFA] dark:hover:text-[#7777FF] dark:hover:border-b-[#7777FF] hover:cursor-pointer hover:border-b-[3px] hover:pb-[5px] data-[active=true]:text-[#000AFA] data-[active=true]:border-b-[#000AFA] data-[active=true]:cursor-pointer data-[active=true]:border-b-[3px] "
+                          "pt-1 block mx-6 font-bold text-[1.1rem] transition-[padding-bottom] duration-300 pb-[3px] border-b-2 border-b-black dark:border-b-white hover:text-[#000AFA] hover:border-b-[#000AFA] dark:hover:text-[#7777FF] dark:hover:border-b-[#7777FF] hover:cursor-pointer hover:border-b-[3px] hover:pb-[5px] data-[active=true]:text-[#000AFA] data-[active=true]:border-b-[#000AFA] data-[active=true]:cursor-pointer data-[active=true]:border-b-[3px] "
                         }
                       >
                         {translations.navigation.navTitles[item.id]}
@@ -78,25 +76,33 @@ export default function Header() {
                 <button
                   onClick={() => {
                     signOut({
-                      callbackUrl: `/${locale}/`
-                    }).then()
+                      callbackUrl: `/${locale}/`,
+                    }).then();
                   }}
                   className="flex items-center justify-center h-full hover:text-red-500 transition-all duration-150 cursor-pointer"
                 >
                   <div className="flex items-center justify-center gap-2">
                     <Avatar>
-                      <AvatarImage src={session.data.user?.image ?? ""} alt="@shadcn" />
-                      <AvatarFallback>{session.data.user?.name?.split(" ").map((name) => name.at(0)).join("") ?? "?"}</AvatarFallback>
+                      <AvatarImage
+                        src={session.data.user?.image ?? ""}
+                        alt="@shadcn"
+                      />
+                      <AvatarFallback>
+                        {session.data.user?.name
+                          ?.split(" ")
+                          .map((name) => name.at(0))
+                          .join("") ?? "?"}
+                      </AvatarFallback>
                     </Avatar>
                     <span className="font-bold text-[1.1rem] ">
-                  {session.data.user?.name}
-                </span>
+                      {session.data.user?.name}
+                    </span>
                   </div>
                 </button>
               ) : (
                 <button
                   onClick={() => {
-                    signIn("keycloak").then()
+                    signIn("keycloak").then();
                   }}
                   className="flex items-center justify-center h-full hover:text-muted-foreground transition-all duration-150 cursor-pointer"
                 >
@@ -107,8 +113,8 @@ export default function Header() {
                       </AvatarFallback>
                     </Avatar>
                     <span className="font-bold text-[1.1rem] ">
-                    {translations.navigation.signIn}
-                  </span>
+                      {translations.navigation.signIn}
+                    </span>
                   </div>
                 </button>
               )}

@@ -1,6 +1,5 @@
 import DatasetDetailsDistributions from "../../../../components/dataset/DatasetDetailsDistributions";
 import Header from "@/components/Header";
-import React from "react";
 import Footer from "@/components/Footer";
 import {
   Accordion,
@@ -12,7 +11,7 @@ import { getTranslations, supportedLocales } from "@/lib/lang";
 import { redirect } from "next/navigation";
 import { headers as getHeaders } from "next/headers";
 import { dataTypes, pickBestDataType } from "@/lib/content";
-import {getDataset, getDatasetDirect} from "@/lib/dataset/api";
+import { getDataset } from "@/lib/dataset/api";
 import ModelDetailsHeader from "@/components/dataset/ModelDetailsHeader";
 
 interface Props {
@@ -61,10 +60,7 @@ export default async function ModelPage({ params }: Props) {
               {translations.dataset.distribution.titleWeights}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsDistributions
-                dataset={response}
-                urls={urls}
-              />
+              <DatasetDetailsDistributions dataset={response} urls={urls} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

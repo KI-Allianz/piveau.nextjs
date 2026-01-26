@@ -1,21 +1,22 @@
 "use client";
 
-import { useLocale } from "@/hooks/useLocale";
-import DatasetDetailsExportButton from "@/components/dataset/DatasetDetailsExportButton";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Archive, ChevronLeft, Tag } from "lucide-react";
-import DatasetDetailsDescription from "@/components/dataset/DatasetDetailsDescription";
-import React from "react";
-import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+
+import { useLocale } from "@/hooks/useLocale";
 import { Dataset, isAIModel, parseDate, UrlCollection } from "@/lib/utils";
+import { extractParserRepository } from "@/lib/code/examples";
 import { getCategoryIcon } from "@/lib/icons";
+
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import DatasetDetailsExportButton from "@/components/dataset/DatasetDetailsExportButton";
+import DatasetDetailsDescription from "@/components/dataset/DatasetDetailsDescription";
+import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFavouriteButton";
 import PublisherPopover from "@/components/dataset/PublisherPopover";
-import { extractParserRepository } from "@/lib/code/examples";
 
 interface Props {
   dataset: Dataset;

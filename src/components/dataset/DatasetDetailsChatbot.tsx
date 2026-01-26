@@ -1,16 +1,15 @@
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import {useLocale} from "@/hooks/useLocale";
-import {Card, CardContent, CardDescription} from "@/components/ui/card";
-import {Dataset} from "@/lib/utils";
+import { useCallback, useMemo, useState } from "react";
 
-type ApiResponse =
-  | { response?: string; [k: string]: any }
-  | string
-  | null;
+import { useLocale } from "@/hooks/useLocale";
+import { Dataset } from "@/lib/utils";
+
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+type ApiResponse = { response?: string; [k: string]: any } | string | null;
 
 type Props = {
   dataset: Dataset;
@@ -19,7 +18,7 @@ type Props = {
 
 export default function DatasetDetailsChatbot({ dataset, className }: Props) {
   const [userInput, setUserInput] = useState("");
-  const {translations} = useLocale()
+  const { translations } = useLocale();
   const [response, setResponse] = useState<ApiResponse>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,18 +42,24 @@ export default function DatasetDetailsChatbot({ dataset, className }: Props) {
       setError(null);
 
       try {
-        const res = await fetch("https://ask.ki-allianz.de/metadataassistant/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_input: userInput,
-            json_data: JSON.stringify(ds),
-          }),
-        });
+        const res = await fetch(
+          "https://ask.ki-allianz.de/metadataassistant/",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user_input: userInput,
+              json_data: JSON.stringify(ds),
+            }),
+          },
+        );
 
         if (!res.ok) {
           const maybeJson = await res.json().catch(() => null);
-          const detail = (maybeJson as any)?.detail || res.statusText || `HTTP ${res.status}`;
+          const detail =
+            (maybeJson as any)?.detail ||
+            res.statusText ||
+            `HTTP ${res.status}`;
           throw new Error(detail);
         }
 
@@ -68,7 +73,7 @@ export default function DatasetDetailsChatbot({ dataset, className }: Props) {
         setIsLoading(false);
       }
     },
-    [isLoading, userInput]
+    [isLoading, userInput],
   );
 
   return (
@@ -91,7 +96,7 @@ export default function DatasetDetailsChatbot({ dataset, className }: Props) {
         <Button
           onClick={() => submitQuestion(dataset)}
           disabled={isLoading || !userInput.trim()}
-          className="inline-flex items-center justify-center h-10 whitespace-nowrap rounded-md bg-[var(--main-accent)] text-sm font-medium text-white shadow-sm transition-colors hover:bg-[var(--main-accent)]/90 disabled:cursor-not-allowed disabled:opacity-60 rounded-l-none px-6"
+          className="inline-flex items-center justify-center h-10 whitespace-nowrap rounded-md bg-(--main-accent) text-sm font-medium text-white shadow-sm transition-colors hover:bg-(--main-accent)/90 disabled:cursor-not-allowed disabled:opacity-60 rounded-l-none px-6"
         >
           {isLoading && (
             <svg
@@ -116,7 +121,9 @@ export default function DatasetDetailsChatbot({ dataset, className }: Props) {
               />
             </svg>
           )}
-          {isLoading ? translations.dataset.assistant.processing : translations.dataset.assistant.ask}
+          {isLoading
+            ? translations.dataset.assistant.processing
+            : translations.dataset.assistant.ask}
         </Button>
       </div>
 

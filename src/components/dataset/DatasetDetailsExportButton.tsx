@@ -1,3 +1,10 @@
+import { Menu } from "lucide-react";
+import Link from "next/link";
+
+import { useLocale } from "@/hooks/useLocale";
+import { dataTypes } from "@/lib/content";
+import { Dataset, UrlCollection } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,12 +18,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu } from "lucide-react";
-import Link from "next/link";
-import * as React from "react";
-import { useLocale } from "@/hooks/useLocale";
-import { dataTypes } from "@/lib/content";
-import {Dataset, UrlCollection} from "@/lib/utils";
 
 interface Props {
   id: NonNullable<Dataset["distributions"]>[number]["id"];

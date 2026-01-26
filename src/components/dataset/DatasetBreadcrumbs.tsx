@@ -1,7 +1,9 @@
 "use client";
 
+import { Archive, SearchIcon } from "lucide-react";
+
 import { useLocale } from "@/hooks/useLocale";
-import React from "react";
+import { Dataset } from "@/lib/utils";
 
 import {
   Breadcrumb,
@@ -10,17 +12,14 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import {Archive, SearchIcon} from "lucide-react";
-import { Dataset } from "@/lib/utils";
-
+} from "@/components/ui/breadcrumb";
 
 interface Props {
   dataset: Dataset;
 }
 
 export default function DatasetBreadcrumbs({ dataset }: Props) {
-  const { locale, translateDict, translations } = useLocale()
+  const { locale, translateDict, translations } = useLocale();
 
   return (
     <div className="w-fit space-y-3">
@@ -34,7 +33,10 @@ export default function DatasetBreadcrumbs({ dataset }: Props) {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href={`/${locale}/catalogues/${dataset.catalog.id}`} className="flex gap-2 items-center">
+            <BreadcrumbLink
+              href={`/${locale}/catalogues/${dataset.catalog.id}`}
+              className="flex gap-2 items-center"
+            >
               <Archive size={16} />
               {translateDict(dataset.catalog.title)}
             </BreadcrumbLink>
@@ -46,5 +48,5 @@ export default function DatasetBreadcrumbs({ dataset }: Props) {
         </BreadcrumbList>
       </Breadcrumb>
     </div>
-  )
+  );
 }

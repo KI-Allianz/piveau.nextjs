@@ -1,10 +1,14 @@
+import { BookOpenText, Copy } from "lucide-react";
+import { useTheme } from "next-themes";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import {docco, dracula} from "react-syntax-highlighter/dist/esm/styles/hljs";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
-import {Button} from "@/components/ui/button";
-import {BookOpenText, Copy} from "lucide-react";
-import React from "react";
-import {useTheme} from "next-themes";
+import { docco, dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   code: string;
@@ -39,7 +43,7 @@ export function CodeBlock({ code, title, docUrl }: Props) {
           borderRadius: "0.5rem",
           background: theme == "dark" ? "#111111" : "#EEE",
           padding: "1rem",
-          paddingTop: title ? "3rem" : "1rem"
+          paddingTop: title ? "3rem" : "1rem",
         }}
       >
         {code}
@@ -81,5 +85,5 @@ export function CodeBlock({ code, title, docUrl }: Props) {
         </Tooltip>
       </div>
     </div>
-  )
+  );
 }

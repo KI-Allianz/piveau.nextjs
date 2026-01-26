@@ -1,7 +1,6 @@
 import DatasetDetailsHeader from "../../../../components/dataset/DatasetDetailsHeader";
 import DatasetDetailsDistributions from "../../../../components/dataset/DatasetDetailsDistributions";
 import Header from "@/components/Header";
-import React from "react";
 import Footer from "@/components/Footer";
 import MapComponent from "@/components/MapComponent";
 import {

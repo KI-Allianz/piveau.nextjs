@@ -1,10 +1,6 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 import { Code } from "lucide-react";
+import React, { useMemo } from "react";
+
 import {
   CodeExampleType,
   codeExampleTypesNames,
@@ -12,7 +8,13 @@ import {
   getInstallationExample,
   ModelExampleType,
 } from "@/lib/code/examples";
-import React, { useMemo } from "react";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,

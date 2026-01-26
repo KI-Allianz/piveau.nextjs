@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Scale, SquareArrowOutUpRight } from "lucide-react";
 import {
   MorphingDialog,
   MorphingDialogTrigger,
@@ -7,12 +9,12 @@ import {
   MorphingDialogClose,
   MorphingDialogContainer,
 } from "@/components/motion-primitives/morphing-dialog";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Scale, SquareArrowOutUpRight } from "lucide-react";
-import { useLocale } from "@/hooks/useLocale";
-import {useLicenses} from "@/hooks/useLicenses";
+
 import { Dataset } from "@/lib/utils";
+import { useLocale } from "@/hooks/useLocale";
+import { useLicenses } from "@/hooks/useLicenses";
+
+import { Button } from "@/components/ui/button";
 
 interface Props {
   license: NonNullable<Dataset["distributions"]>[number]["license"];
@@ -22,7 +24,7 @@ export function DistributionLicense({ license }: Props) {
   const { translations } = useLocale();
   const { getLicense } = useLicenses();
 
-  console.log(license, getLicense(license))
+  console.log(license, getLicense(license));
 
   return (
     <MorphingDialog
@@ -70,18 +72,14 @@ export function DistributionLicense({ license }: Props) {
                 {getLicense(license).usageType}
               </MorphingDialogSubtitle>
               <div className="mt-4 flex gap-2">
-                <Link
-                  href={license?.resource ?? "#"}
-                >
+                <Link href={license?.resource ?? "#"}>
                   <Button variant={"outline"}>
                     <SquareArrowOutUpRight />
                     {translations.open}
                   </Button>
                 </Link>
                 {(license as { la_url?: string }).la_url && (
-                  <Link
-                    href={(license as { la_url: string })?.la_url ?? "#"}
-                  >
+                  <Link href={(license as { la_url: string })?.la_url ?? "#"}>
                     <Button variant={"outline"}>
                       <SquareArrowOutUpRight />
                       {translations.dataset.distribution.licensingAssistant}

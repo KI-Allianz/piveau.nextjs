@@ -6,9 +6,9 @@ import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "next-themes";
-import {getLicenses} from "@/lib/license";
-import {LicenseProvider} from "@/hooks/useLicenses";
-import {AuthProviders} from "@/components/AuthProvider";
+import { getLicenses } from "@/lib/license";
+import { LicenseProvider } from "@/hooks/useLicenses";
+import { AuthProviders } from "@/components/AuthProvider";
 import Provider from "../_trpc/Provider";
 
 const nunitoSans = Nunito_Sans({
@@ -41,26 +41,36 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <head>
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
       </head>
       <body className={`${nunitoSans.variable} antialiased`}>
-      <AuthProviders>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="w-full bg-white dark:bg-black">
+        <AuthProviders>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="w-full bg-white dark:bg-black">
               <LanguageProvider language={locale as supportedLocales}>
-                <LicenseProvider licenses={licenses} >
+                <LicenseProvider licenses={licenses}>
                   <Provider>{children}</Provider>
                 </LicenseProvider>
               </LanguageProvider>
-          </div>
-        </ThemeProvider>
-      </AuthProviders>
+            </div>
+          </ThemeProvider>
+        </AuthProviders>
       </body>
     </html>
   );

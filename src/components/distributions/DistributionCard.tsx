@@ -1,5 +1,10 @@
 "use client";
 
+import { format } from "date-fns";
+
+import { Dataset, UrlCollection } from "@/lib/utils";
+import { useLocale } from "@/hooks/useLocale";
+
 import {
   Card,
   CardContent,
@@ -7,14 +12,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { DistributionDownloadButton } from "@/components/distributions/DistributionDownloadButton";
-import { DistributionLinkedDataButton } from "@/components/distributions/DistributionLinkedDataButton";
-import { useLocale } from "@/hooks/useLocale";
-import { DistributionLicense } from "@/components/distributions/DistributionLicense";
-import { format } from "date-fns";
 import HtmlSnippet from "@/components/HTMLSnippet";
 import { ExpandableClamp } from "@/components/ExpandableClamp";
-import {Dataset, UrlCollection} from "@/lib/utils";
+import { DistributionDownloadButton } from "@/components/distributions/DistributionDownloadButton";
+import { DistributionLinkedDataButton } from "@/components/distributions/DistributionLinkedDataButton";
+import { DistributionLicense } from "@/components/distributions/DistributionLicense";
 
 interface Props {
   distribution: NonNullable<Dataset["distributions"]>[number];

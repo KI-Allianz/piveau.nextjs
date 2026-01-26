@@ -1,5 +1,6 @@
+import { Dataset, UrlCollection } from "@/lib/utils";
+
 import DistributionCard from "@/components/distributions/DistributionCard";
-import {Dataset, UrlCollection } from "@/lib/utils";
 
 interface Props {
   dataset: Dataset;

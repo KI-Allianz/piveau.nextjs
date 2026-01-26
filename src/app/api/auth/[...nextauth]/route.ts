@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth from "next-auth";
 import Keycloak from "next-auth/providers/keycloak";
 
 export const authOptions = {
@@ -8,10 +8,10 @@ export const authOptions = {
       clientId: process.env.AUTH_KEYCLOAK_ID || "",
       clientSecret: process.env.AUTH_KEYCLOAK_SECRET || "",
       issuer: process.env.AUTH_KEYCLOAK_ISSUER || "",
-    })
-  ]
-}
+    }),
+  ],
+};
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };

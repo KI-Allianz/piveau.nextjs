@@ -1,6 +1,11 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
+
+import { useLocale } from "@/hooks/useLocale";
+import { dataTypes } from "@/lib/content";
+import { Dataset, UrlCollection } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,10 +21,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import Link from "next/link";
-import { useLocale } from "@/hooks/useLocale";
-import { dataTypes } from "@/lib/content";
-import {Dataset, UrlCollection} from "@/lib/utils";
 
 interface Props {
   id: NonNullable<Dataset["distributions"]>[number]["id"];

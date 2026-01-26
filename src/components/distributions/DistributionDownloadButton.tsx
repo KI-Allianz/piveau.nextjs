@@ -1,6 +1,11 @@
 "use client";
 
 import * as React from "react";
+import { SquareArrowOutUpRight } from "lucide-react";
+import Link from "next/link";
+
+import { useLocale } from "@/hooks/useLocale";
+import { Dataset } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,10 +21,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import Link from "next/link";
-import { SquareArrowOutUpRight } from "lucide-react";
-import { useLocale } from "@/hooks/useLocale";
-import {Dataset} from "@/lib/utils";
 
 interface Props {
   access_urls: NonNullable<Dataset["distributions"]>[number]["access_url"];

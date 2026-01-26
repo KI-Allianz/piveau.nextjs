@@ -1,20 +1,21 @@
 "use client";
 
-import { useLocale } from "@/hooks/useLocale";
-import DatasetDetailsExportButton from "@/components/dataset/DatasetDetailsExportButton";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Archive, ChevronLeft, Tag } from "lucide-react";
-import DatasetDetailsDescription from "@/components/dataset/DatasetDetailsDescription";
-import React from "react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import {Dataset, isAIModel, parseDate, UrlCollection } from "@/lib/utils";
+
+import { Dataset, isAIModel, parseDate, UrlCollection } from "@/lib/utils";
 import { getCategoryIcon } from "@/lib/icons";
+import { useLocale } from "@/hooks/useLocale";
+
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFavouriteButton";
 import PublisherPopover from "@/components/dataset/PublisherPopover";
-import ExampleCodePopover from "./ExampleCodePopover";
+import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
+import DatasetDetailsExportButton from "@/components/dataset/DatasetDetailsExportButton";
+import DatasetDetailsDescription from "@/components/dataset/DatasetDetailsDescription";
 
 interface Props {
   dataset: Dataset;
@@ -22,14 +23,11 @@ interface Props {
   urls: UrlCollection;
 }
 
-export default function ModelDetailsHeader({
-  dataset,
-  urls,
-}: Props) {
+export default function ModelDetailsHeader({ dataset, urls }: Props) {
   const { locale, translateDict, translations } = useLocale();
   const router = useRouter();
 
-  const jsonldurl = urls.REPO + `datasets/${dataset.id}.jsonld`
+  const jsonldurl = urls.REPO + `datasets/${dataset.id}.jsonld`;
 
   return (
     <div className="w-full space-y-3">

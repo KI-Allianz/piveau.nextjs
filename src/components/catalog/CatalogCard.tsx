@@ -1,22 +1,28 @@
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import HtmlSnippet from "@/components/HTMLSnippet";
-import {Badge} from "@/components/ui/badge";
-import {useLocale} from "@/hooks/useLocale";
 import Link from "next/link";
-import {Dataset, parseDate} from "@/lib/utils";
+
+import { useLocale } from "@/hooks/useLocale";
+import { Dataset, parseDate } from "@/lib/utils";
+
+import HtmlSnippet from "@/components/HTMLSnippet";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
   catalog: Dataset;
 }
 
-export default function CatalogCard({catalog}: Props) {
+export default function CatalogCard({ catalog }: Props) {
   const { translateDict, locale } = useLocale();
 
   return (
-    <Link href={`/${locale}/catalogues/${catalog.id}`} className="w-full" >
-      <Card
-        className="w-full hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer"
-      >
+    <Link href={`/${locale}/catalogues/${catalog.id}`} className="w-full">
+      <Card className="w-full hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer">
         <CardHeader>
           <CardTitle>
             <h2 className="text-2xl text-wrap">
@@ -36,18 +42,23 @@ export default function CatalogCard({catalog}: Props) {
             </CardDescription>
             <div className="flex flex-wrap gap-2 flex-1/3">
               <Badge variant={"outline"}>
-                {catalog.modified ? parseDate(catalog.modified)?.toLocaleDateString() : parseDate(catalog.issued)?.toLocaleDateString()}
+                {catalog.modified
+                  ? parseDate(catalog.modified)?.toLocaleDateString()
+                  : parseDate(catalog.issued)?.toLocaleDateString()}
               </Badge>
-              {[... new Set(catalog.distributions
-                ?.map((keyword) => keyword.format?.label)
-                .filter((format) => format))]
-                .map((format) => (
-                  <Badge variant={"outline"}>{format}</Badge>
-                ))}
+              {[
+                ...new Set(
+                  catalog.distributions
+                    ?.map((keyword) => keyword.format?.label)
+                    .filter((format) => format),
+                ),
+              ].map((format) => (
+                <Badge variant={"outline"}>{format}</Badge>
+              ))}
             </div>
           </div>
         </CardContent>
       </Card>
     </Link>
-  )
+  );
 }

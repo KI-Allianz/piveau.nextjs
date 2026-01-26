@@ -4,13 +4,13 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useLocale } from "@/hooks/useLocale";
+import { trpc } from "@/app/_trpc/client";
 
+import BaseSearch from "@/components/BaseSearch";
 import CatalogCard from "@/components/catalog/CatalogCard";
 import CatalogCardSkeleton from "@/components/catalog/CatalogCardSkeleton";
-import BaseSearch from "@/components/BaseSearch";
 import { SearchTab } from "@/components/facets/SearchTabSwitcher";
 import SearchFacet from "@/components/facets/SearchFacet";
-import { trpc } from "@/app/_trpc/client";
 
 export default function CatalogueSearch() {
   const searchParams = useSearchParams();
@@ -56,7 +56,7 @@ export default function CatalogueSearch() {
       // enabled: !!params.q,          // don’t fire until a term is present
       staleTime: 1000 * 60 * 5, // 5 min fresh cache
       retry: false, // or a number/function
-    }
+    },
   );
 
   useEffect(() => {
