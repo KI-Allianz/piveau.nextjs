@@ -16,6 +16,7 @@ import PublisherPopover from "@/components/dataset/PublisherPopover";
 import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 import DatasetDetailsExportButton from "@/components/dataset/DatasetDetailsExportButton";
 import DatasetDetailsDescription from "@/components/dataset/DatasetDetailsDescription";
+import CatalogBadge from "./CatalogBadge";
 
 interface Props {
   dataset: Dataset;
@@ -55,15 +56,7 @@ export default function ModelDetailsHeader({ dataset, urls }: Props) {
 
       <div className="flex justify-center py-5">
         <div className="flex flex-row justify-between items-center gap-20 bg-card py-5 px-6 rounded-2xl w-fit">
-          <Link
-            href={`/${locale}/catalogues/${dataset.catalog.id}`}
-            className="flex items-center gap-2 group font-bold transition-all duration-200 hover:bg-accent/30 cursor-pointer rounded-lg p-1"
-          >
-            <div className="bg-[#080efa] text-white p-1.5 rounded-xl w-fit group-hover:bg-blue-800 transition-all duration-200">
-              <Archive size={18} />
-            </div>
-            {translateDict(dataset.catalog.title)}
-          </Link>
+          <CatalogBadge catalog={dataset.catalog} />
           <div className="flex flex-col items-center">
             <span>
               {dataset.modified
@@ -76,7 +69,10 @@ export default function ModelDetailsHeader({ dataset, urls }: Props) {
                 : parseDate(dataset.issued)?.toLocaleDateString()}
             </span>
           </div>
-          <PublisherPopover dataset={dataset} />
+          <PublisherPopover
+            publisher={dataset.publisher}
+            contact_point={dataset.contact_point}
+          />
         </div>
       </div>
 
