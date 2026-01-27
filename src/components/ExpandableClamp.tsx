@@ -30,7 +30,7 @@ export function ExpandableClamp({
   collapsedHeight = 320,
   defaultExpanded = false,
   onToggle,
-  gradientName = "from-neutral-50 dark:from-neutral-950",
+  gradientName = "from-background",
 }: ExpandableClampProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [canExpand, setCanExpand] = useState(false);
