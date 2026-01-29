@@ -24,6 +24,13 @@ export default function DatasetCard({ dataset }: Props) {
   const { translateDict, translations, locale } = useLocale();
 
   const isModel = isAIModel(dataset);
+  const formatTags = [
+    ...new Set(
+      dataset.distributions
+        ?.map((keyword) => keyword.format?.label)
+        .filter((format) => format),
+    ),
+  ];
 
   return (
     <Link
@@ -51,7 +58,7 @@ export default function DatasetCard({ dataset }: Props) {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4 justify-between">
+          <div className="flex flex-col gap-4">
             <CardDescription className="flex-2/3 snippet">
               <HtmlSnippet
                 html={
@@ -60,25 +67,21 @@ export default function DatasetCard({ dataset }: Props) {
                 }
               />
             </CardDescription>
-            <div className="flex flex-wrap gap-2 flex-1/3">
-              {isAIModel(dataset) && (
-                <Badge
-                  variant={"outline"}
-                  className="bg-amber-100 dark:bg-amber-500 text-amber-800 dark:text-black border-amber-300"
-                >
-                  {translations.dataset.aiModel}
-                </Badge>
-              )}
-              {[
-                ...new Set(
-                  dataset.distributions
-                    ?.map((keyword) => keyword.format?.label)
-                    .filter((format) => format),
-                ),
-              ].map((format) => (
-                <Badge variant={"secondary"}>{format}</Badge>
-              ))}
-            </div>
+            {(formatTags.length > 0 || isModel) && (
+              <div className="flex flex-wrap gap-2 flex-1/3">
+                {isModel && (
+                  <Badge
+                    variant={"outline"}
+                    className="bg-amber-100 dark:bg-amber-500 text-amber-800 dark:text-black border-amber-300"
+                  >
+                    {translations.dataset.aiModel}
+                  </Badge>
+                )}
+                {formatTags.map((format) => (
+                  <Badge variant={"secondary"}>{format}</Badge>
+                ))}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

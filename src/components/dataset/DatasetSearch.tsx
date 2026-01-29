@@ -25,7 +25,7 @@ export default function DatasetSearch({ catalog }: Props) {
   const searchParams = useSearchParams();
   const { translations } = useLocale();
 
-  const search = trpc.search.useQuery(
+  const search = trpc.search.datasets.useQuery(
     {
       q: searchParams.get("q") || "",
       filters: "dataset",
