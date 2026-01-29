@@ -12,6 +12,7 @@ import CatalogCardSkeleton from "@/components/catalog/CatalogCardSkeleton";
 import { SearchTab } from "@/components/facets/SearchTabSwitcher";
 import SearchFacet from "@/components/facets/SearchFacet";
 import { rebuildFromSearchParams } from "@/lib/search";
+import SortButton from "../facets/SortButton";
 
 export default function CatalogueSearch() {
   const searchParams = useSearchParams();
@@ -28,7 +29,9 @@ export default function CatalogueSearch() {
         ? parseInt(searchParams.get("page") as string)
         : 0,
       dataServices: searchParams.get("tab") == SearchTab.DATA_SERVICES,
-      sort: "relevance+desc, modified+desc, title.en+asc",
+      sort:
+        searchParams.get("sort") ||
+        "relevance+desc, modified+desc, title.en+asc",
       includes: [
         "id",
         "title",
@@ -60,10 +63,11 @@ export default function CatalogueSearch() {
         <CatalogCardSkeleton key={"dss" + index} />
       ))}
       searchBar={
-        <div className="flex flex-col w-full gap-2">
+        <div className="flex items-center w-full gap-2">
           <SearchFacet
             placeholder={translations.search.placeholder.catalogues}
           />
+          <SortButton className="h-9 p-5" />
         </div>
       }
     />

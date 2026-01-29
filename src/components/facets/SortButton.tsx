@@ -1,18 +1,24 @@
-"use client"
+"use client";
 
-import {useSearchParams} from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
-  Menubar, MenubarCheckboxItem,
+  Menubar,
+  MenubarCheckboxItem,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
   MenubarTrigger,
-} from "@/components/ui/menubar"
-import {ArrowDownWideNarrow, ArrowUpNarrowWide} from "lucide-react";
-import {useLocale} from "@/hooks/useLocale";
-import {SortMode, sortModeTypes} from "@/lib/utils";
+} from "@/components/ui/menubar";
+import { ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
+import { useLocale } from "@/hooks/useLocale";
+import { SortMode, sortModeTypes } from "@/lib/utils";
+import { twMerge } from "tailwind-merge";
 
-export default function SortButton() {
+interface SortButtonProps {
+  className?: string;
+}
+
+export default function SortButton({ className }: SortButtonProps) {
   const searchParams = useSearchParams();
   const { translations } = useLocale();
 
@@ -30,7 +36,7 @@ export default function SortButton() {
     }
 
     return SortMode.RELEVANCE;
-  }
+  };
 
   const onChange = (value: SortMode) => {
     const params = new URLSearchParams(window.location.search);
@@ -45,36 +51,32 @@ export default function SortButton() {
 
       window.history.replaceState({}, "", `?${params.toString()}`);
     }
-  }
+  };
 
   const buildSortButtonTrigger = (mode: SortMode) => {
     const sortModeType = sortModeTypes[mode];
     return (
-      <span className="flex items-center gap-2">
-        {translations.search.sort[mode] }
+      <span className={twMerge("flex items-center gap-2")}>
+        {translations.search.sort[mode]}
         {sortModeType === "asc" ? (
           <ArrowUpNarrowWide className="h-4 w-4 text-muted-foreground" />
-          ) : (
+        ) : (
           <ArrowDownWideNarrow className="h-4 w-4 text-muted-foreground" />
         )}
       </span>
-    )
-  }
+    );
+  };
 
   return (
-    <Menubar>
+    <Menubar className="h-fit">
       <MenubarMenu>
-        <MenubarTrigger>
+        <MenubarTrigger className={className}>
           {buildSortButtonTrigger(currentMode(searchParams))}
         </MenubarTrigger>
         <MenubarContent>
           {Object.values(SortMode).map((mode) => (
-            <MenubarCheckboxItem
-              checked={currentMode(searchParams) === mode}
-            >
-              <MenubarItem
-                onClick={() => onChange(mode)}
-              >
+            <MenubarCheckboxItem checked={currentMode(searchParams) === mode}>
+              <MenubarItem onClick={() => onChange(mode)}>
                 {translations.search.sort[mode]}
               </MenubarItem>
             </MenubarCheckboxItem>
@@ -82,5 +84,5 @@ export default function SortButton() {
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
-  )
+  );
 }
