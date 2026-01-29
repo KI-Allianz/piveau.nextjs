@@ -18,6 +18,7 @@ import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFavouriteButton";
 import PublisherPopover from "@/components/dataset/PublisherPopover";
 import CatalogBadge from "./CatalogBadge";
+import DateBadge from "./DateBadge";
 
 interface Props {
   dataset: Dataset;
@@ -64,18 +65,7 @@ export default function DatasetDetailsHeader({
       <div className="flex justify-center py-5">
         <div className="flex flex-row justify-between items-center gap-20 bg-card py-5 px-6 rounded-2xl w-fit">
           <CatalogBadge catalog={dataset.catalog} />
-          <div className="flex flex-col items-center">
-            <span>
-              {dataset.modified
-                ? translations.dataset.lastModified
-                : translations.dataset.issuedOn}
-            </span>
-            <span className="font-semibold">
-              {dataset.modified
-                ? parseDate(dataset.modified)?.toLocaleDateString()
-                : parseDate(dataset.issued)?.toLocaleDateString()}
-            </span>
-          </div>
+          <DateBadge modified={dataset.modified} issued={dataset.issued} />
           <PublisherPopover
             publisher={dataset.publisher}
             contact_point={dataset.contact_point}

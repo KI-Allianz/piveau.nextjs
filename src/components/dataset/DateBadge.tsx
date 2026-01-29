@@ -56,7 +56,7 @@ export default function DateBadge({ modified, issued }: Props) {
 
   return (
     <div
-      className="flex items-center gap-2 font-semibold group transition-all duration-200 hover:bg-secondary cursor-pointer rounded-lg p-1"
+      className="w-fit flex items-center gap-2 font-semibold group transition-all duration-200 hover:bg-secondary cursor-pointer rounded-lg p-1"
       onClick={(e) => toggle(e)}
     >
       <div className="bg-black text-white p-1.5 rounded-xl w-fit group-hover:bg-black/80 transition-all duration-200">

@@ -16,9 +16,13 @@ import {
 
 interface Props {
   dataset: Dataset;
+  isAiModel?: boolean;
 }
 
-export default function DatasetBreadcrumbs({ dataset }: Props) {
+export default function DatasetBreadcrumbs({
+  dataset,
+  isAiModel = false,
+}: Props) {
   const { locale, translateDict, translations } = useLocale();
 
   return (
@@ -43,7 +47,11 @@ export default function DatasetBreadcrumbs({ dataset }: Props) {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>{translations.search.tabs.datasets}</BreadcrumbPage>
+            <BreadcrumbPage>
+              {isAiModel
+                ? translations.search.tabs.aiModels
+                : translations.search.tabs.datasets}
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>

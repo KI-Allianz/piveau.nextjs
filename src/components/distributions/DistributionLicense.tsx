@@ -36,9 +36,9 @@ export function DistributionLicense({ license }: Props) {
     >
       <MorphingDialogTrigger
         style={{
-          borderRadius: "4px",
+          borderRadius: "10px",
         }}
-        className="border border-gray-200/60 bg-card"
+        className="border bg-secondary/60 hover:bg-secondary-hover/60 transition-all duration-200 cursor-pointer w-fit"
       >
         <div className="flex items-center space-x-3 p-3">
           <div className="flex flex-col items-start justify-center space-y-0">
@@ -55,9 +55,9 @@ export function DistributionLicense({ license }: Props) {
       <MorphingDialogContainer>
         <MorphingDialogContent
           style={{
-            borderRadius: "12px",
+            borderRadius: "10px",
           }}
-          className="relative h-auto w-[500px] border border-gray-100 bg-card"
+          className="relative h-auto w-[500px] border bg-card"
         >
           <div className="relative p-6">
             <div className="flex flex-col gap-1">
