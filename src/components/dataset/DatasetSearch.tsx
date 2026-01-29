@@ -28,7 +28,6 @@ export default function DatasetSearch({ catalog }: Props) {
   const search = trpc.search.datasets.useQuery(
     {
       q: searchParams.get("q") || "",
-      filters: "dataset",
       limit: searchParams.get("limit")
         ? parseInt(searchParams.get("limit") as string)
         : 10,
@@ -39,33 +38,11 @@ export default function DatasetSearch({ catalog }: Props) {
       sort:
         searchParams.get("sort") ||
         "relevance+desc, modified+desc, title.en+asc",
-      includes: [
-        "id",
-        "title",
-        "description",
-        "languages",
-        "modified",
-        "issued",
-        "catalog.id",
-        "catalog.title",
-        "catalog.country.id",
-        "distributions.id",
-        "distributions.format.label",
-        "distributions.format.id",
-        "distributions.license",
-        "categories.label",
-        "keywords.label",
-        "publisher",
-      ],
-      facets: {
-        ...buildDatasetFacets(searchParams, catalog),
-      },
+      facets: buildDatasetFacets(searchParams, catalog),
     },
     {
-      // nice-to-have flags
-      // enabled: !!params.q,          // don’t fire until a term is present
       staleTime: 1000 * 60 * 5, // 5 min fresh cache
-      retry: false, // or a number/function
+      retry: false,
     },
   );
 

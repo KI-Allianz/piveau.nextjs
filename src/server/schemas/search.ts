@@ -28,7 +28,7 @@ export const SearchParamsBaseSchema = z.object({
   sort: z.string().nullable().optional(),
   filterDistributions: z.boolean().nullable().optional(),
   aggregation: z.boolean().nullable().optional(),
-  includes: z.array(z.string()).nullable().optional(),
+  // includes: z.array(z.string()).nullable().optional(), // handled on server side
   scroll: z.boolean().nullable().optional(),
   minScoring: z.number().nullable().optional(),
   maxScoring: z.number().nullable().optional(),
@@ -43,17 +43,15 @@ export const SearchParamsBaseSchema = z.object({
 });
 
 export const SearchParamsWithFacetsSchema = SearchParamsBaseSchema.extend({
-  facets: z.record(z.string(), z.union([z.string(), z.array(z.string())])).optional(),
+  facets: z
+    .record(z.string(), z.union([z.string(), z.array(z.string())]))
+    .optional(),
 });
 
 export const SearchParamsSchema = SearchParamsWithFacetsSchema.extend({
   /**
-   * Deprecated: must not be provided
-   */
-  filter: z.never().optional(),
-
-  /**
    * Single or multiple document types
+   * @deprecated Handled on server side
    */
-  filters: z.union([z.string(), z.array(z.string())]).optional(),
+  // filters: z.union([z.string(), z.array(z.string())]).optional(),
 });

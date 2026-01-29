@@ -17,7 +17,28 @@ export const appRouter = router({
 
         const res = await searchResource<SearchResult<Dataset>>({
           baseUrl: process.env.SEARCH_HUB_URL || "",
-          params: input,
+          params: {
+            ...input,
+            filters: "dataset",
+            includes: [
+              "id",
+              "title",
+              "description",
+              "languages",
+              "modified",
+              "issued",
+              "catalog.id",
+              "catalog.title",
+              "catalog.country.id",
+              "distributions.id",
+              "distributions.format.label",
+              "distributions.format.id",
+              "distributions.license",
+              "categories.label",
+              "keywords.label",
+              "publisher",
+            ],
+          },
         });
 
         return res.data.result;
@@ -29,7 +50,19 @@ export const appRouter = router({
 
         const res = await searchResource<SearchResult<Catalog>>({
           baseUrl: process.env.SEARCH_HUB_URL || "",
-          params: input,
+          params: {
+            ...input,
+            filters: "catalogue",
+            includes: [
+              "id",
+              "title",
+              "description",
+              "modified",
+              "issued",
+              "country",
+              "count",
+            ],
+          },
         });
 
         return res.data.result;

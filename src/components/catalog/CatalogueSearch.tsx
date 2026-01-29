@@ -1,7 +1,6 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 import { useLocale } from "@/hooks/useLocale";
 import { trpc } from "@/app/_trpc/client";
@@ -21,7 +20,6 @@ export default function CatalogueSearch() {
   const search = trpc.search.catalogs.useQuery(
     {
       q: searchParams.get("q") || "",
-      filters: "catalogue",
       limit: searchParams.get("limit")
         ? parseInt(searchParams.get("limit") as string)
         : 10,
@@ -32,24 +30,11 @@ export default function CatalogueSearch() {
       sort:
         searchParams.get("sort") ||
         "relevance+desc, modified+desc, title.en+asc",
-      includes: [
-        "id",
-        "title",
-        "description",
-        "modified",
-        "issued",
-        "country",
-        "count",
-      ],
-      facets: {
-        ...rebuildFromSearchParams(searchParams),
-      },
+      facets: rebuildFromSearchParams(searchParams),
     },
     {
-      // nice-to-have flags
-      // enabled: !!params.q,          // don’t fire until a term is present
       staleTime: 1000 * 60 * 5, // 5 min fresh cache
-      retry: false, // or a number/function
+      retry: false,
     },
   );
 
