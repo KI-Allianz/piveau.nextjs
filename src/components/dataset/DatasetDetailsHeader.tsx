@@ -75,7 +75,10 @@ export default function DatasetDetailsHeader({
 
       <div className="pt-3 flex flex-wrap gap-2">
         {dataset.keywords?.map((keyword) => (
-          <Link key={keyword.id} href={`/${locale}?keywords=${keyword.id}`}>
+          <Link
+            key={keyword.id}
+            href={`/${locale}/dataset?keywords=${keyword.id}`}
+          >
             <Badge
               variant={"secondaryHover"}
               className="flex items-center gap-2"
@@ -86,7 +89,10 @@ export default function DatasetDetailsHeader({
           </Link>
         ))}
         {dataset.categories?.map((category) => (
-          <Link key={category.id} href={`/${locale}?categories=${category.id}`}>
+          <Link
+            key={category.id}
+            href={`/${locale}/dataset?categories=${category.id}`}
+          >
             <Badge
               variant={"secondaryHover"}
               className="flex items-center gap-2"
