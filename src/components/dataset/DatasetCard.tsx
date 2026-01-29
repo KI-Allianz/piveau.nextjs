@@ -76,7 +76,7 @@ export default function DatasetCard({ dataset }: Props) {
                     .filter((format) => format),
                 ),
               ].map((format) => (
-                <Badge variant={"outline"}>{format}</Badge>
+                <Badge variant={"secondary"}>{format}</Badge>
               ))}
             </div>
           </div>

@@ -79,7 +79,10 @@ export default function ModelDetailsHeader({ dataset, urls }: Props) {
       <div className="pt-3 flex flex-wrap gap-2">
         {dataset.keywords?.map((keyword) => (
           <Link key={keyword.id} href={`/${locale}?keywords=${keyword.id}`}>
-            <Badge variant={"outlineHover"} className="flex items-center gap-2">
+            <Badge
+              variant={"secondaryHover"}
+              className="flex items-center gap-2"
+            >
               <Tag />
               <span className="">{keyword.label}</span>
             </Badge>
@@ -87,7 +90,10 @@ export default function ModelDetailsHeader({ dataset, urls }: Props) {
         ))}
         {dataset.categories?.map((category) => (
           <Link key={category.id} href={`/${locale}?categories=${category.id}`}>
-            <Badge variant={"outlineHover"} className="flex items-center gap-2">
+            <Badge
+              variant={"secondaryHover"}
+              className="flex items-center gap-2"
+            >
               {getCategoryIcon(category.id)}
               <span className="">{translateDict(category.label)}</span>
             </Badge>
