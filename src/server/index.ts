@@ -6,10 +6,10 @@ import {
 } from "@piveau/sdk-core";
 import { router } from "./trpc";
 import { SearchParamsSchema } from "./schemas/search";
-import { protectedProcedure } from "./auth/procedures";
+import { protectedProcedure, publicProcedure } from "./auth/procedures";
 
 export const appRouter = router({
-  categories: protectedProcedure.query(async () => {
+  categories: publicProcedure.query(async () => {
     const res = await searchResource<SearchResult<Dataset>>({
       baseUrl: process.env.SEARCH_HUB_URL!,
       params: {
