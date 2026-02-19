@@ -1,28 +1,27 @@
-import {translations} from "@/lib/lang/base";
-import {NavItemId} from "@/components/Header";
-import {SortMode} from "@/lib/utils";
-
+import { NavItemId, translations } from "@/lib/lang/base";
+import { SortMode } from "@/lib/utils";
 
 export const en: translations = {
   search: {
     facets: {
-      title: 'Facets',
-      description: 'Filter results by facets such as category, catalogue, and more.',
+      title: "Facets",
+      description:
+        "Filter results by facets such as category, catalogue, and more.",
       select: "Select {0}...",
       search: "Select {0}...",
       hide: "Hide",
       show: "Show",
       ignore: "Ignore",
-      notFound: "No {0} found."
+      notFound: "No {0} found.",
     },
     placeholder: {
-      datasets: 'Search datasets, data services, and AI models...',
-      catalogues: 'Search catalogues...'
+      datasets: "Search datasets, data services, and AI models...",
+      catalogues: "Search catalogues...",
     },
     tabs: {
-      datasets: 'Datasets',
-      dataServices: 'Data Services',
-      aiModels: 'AI Models'
+      datasets: "Datasets",
+      dataServices: "Data Services",
+      aiModels: "AI Models",
     },
     page: "Page",
     sort: {
@@ -49,10 +48,10 @@ export const en: translations = {
       titleWeights: "Available Weights",
       license: "License",
       licensingAssistant: "Licensing Assistant",
-      placeholder: "Search urls..."
+      placeholder: "Search urls...",
     },
     map: {
-      title: 'Map'
+      title: "Map",
     },
     assistant: {
       title: "AI Data Assistant",
@@ -60,11 +59,11 @@ export const en: translations = {
       placeholder: "E.g., What is the main topic of this dataset?",
       ask: "Ask",
       processing: "Processing...",
-      answer: "Answer"
+      answer: "Answer",
     },
     favourite: {
       add: "Add to Favourites",
-      remove: "Remove from Favourites"
+      remove: "Remove from Favourites",
     },
     keywords: "Keywords",
     categories: "Categories",
@@ -84,12 +83,12 @@ export const en: translations = {
     metadata: "Catalogue Metadata as linked data",
   },
   download: {
-    download: 'Download',
-    noDownloads: 'No downloads found.'
+    download: "Download",
+    noDownloads: "No downloads found.",
   },
   expand: {
     more: "Show more",
-    less: "Show less"
+    less: "Show less",
   },
   footer: {
     imprint: "Imprint",
@@ -108,8 +107,8 @@ export const en: translations = {
     scoring: "Scoring",
     format: "Format",
     license: "License",
-    subject: "Subject"
+    subject: "Subject",
   },
-  open: 'Open',
+  open: "Open",
   languages: "Languages",
-}
+};

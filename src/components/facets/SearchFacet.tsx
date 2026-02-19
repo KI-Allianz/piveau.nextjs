@@ -1,12 +1,12 @@
-import {Input} from "@/components/ui/input";
-import {useSearchParams} from "next/navigation";
-import {useEffect, useState} from "react";
+import { Input } from "@/components/ui/input";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface Props {
-  placeholder: string
+  placeholder: string;
 }
 
-export default function SearchFacet({placeholder}: Props) {
+export default function SearchFacet({ placeholder }: Props) {
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
 
@@ -30,8 +30,9 @@ export default function SearchFacet({placeholder}: Props) {
     <Input
       placeholder={placeholder}
       className="w-full bg-card p-6 rounded-lg shadow"
+      role={"search"}
       value={query}
       onChange={(e) => setQuery(e.target.value)}
     />
-  )
+  );
 }

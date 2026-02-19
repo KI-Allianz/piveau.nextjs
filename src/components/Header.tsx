@@ -9,12 +9,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { User } from "lucide-react";
 import { AUTH_DISABLED } from "@/lib/auth-config";
-
-export enum NavItemId {
-  DATASETS = "datasets",
-  CATALOGUES = "catalogues",
-  FAVOURITES = "favourites",
-}
+import { NavItemId } from "@/lib/lang/base";
 
 const navItems = [
   {
