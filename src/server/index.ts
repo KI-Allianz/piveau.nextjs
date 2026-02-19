@@ -9,6 +9,21 @@ import { SearchParamsSchema } from "./schemas/search";
 import { protectedProcedure } from "./auth/procedures";
 
 export const appRouter = router({
+  categories: protectedProcedure.query(async () => {
+    const res = await searchResource<SearchResult<Dataset>>({
+      baseUrl: process.env.SEARCH_HUB_URL!,
+      params: {
+        q: "",
+        filters: "dataset",
+        limit: 1,
+        page: 0,
+        includes: ["categories.label"],
+      },
+    });
+
+    return res.data.result.facets.find((facet) => facet.id === "categories")
+      ?.items;
+  }),
   search: {
     datasets: protectedProcedure
       .input(SearchParamsSchema)
