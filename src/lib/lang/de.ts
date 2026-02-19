@@ -1,6 +1,5 @@
-import { translations } from "@/lib/lang/base";
-import {NavItemId} from "@/components/Header";
-import {SortMode} from "@/lib/utils";
+import { NavItemId, translations } from "@/lib/lang/base";
+import { SortMode } from "@/lib/utils";
 
 export const de: translations = {
   search: {
@@ -16,7 +15,8 @@ export const de: translations = {
       notFound: "Keine {0} gefunden.",
     },
     placeholder: {
-      datasets: "Suche nach Datensätzen, Datenschnittstellen und KI-Modellen...",
+      datasets:
+        "Suche nach Datensätzen, Datenschnittstellen und KI-Modellen...",
       catalogues: "Suche nach Kataloge...",
     },
     tabs: {

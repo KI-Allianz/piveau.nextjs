@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {usePathname} from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -10,12 +10,12 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import {languageNames, SupportedLocales} from "@/lib/lang";
-import {useLocale} from "@/hooks/useLocale";
+} from "@/components/ui/select";
+import { languageNames, SupportedLocales } from "@/lib/lang";
+import { useLocale } from "@/hooks/useLocale";
 
 export default function LanguageSelector() {
-  const pathname = usePathname()
+  const pathname = usePathname();
   const { locale, setLocale, translations } = useLocale();
 
   return (
@@ -27,7 +27,11 @@ export default function LanguageSelector() {
         <SelectGroup>
           <SelectLabel>{translations.languages}</SelectLabel>
           {SupportedLocales.map((locale) => (
-            <Link key={locale} href={`/${locale}/${pathname.split("/").slice(2).join("/")}`} className="flex items-center">
+            <Link
+              key={locale}
+              href={`/${locale}/${pathname.split("/").slice(2).join("/")}`}
+              className="flex items-center"
+            >
               <SelectItem key={locale} value={locale}>
                 {languageNames[locale]}
               </SelectItem>
@@ -36,5 +40,5 @@ export default function LanguageSelector() {
         </SelectGroup>
       </SelectContent>
     </Select>
-  )
+  );
 }
