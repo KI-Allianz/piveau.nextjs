@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Logo from "@/components/Logo";
 import { usePathname } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import { useLocale } from "@/hooks/useLocale";
@@ -10,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { User } from "lucide-react";
 import { AUTH_DISABLED } from "@/lib/auth-config";
 import { NavItemId } from "@/lib/lang/base";
+import { getTheme } from "@/themes";
 
 const navItems = [
   {
@@ -33,28 +33,29 @@ export default function Header() {
   const pathname = usePathname();
   const { locale, translations } = useLocale();
   const session = useSession();
+  const theme = getTheme();
 
   return (
-    <header className="">
+    <header className="header">
       <div className="pt-4 mx-4 justify-center flex">
-        <nav className="navbar flex flex-row items-center w-full max-w-[1440px] h-[80px] gap-2">
-          <div className="h-[80px] flex flex-1 items-center justify-between bg-white dark:bg-black rounded-2xl pr-[2.3rem] pl-[3.75rem]">
+        <nav className="h-20 flex flex-row gap-2 items-center w-full">
+          <div className="h-20 flex flex-1 items-center justify-between bg-white dark:bg-black rounded-2xl pr-[2.3rem] pl-15 navbar">
             <Link className="navbar-brand dark:invert" href={`/${locale}`}>
-              <Logo />
+              <theme.components.Logo />
             </Link>
-            <div className="flex items-center h-[48px]" id="navbarNav">
+            <div className="flex items-center h-12" id="navbarNav">
               <ul className="flex flex-row mt-0">
                 {navItems.map((item, i) => {
                   return (
                     <li
                       key={`navItem@${i}`}
-                      className={twMerge("text-black dark:text-white h-[48px]")}
+                      className={twMerge("h-12 navbar-link")}
                     >
                       <Link
                         href={(item.external ? "" : "/" + locale) + item.href}
                         data-active={item.href === pathname}
                         className={
-                          "pt-1 block mx-6 font-bold text-[1.1rem] transition-[padding-bottom] duration-300 pb-[3px] border-b-2 border-b-black dark:border-b-white hover:text-[#000AFA] hover:border-b-[#000AFA] dark:hover:text-[#7777FF] dark:hover:border-b-[#7777FF] hover:cursor-pointer hover:border-b-[3px] hover:pb-[5px] data-[active=true]:text-[#000AFA] data-[active=true]:border-b-[#000AFA] data-[active=true]:cursor-pointer data-[active=true]:border-b-[3px] "
+                          "text-black dark:text-white pt-1 block mx-6 font-bold text-[1.1rem] transition-[padding-bottom] duration-300 pb-[3px] border-b-2 border-b-black dark:border-b-white hover:text-[#000AFA] hover:border-b-[#000AFA] dark:hover:text-[#7777FF] dark:hover:border-b-[#7777FF] hover:cursor-pointer hover:border-b-[3px] hover:pb-[5px] data-[active=true]:text-[#000AFA] data-[active=true]:border-b-[#000AFA] data-[active=true]:cursor-pointer data-[active=true]:border-b-[3px] "
                         }
                       >
                         {translations.navigation.navTitles[item.id]}
@@ -66,7 +67,7 @@ export default function Header() {
             </div>
           </div>
           {!AUTH_DISABLED && (
-            <div className="h-[80px] bg-white dark:bg-black rounded-2xl px-4 flex">
+            <div className="h-20 bg-white dark:bg-black rounded-2xl px-4 flex navbar">
               {session.status === "authenticated" ? (
                 <button
                   onClick={() => {

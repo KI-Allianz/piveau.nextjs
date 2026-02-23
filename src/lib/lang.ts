@@ -1,10 +1,12 @@
 import { en } from "@/lib/lang/en";
 import { de } from "@/lib/lang/de";
 import { de as deDate, enUS as enDate } from "date-fns/locale";
+import { getTheme } from "@/themes";
 
-export const defaultLocale = "de";
+const theme = getTheme();
+export const defaultLocale = theme.lang.default;
 export type supportedLocales = "de" | "en";
-export const SupportedLocales: supportedLocales[] = ["de"];
+export const SupportedLocales: supportedLocales[] = theme.lang.supported;
 export const languageNames: Record<supportedLocales, string> = {
   en: "English",
   de: "Deutsch",
@@ -21,11 +23,11 @@ export function getTranslations(locale: supportedLocales) {
   // In a real application, you would import the actual translations.
   switch (locale) {
     case "en":
-      return en;
+      return { ...en, ...theme.lang.translations.en };
     case "de":
-      return de;
+      return { ...de, ...theme.lang.translations.de };
     default:
-      return de;
+      return { ...de, ...theme.lang.translations.de };
   }
 }
 
