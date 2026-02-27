@@ -3,6 +3,7 @@ import SupportSection from "@/components/SupportSection";
 import Footer from "@/components/Footer";
 import { CategorySlider } from "@/components/homepage/CategorySlider";
 import { supportedLocales } from "@/lib/lang";
+import { SearchPreview } from "@/components/homepage/SearchPreview";
 
 interface Props {
   params: Promise<{ locale: supportedLocales }>;
@@ -14,12 +15,16 @@ export default async function MainPage({ params }: Props) {
   return (
     <div className="bg-background w-full max-w-[1920px] mx-auto shadow-[0_0_12px_rgba(0,0,0,0.17)]">
       <Header />
-      <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-10">
-        <h1 className="text-4xl font-bold mb-6">
+      <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
+        <h1 className="text-4xl font-bold mb-6 text-center">
           Willkommen zur KI-Allianz Datenplattform
         </h1>
 
-        <CategorySlider locale={locale} />
+        <div className="flex flex-col gap-4">
+          <SearchPreview />
+
+          <CategorySlider locale={locale} />
+        </div>
       </div>
 
       <SupportSection />
