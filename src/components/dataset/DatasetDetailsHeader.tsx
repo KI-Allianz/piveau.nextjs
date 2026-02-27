@@ -95,7 +95,10 @@ export default function DatasetDetailsHeader({
         {dataset.categories?.map((category) => (
           <Link
             key={category.id}
-            href={`/${locale}/dataset?categories=${category.id}`}
+            href={fixThemeUrl(
+              `/${locale}/dataset?categories=${category.id}`,
+              theme,
+            )}
           >
             <Badge
               variant={"secondaryHover"}
