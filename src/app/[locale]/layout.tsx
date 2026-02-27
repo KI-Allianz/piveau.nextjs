@@ -27,7 +27,8 @@ export default async function RootLayout({
   const theme = getTheme();
 
   if (!locale || !SupportedLocales.includes(locale as supportedLocales)) {
-    redirect("/" + defaultLocale);
+    // TODO: redirect locale to same path with default locale instead of root path
+    redirect(`/${defaultLocale}/`);
   }
 
   const licenses = await getLicenses();

@@ -8,6 +8,6 @@ const themeMap: Record<string, ProjectTheme> = {
 };
 
 export function getTheme(): ProjectTheme {
-  const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || "kiallianz";
+  const projectId = process.env.NEXT_PUBLIC_DEFAULT_THEME || "kiallianz";
   return themeMap[projectId] || KiAllianzTheme;
 }
