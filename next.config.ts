@@ -5,7 +5,17 @@ const nextConfig: NextConfig = {
   /* config options here */
   outputFileTracingIncludes: {
     // adjust the route path to the one that needs the file
-    '/': ['./assets/licenses-dcat.rdf', './assets/licenses-skos.rdf'],
+    "/": ["./assets/licenses-dcat.rdf", "./assets/licenses-skos.rdf"],
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.hammerhai.eu",
+        port: "",
+        pathname: "/wp-content/uploads/**",
+      },
+    ],
   },
 };
 

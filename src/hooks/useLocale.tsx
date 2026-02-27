@@ -1,30 +1,27 @@
-'use client'
+"use client";
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext } from "react";
 import {
   buildTranslateDictFunction,
-  defaultLocale, getDateLocale, getTranslations,
-  supportedLocales
+  getDateLocale,
+  getTranslations,
+  supportedLocales,
 } from "@/lib/lang";
-import {redirect, usePathname} from "next/navigation";
-import {facetIds} from "@/lib/lang/facets";
+import { redirect, usePathname } from "next/navigation";
+import { facetIds } from "@/lib/lang/facets";
+import { useTheme } from "./useTheme";
 
-const LanguageContext = createContext<{
-  language: supportedLocales
-}>({
-  language: defaultLocale
-});
+const LanguageContext = createContext<supportedLocales | undefined>(undefined);
 
 export function LanguageProvider({
-                              children, language
-                            }: {
+  children,
+  language,
+}: {
   language: supportedLocales;
   children: React.ReactNode;
 }) {
   return (
-    <LanguageContext.Provider value={{
-      language: language
-    }}>
+    <LanguageContext.Provider value={language}>
       {children}
     </LanguageContext.Provider>
   );
@@ -32,25 +29,28 @@ export function LanguageProvider({
 
 export function useLocale() {
   const context = useContext(LanguageContext);
-  if (context === null) {
-    throw new Error('useLocale must be used within an LanguageProvider');
+  if (context === undefined) {
+    throw new Error("useLocale must be used within an LanguageProvider");
   }
 
   // console.log(`Current locale: ${context.language}`);
 
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const theme = useTheme();
 
   return {
-    locale: context.language,
-    dateLocale: getDateLocale(context.language),
+    locale: context,
+    theme: theme,
+    dateLocale: getDateLocale(context),
     setLocale: (newLocale: supportedLocales) => {
       // This is a placeholder for setting the locale.
       // In a real application, you might want to store this in a global state or context.
       console.log(`Locale set to: ${newLocale}`);
-      redirect(`/${newLocale}/${pathname.split("/").slice(2).join("/")}`)
+      redirect(`/${newLocale}/${pathname.split("/").slice(2).join("/")}`);
     },
-    translateDict: buildTranslateDictFunction(context.language),
-    translations: getTranslations(context.language),
-    translateFacet: (facetId: facetIds) => getTranslations(context.language).facets[facetId]
-  }
+    translateDict: buildTranslateDictFunction(context, theme),
+    translations: getTranslations(context),
+    translateFacet: (facetId: facetIds) =>
+      getTranslations(context).facets[facetId],
+  };
 }

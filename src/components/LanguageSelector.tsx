@@ -11,12 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { languageNames, SupportedLocales } from "@/lib/lang";
+import { languageNames } from "@/lib/lang";
 import { useLocale } from "@/hooks/useLocale";
 
 export default function LanguageSelector() {
   const pathname = usePathname();
-  const { locale, setLocale, translations } = useLocale();
+  const { locale, setLocale, translations, theme } = useLocale();
 
   return (
     <Select defaultValue={locale} onValueChange={setLocale}>
@@ -26,7 +26,7 @@ export default function LanguageSelector() {
       <SelectContent>
         <SelectGroup>
           <SelectLabel>{translations.languages}</SelectLabel>
-          {SupportedLocales.map((locale) => (
+          {theme.lang.supported.map((locale) => (
             <Link
               key={locale}
               href={`/${locale}/${pathname.split("/").slice(2).join("/")}`}

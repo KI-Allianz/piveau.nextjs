@@ -19,6 +19,7 @@ import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFa
 import PublisherPopover from "@/components/dataset/PublisherPopover";
 import CatalogBadge from "./CatalogBadge";
 import DateBadge from "./DateBadge";
+import { fixThemeUrl, getCleanUrl } from "@/hooks/useTheme";
 
 interface Props {
   dataset: Dataset;
@@ -31,7 +32,7 @@ export default function DatasetDetailsHeader({
   baseUrl,
   urls,
 }: Props) {
-  const { locale, translateDict, translations } = useLocale();
+  const { locale, translateDict, translations, theme } = useLocale();
   const router = useRouter();
 
   return (
@@ -48,7 +49,7 @@ export default function DatasetDetailsHeader({
         <div className="space-x-2">
           <DatasetDetailsFavouriteButton dataset={dataset} />
           <ExampleCodePopover
-            url={`${baseUrl}/de/dataset/${dataset.id}`}
+            url={getCleanUrl(`${baseUrl}/de/dataset/${dataset.id}`)}
             customParser={extractParserRepository(dataset, translateDict)}
             isAIModel={isAIModel(dataset)}
           />
@@ -77,7 +78,10 @@ export default function DatasetDetailsHeader({
         {dataset.keywords?.map((keyword) => (
           <Link
             key={keyword.id}
-            href={`/${locale}/dataset?keywords=${keyword.id}`}
+            href={fixThemeUrl(
+              `/${locale}/dataset?keywords=${keyword.id}`,
+              theme,
+            )}
           >
             <Badge
               variant={"secondaryHover"}
@@ -91,7 +95,10 @@ export default function DatasetDetailsHeader({
         {dataset.categories?.map((category) => (
           <Link
             key={category.id}
-            href={`/${locale}/dataset?categories=${category.id}`}
+            href={fixThemeUrl(
+              `/${locale}/dataset?categories=${category.id}`,
+              theme,
+            )}
           >
             <Badge
               variant={"secondaryHover"}

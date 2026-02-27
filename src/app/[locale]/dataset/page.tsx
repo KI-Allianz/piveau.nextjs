@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import DatasetSearch from "@/components/dataset/DatasetSearch";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import SupportSection from "@/components/SupportSection";
+import { SupportSection } from "@/components/SupportSection";
 
 export default async function DatasetsPage() {
   return (
@@ -16,7 +16,6 @@ export default async function DatasetsPage() {
       </div>
 
       <SupportSection />
-
       <Footer />
     </div>
   );
