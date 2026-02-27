@@ -7,6 +7,7 @@ import Link from "next/link";
 import { trpc } from "@/app/_trpc/client";
 import { useLocale } from "@/hooks/useLocale";
 import { fixThemeUrl, useTheme } from "@/hooks/useTheme";
+import { Skeleton } from "../ui/skeleton";
 
 interface Props {
   locale: supportedLocales;
@@ -18,32 +19,45 @@ export function CategorySlider({ locale }: Props) {
   const theme = useTheme();
 
   return (
-    <InfiniteSlider
-      speed={120}
-      speedOnHover={20}
-      gap={24}
-      className="py-2 rounded-4xl"
-    >
-      {search.data &&
-        search.data.map((category) => (
-          <Link
-            href={fixThemeUrl(
-              `/${locale}/dataset/?categories=${category.id}`,
-              theme,
-            )}
-            key={category.id}
-          >
-            <div className="flex flex-col items-center w-40 p-4 bg-secondary justify-center rounded-2xl gap-2 aspect-square hover:scale-105 transition-transform cursor-pointer">
-              <span className="text-(--main-accent-gradient) to-(--main-accent-gradient)">
-                {getCategoryIcon(category.id, 32)}
-              </span>
+    <div className="flex gap-2">
+      {search.isPending ? (
+        <div className="py-2 rounded-4xl flex gap-6 overflow-hidden">
+          {[...Array(10).keys()].map((_, index) => (
+            <Skeleton
+              className="h-40 w-40 min-h-40 min-w-40 rounded-2xl"
+              key={"skeleton-" + index}
+            />
+          ))}
+        </div>
+      ) : (
+        <InfiniteSlider
+          speed={120}
+          speedOnHover={20}
+          gap={24}
+          className="py-2 rounded-4xl"
+        >
+          {search.data &&
+            search.data.map((category) => (
+              <Link
+                href={fixThemeUrl(
+                  `/${locale}/dataset/?categories=${category.id}`,
+                  theme,
+                )}
+                key={category.id}
+              >
+                <div className="flex flex-col items-center w-40 p-4 bg-secondary justify-center rounded-2xl gap-2 aspect-square hover:scale-105 transition-transform cursor-pointer">
+                  <span className="text-(--main-accent-gradient) to-(--main-accent-gradient)">
+                    {getCategoryIcon(category.id, 32)}
+                  </span>
 
-              <span className="mt-2 text-sm text-center">
-                {translateDict(category.title)}
-              </span>
-            </div>
-          </Link>
-        ))}
-    </InfiniteSlider>
+                  <span className="mt-2 text-sm text-center">
+                    {translateDict(category.title)}
+                  </span>
+                </div>
+              </Link>
+            ))}
+        </InfiniteSlider>
+      )}
+    </div>
   );
 }
