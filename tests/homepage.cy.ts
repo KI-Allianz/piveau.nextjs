@@ -1,4 +1,4 @@
-import { languageNames, SupportedLocales } from "@/lib/lang";
+import { languageNames } from "@/lib/lang";
 import { getTheme } from "@/themes";
 
 describe("Homepage Tests", () => {
@@ -48,13 +48,13 @@ describe("Homepage Tests", () => {
     cy.get("button").contains(defaultLanguage).click({ force: true });
 
     // Check if all options are visible
-    SupportedLocales.forEach((lang) => {
+    theme.lang.supported.forEach((lang) => {
       const langName = languageNames[lang];
       cy.get('[role="option"]').contains(langName).should("be.visible");
     });
 
     // Select Last language in the list
-    const lastLang = SupportedLocales[SupportedLocales.length - 1];
+    const lastLang = theme.lang.supported[theme.lang.supported.length - 1];
     const lastLangName = languageNames[lastLang];
 
     cy.get('[role="option"]').contains(lastLangName).click();
