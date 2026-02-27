@@ -20,7 +20,6 @@ export function getTheme(themeId: string | null): ProjectTheme {
   }
 
   if (themeId && SupportedThemes.includes(themeId as SupportedTheme)) {
-    console.log(`Selected theme: ${JSON.stringify(themeMap)}`);
     return themeMap[themeId as SupportedTheme];
   }
 

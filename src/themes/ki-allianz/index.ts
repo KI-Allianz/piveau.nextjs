@@ -1,5 +1,6 @@
 import { Nunito_Sans } from "next/font/google";
 import { ProjectTheme } from "../types";
+import { headElements } from "./head";
 
 const nunitoSans = Nunito_Sans({
   variable: "--font-nunito-sans",
@@ -16,6 +17,7 @@ export const KiAllianzTheme: ProjectTheme = {
     defaultTheme: "system",
     enableSystem: true,
   },
+  headElements: headElements,
   footer: {
     enableLanguageSelector: false,
     enableThemeToggle: true,

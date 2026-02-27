@@ -13,11 +13,6 @@ import { getTheme } from "@/themes";
 import { headers } from "next/headers";
 import { ThemeProvider } from "@/hooks/useTheme";
 
-export const metadata: Metadata = {
-  title: "Piveau Next",
-  description: "Piveau using Next.js",
-};
-
 export default async function RootLayout({
   children,
   params,
@@ -34,21 +29,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} data-project={theme.id}>
-      <head>
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
-        {/* <link rel="stylesheet" type="text/css" href={theme.stylesheetPath} /> */}
-      </head>
+      <head>{theme.headElements}</head>
       <body
         className={`${theme.fonts.map((f) => f.variable).join(" ")} antialiased`}
       >

@@ -1,5 +1,6 @@
 import { Exo_2, Overpass } from "next/font/google";
 import { ProjectTheme } from "../types";
+import { headElements } from "./head";
 
 const exo2 = Exo_2({
   variable: "--font-exo-2",
@@ -22,6 +23,7 @@ export const HammerTheme: ProjectTheme = {
     defaultTheme: "light",
     forcedTheme: "light",
   },
+  headElements: headElements,
   footer: {
     enableLanguageSelector: false,
     enableThemeToggle: false,

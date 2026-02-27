@@ -11,6 +11,8 @@ export interface ProjectTheme {
   fonts: NextFontWithVariable[];
   themeProvider?: ThemeProviderProps;
 
+  headElements: React.ReactNode[];
+
   footer: {
     enableLanguageSelector: boolean;
     enableThemeToggle: boolean;
