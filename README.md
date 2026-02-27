@@ -4,6 +4,7 @@ The **Next.js-based web version of Piveau**, a modern open-source data portal bu
 This project reimagines the web UI for the [Piveau](https://www.piveau.de/) platform, offering the full functionality of the original site — plus enhanced user experience, favorites, example code blocks, and AI-chat.
 
 ### Demos
+
 - [KI-Allianz Datenplattform](https://next-piveau.vercel.app/de/)
 - [Hammerhai Datenplattform](https://next-piveau-git-hammerhai-felixsmtts-projects.vercel.app/en)
 
@@ -12,18 +13,18 @@ This project reimagines the web UI for the [Piveau](https://www.piveau.de/) plat
 ## ✨ Features
 
 - **Full Feature Parity with Original Piveau**
-    - Dataset search, filtering, sorting, and visualization
-    - Support for all metadata structures and linked data standards
+  - Dataset search, filtering, sorting, and visualization
+  - Support for all metadata structures and linked data standards
 - **User Favorites**
-    - Save and manage favorite datasets directly in your browser
+  - Save and manage favorite datasets directly in your browser
 - **AI Model Routing**
-    - Dedicated details pages for AI models with structured metadata
+  - Dedicated details pages for AI models with structured metadata
 - **Modern Frontend Stack**
-    - Built with [Next.js 15](https://nextjs.org/)
-    - Fully typed with TypeScript
-    - ShadCN and Tailwind CSS for styling
+  - Built with [Next.js 15](https://nextjs.org/)
+  - Fully typed with TypeScript
+  - ShadCN and Tailwind CSS for styling
 - **Optimized Performance**
-    - Server-side rendering (SSR) for SEO
+  - Server-side rendering (SSR) for SEO
 
 ---
 
@@ -57,7 +58,7 @@ NEXTAUTH_URL=${DOMAIN}
 NEXT_PUBLIC_AUTH_DISABLED=${AUTH_DISABLED}
 NEXT_PUBLIC_AUTH_URL=${DOMAIN}
 NEXT_PUBLIC_AUTH_KEYCLOAK_ID=${AUTH_KEYCLOAK_ID}
-NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER=${AUTH_KEYCLOAK_SECRET}
+NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER=${AUTH_KEYCLOAK_ISSUER}
 ```
 
 Run the following command to generate a secret for `AUTH_SECRET`:
@@ -83,5 +84,3 @@ You can easily deploy Piveau (Next.js) with Docker Compose using the provided `d
 ```bash
 docker-compose up -d
 ```
-
-
