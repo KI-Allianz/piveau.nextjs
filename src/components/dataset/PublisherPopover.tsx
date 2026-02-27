@@ -13,6 +13,13 @@ interface Props {
   contact_point: Dataset["contact_point"];
 }
 
+function clampString(str: string, maxLength: number) {
+  if (str.length <= maxLength) {
+    return str;
+  }
+  return str.substring(0, maxLength) + "...";
+}
+
 export default function PublisherPopover({ publisher, contact_point }: Props) {
   return (
     <Popover>
@@ -22,9 +29,10 @@ export default function PublisherPopover({ publisher, contact_point }: Props) {
             <Users size={18} />
           </div>
           <span className="line-clamp-1">
-            {publisher?.name?.substring(0, 50) +
-              (publisher?.name && publisher?.name.length > 50 ? "..." : "") ||
-              "Publisher"}
+            {clampString(
+              publisher?.name || contact_point?.at(0)?.name || "Publisher",
+              50,
+            )}
           </span>
         </div>
       </PopoverTrigger>
