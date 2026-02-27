@@ -15,13 +15,14 @@ import HtmlSnippet from "@/components/HTMLSnippet";
 import CatalogBadge from "./CatalogBadge";
 import PublisherPopover from "./PublisherPopover";
 import DateBadge from "./DateBadge";
+import { fixThemeUrl } from "@/hooks/useTheme";
 
 interface Props {
   dataset: Dataset;
 }
 
 export default function DatasetCard({ dataset }: Props) {
-  const { translateDict, translations, locale } = useLocale();
+  const { translateDict, translations, locale, theme } = useLocale();
 
   const isModel = isAIModel(dataset);
   const formatTags = [
@@ -34,7 +35,10 @@ export default function DatasetCard({ dataset }: Props) {
 
   return (
     <Link
-      href={`/${locale}/${isModel ? "model" : "dataset"}/${dataset.id}`}
+      href={fixThemeUrl(
+        `/${locale}/${isModel ? "model" : "dataset"}/${dataset.id}`,
+        theme,
+      )}
       className="w-full"
     >
       <Card className="w-full hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer gap-3">

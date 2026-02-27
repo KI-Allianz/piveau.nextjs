@@ -62,7 +62,7 @@ export const rebuildFromSearchParams = (params: URLSearchParams) => {
 
   const newFacetMap: Record<string, string[]> = {};
 
-  const nonFacetParams = ["q", "limit", "page", "sort", "tab"];
+  const nonFacetParams = ["q", "limit", "page", "sort", "tab", "theme"];
   params.forEach((value, key) => {
     if (!nonFacetParams.includes(key)) {
       if (!newFacetMap[key]) {

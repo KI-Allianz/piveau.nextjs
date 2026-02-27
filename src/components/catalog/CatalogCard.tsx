@@ -13,16 +13,20 @@ import {
 import { Badge } from "@/components/ui/badge";
 import DateBadge from "../dataset/DateBadge";
 import { Catalog } from "@piveau/sdk-core";
+import { fixThemeUrl } from "@/hooks/useTheme";
 
 interface Props {
   catalog: Catalog;
 }
 
 export default function CatalogCard({ catalog }: Props) {
-  const { translateDict, locale } = useLocale();
+  const { translateDict, locale, theme } = useLocale();
 
   return (
-    <Link href={`/${locale}/catalogues/${catalog.id}`} className="w-full">
+    <Link
+      href={fixThemeUrl(`/${locale}/catalogues/${catalog.id}`, theme)}
+      className="w-full"
+    >
       <Card className="w-full hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer gap-3">
         <CardHeader className="flex justify-between">
           <div className="flex items-center gap-3">

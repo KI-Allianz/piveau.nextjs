@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { User } from "lucide-react";
 import { AUTH_DISABLED } from "@/lib/auth-config";
 import { NavItemId } from "@/lib/lang/base";
-import { useTheme } from "@/hooks/useTheme";
+import { fixThemeUrl, useTheme } from "@/hooks/useTheme";
 import { getClientTheme } from "@/themes/client";
 
 const navItems = [
@@ -44,7 +44,7 @@ export default function Header() {
           <div className="h-20 flex flex-1 items-center justify-between bg-white dark:bg-black rounded-2xl pr-[2.3rem] pl-15 navbar">
             <Link
               className="navbar-brand dark:invert"
-              href={`/${locale}?theme=${theme.id}`}
+              href={fixThemeUrl(`/${locale}`, theme)}
             >
               <clientTheme.components.Logo />
             </Link>
@@ -57,12 +57,10 @@ export default function Header() {
                       className={twMerge("h-12 navbar-link")}
                     >
                       <Link
-                        href={
-                          (item.external ? "" : "/" + locale) +
-                          item.href +
-                          "?theme=" +
-                          theme.id
-                        }
+                        href={fixThemeUrl(
+                          (item.external ? "" : "/" + locale) + item.href,
+                          theme,
+                        )}
                         data-active={item.href === pathname}
                         className={
                           "text-black dark:text-white pt-1 block mx-6 font-bold text-[1.1rem] transition-[padding-bottom] duration-300 pb-[3px] border-b-2 border-b-black dark:border-b-white hover:text-[#000AFA] hover:border-b-[#000AFA] dark:hover:text-[#7777FF] dark:hover:border-b-[#7777FF] hover:cursor-pointer hover:border-b-[3px] hover:pb-[5px] data-[active=true]:text-[#000AFA] data-[active=true]:border-b-[#000AFA] data-[active=true]:cursor-pointer data-[active=true]:border-b-[3px] "
@@ -82,7 +80,7 @@ export default function Header() {
                 <button
                   onClick={() => {
                     signOut({
-                      callbackUrl: `/${locale}?theme=${theme.id}`,
+                      callbackUrl: fixThemeUrl(`/${locale}`, theme),
                     }).then();
                   }}
                   className="flex items-center justify-center h-full hover:text-red-500 transition-all duration-150 cursor-pointer"
@@ -109,7 +107,7 @@ export default function Header() {
                 <button
                   onClick={() => {
                     signIn("keycloak", {
-                      callbackUrl: `/${locale}?theme=${theme.id}`,
+                      callbackUrl: fixThemeUrl(`/${locale}`, theme),
                     }).then();
                   }}
                   className="flex items-center justify-center h-full hover:text-muted-foreground transition-all duration-150 cursor-pointer"

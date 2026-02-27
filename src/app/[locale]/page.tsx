@@ -5,7 +5,7 @@ import { supportedLocales } from "@/lib/lang";
 import { SearchPreview } from "@/components/homepage/SearchPreview";
 import { headers } from "next/headers";
 import { getTheme } from "@/themes";
-import { SupportSection } from "@/components/homepage/SupportSection";
+import { SupportSection } from "@/components/SupportSection";
 
 interface Props {
   params: Promise<{ locale: supportedLocales }>;

@@ -17,7 +17,6 @@ export default async function middleware(req: NextRequest) {
   // Theme forwarding
   const themeId = req.nextUrl.searchParams.get("theme") || DefaultTheme;
   const theme = getTheme(themeId);
-  console.log(`Theme details: ${JSON.stringify(theme)}`);
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set(
     "x-selected-theme",

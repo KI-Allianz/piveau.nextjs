@@ -5,7 +5,7 @@ import LanguageSelector from "@/components/LanguageSelector";
 import { useLocale } from "@/hooks/useLocale";
 import { ThemeToggle } from "./ThemeToggle";
 import { getTheme } from "@/themes";
-import { useTheme } from "@/hooks/useTheme";
+import { fixThemeUrl, useTheme } from "@/hooks/useTheme";
 import { getClientTheme } from "@/themes/client";
 
 export default function Footer() {
@@ -17,7 +17,10 @@ export default function Footer() {
     <footer className="">
       <div className="pt-4 mx-4 justify-center flex">
         <nav className="flex flex-row items-center justify-between w-full max-w-[1440px] h-20 pt-28 pb-20">
-          <Link className="dark:invert" href={`/${locale}`}>
+          <Link
+            className="dark:invert"
+            href={fixThemeUrl(`/${locale}?theme=${theme.id}`, theme)}
+          >
             <functions.components.Logo />
           </Link>
 
