@@ -1,3 +1,5 @@
+"use client";
+
 import { supportedLocales } from "@/lib/lang";
 import { ThemeProviderProps } from "next-themes";
 import { NextFontWithVariable } from "next/dist/compiled/@next/font";
@@ -9,17 +11,9 @@ export interface ProjectTheme {
   fonts: NextFontWithVariable[];
   themeProvider?: ThemeProviderProps;
 
-  components: {
-    SupportSection: React.ComponentType;
-    Logo: React.ComponentType;
-  };
-
   footer: {
     enableLanguageSelector: boolean;
     enableThemeToggle: boolean;
-    buildFooterLinks: (
-      translations: translations,
-    ) => Array<{ label: string; href: string }>;
   };
 
   lang: {
@@ -32,5 +26,18 @@ export interface ProjectTheme {
         }
       | undefined
     >;
+  };
+}
+
+export interface ProjectClientTheme {
+  components: {
+    SupportSection: React.ComponentType;
+    Logo: React.ComponentType;
+  };
+
+  footer: {
+    buildFooterLinks: (
+      translations: translations,
+    ) => Array<{ label: string; href: string }>;
   };
 }

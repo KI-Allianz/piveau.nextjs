@@ -2,9 +2,10 @@
 
 import { InfiniteSlider } from "@/components/ui/infinite-slider";
 import { getCategoryIcon } from "@/lib/icons";
-import { supportedLocales, translateDict } from "@/lib/lang";
+import { supportedLocales } from "@/lib/lang";
 import Link from "next/link";
 import { trpc } from "@/app/_trpc/client";
+import { useLocale } from "@/hooks/useLocale";
 
 interface Props {
   locale: supportedLocales;
@@ -12,6 +13,7 @@ interface Props {
 
 export function CategorySlider({ locale }: Props) {
   const search = trpc.categories.useQuery();
+  const { translateDict } = useLocale();
 
   return (
     <InfiniteSlider
@@ -32,7 +34,7 @@ export function CategorySlider({ locale }: Props) {
               </span>
 
               <span className="mt-2 text-sm text-center">
-                {translateDict("de", category.title)}
+                {translateDict(category.title)}
               </span>
             </div>
           </Link>

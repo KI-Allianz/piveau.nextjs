@@ -1,12 +1,9 @@
 import { en } from "@/lib/lang/en";
 import { de } from "@/lib/lang/de";
 import { de as deDate, enUS as enDate } from "date-fns/locale";
-import { getTheme } from "@/themes";
+import { ProjectTheme } from "@/themes/types";
 
-const theme = getTheme();
-export const defaultLocale = theme.lang.default;
 export type supportedLocales = "de" | "en";
-export const SupportedLocales: supportedLocales[] = theme.lang.supported;
 export const languageNames: Record<supportedLocales, string> = {
   en: "English",
   de: "Deutsch",
@@ -23,11 +20,11 @@ export function getTranslations(locale: supportedLocales) {
   // In a real application, you would import the actual translations.
   switch (locale) {
     case "en":
-      return { ...en, ...theme.lang.translations.en };
+      return { ...en };
     case "de":
-      return { ...de, ...theme.lang.translations.de };
+      return { ...de };
     default:
-      return { ...de, ...theme.lang.translations.de };
+      return { ...de };
   }
 }
 
@@ -45,6 +42,7 @@ export function getDateLocale(locale: supportedLocales) {
 
 export const translateDict = (
   lang: supportedLocales,
+  theme: ProjectTheme,
   item?: string | Record<string, string> | null,
 ) => {
   if (!item) {
@@ -61,14 +59,17 @@ export const translateDict = (
   // In a real application, you would implement actual translation logic.
   return (
     item[localeId] ||
-    item[extractLocale(defaultLocale)] ||
+    item[extractLocale(theme.lang.default)] ||
     item[Object.keys(item)[0]] ||
     "Translation not available"
   );
 };
 
-export const buildTranslateDictFunction = (lang: supportedLocales) => {
+export const buildTranslateDictFunction = (
+  lang: supportedLocales,
+  theme: ProjectTheme,
+) => {
   return (item?: string | Record<string, string> | null) => {
-    return translateDict(lang, item);
+    return translateDict(lang, theme, item);
   };
 };

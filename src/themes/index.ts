@@ -2,12 +2,21 @@ import { HammerTheme } from "./hammerhai";
 import { KiAllianzTheme } from "./ki-allianz";
 import { ProjectTheme } from "./types";
 
-const themeMap: Record<string, ProjectTheme> = {
+export const SupportedThemes = ["hammerhai", "kiallianz"];
+export type SupportedTheme = (typeof SupportedThemes)[number];
+export const DefaultTheme: SupportedTheme =
+  (process.env.NEXT_PUBLIC_DEFAULT_THEME as SupportedTheme) ?? "kiallianz";
+
+const themeMap: Record<SupportedTheme, ProjectTheme> = {
   hammerhai: HammerTheme,
   kiallianz: KiAllianzTheme,
 };
 
-export function getTheme(): ProjectTheme {
-  const projectId = process.env.NEXT_PUBLIC_DEFAULT_THEME || "kiallianz";
-  return themeMap[projectId] || KiAllianzTheme;
+export function getTheme(themeId: string | null): ProjectTheme {
+  if (themeId && SupportedThemes.includes(themeId as SupportedTheme)) {
+    console.log(`Selected theme: ${JSON.stringify(themeMap)}`);
+    return themeMap[themeId as SupportedTheme];
+  }
+
+  return themeMap[DefaultTheme] || KiAllianzTheme;
 }

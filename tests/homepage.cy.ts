@@ -1,4 +1,5 @@
-import { defaultLocale, languageNames, SupportedLocales } from "@/lib/lang";
+import { languageNames, SupportedLocales } from "@/lib/lang";
+import { getTheme } from "@/themes";
 
 describe("Homepage Tests", () => {
   beforeEach(() => {
@@ -40,7 +41,8 @@ describe("Homepage Tests", () => {
   });
 
   it("language selector works", () => {
-    const defaultLanguage = languageNames[defaultLocale];
+    const theme = getTheme(null);
+    const defaultLanguage = languageNames[theme.lang.default];
 
     // Open language selector
     cy.get("button").contains(defaultLanguage).click({ force: true });

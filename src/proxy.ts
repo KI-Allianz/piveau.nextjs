@@ -1,6 +1,12 @@
 import { withAuth } from "next-auth/middleware";
 import { NextRequest, NextResponse } from "next/server";
-import { defaultLocale, supportedLocales, SupportedLocales } from "./lib/lang";
+import { supportedLocales } from "./lib/lang";
+import {
+  DefaultTheme,
+  getTheme,
+  SupportedTheme,
+  SupportedThemes,
+} from "./themes";
 
 const AUTH_DISABLED = process.env.AUTH_DISABLED === "true";
 const PROTECTED_PATHS = ["dataset", "model", "catalogues", "favourites"];
@@ -8,6 +14,21 @@ const PROTECTED_PATHS = ["dataset", "model", "catalogues", "favourites"];
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Theme forwarding
+  const themeId = req.nextUrl.searchParams.get("theme") || DefaultTheme;
+  const theme = getTheme(themeId);
+  console.log(`Theme details: ${JSON.stringify(theme)}`);
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set(
+    "x-selected-theme",
+    SupportedThemes.includes(themeId as SupportedTheme)
+      ? themeId
+      : DefaultTheme,
+  );
+
+  // Locale handling
+  const defaultLocale = theme.lang.default;
+  const SupportedLocales = theme.lang.supported;
   const segments = pathname.split("/").filter(Boolean);
   const localeInPath = segments[0];
 
@@ -20,7 +41,9 @@ export default async function middleware(req: NextRequest) {
     }
 
     const newPath = `/${newSegments.join("/")}${req.nextUrl.search}`;
-    return NextResponse.redirect(new URL(newPath, req.url));
+    return NextResponse.redirect(new URL(newPath, req.url), {
+      headers: requestHeaders,
+    });
   }
 
   // Authentication handling (Runs only for protected paths)
@@ -29,7 +52,7 @@ export default async function middleware(req: NextRequest) {
   if (isProtected && !AUTH_DISABLED) {
     return (withAuth as any)(
       function cb(req: NextRequest) {
-        return NextResponse.next();
+        return NextResponse.next({ headers: requestHeaders });
       },
       {
         pages: { signIn: "/auth/signin" },
@@ -40,7 +63,7 @@ export default async function middleware(req: NextRequest) {
     )(req);
   }
 
-  return NextResponse.next();
+  return NextResponse.next({ headers: requestHeaders });
 }
 
 export const config = {
