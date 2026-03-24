@@ -187,6 +187,8 @@ deploy-fullstack-to-vm:
       set -e &&
       cd ~/piveau-fullstack &&
       echo \"$CI_REGISTRY_PASSWORD\" | docker login -u \"$CI_REGISTRY_USER\" --password-stdin \"$CI_REGISTRY\" &&
+      # Remove all existing containers to avoid host port conflicts (e.g. 3000 already bound)
+      docker ps -aq | xargs -r docker rm -f &&
       docker compose --env-file fullstack.env -f docker-compose.fullstack.deploy.yml pull &&
       docker compose --env-file fullstack.env -f docker-compose.fullstack.deploy.yml up -d --remove-orphans &&
       docker image prune -f
