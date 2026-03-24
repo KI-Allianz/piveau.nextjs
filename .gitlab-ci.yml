@@ -2,66 +2,194 @@ stages:
   - build
   - deploy
 
-build-image:
+build-fullstack-frontend-image:
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
-    # 1. Create the Docker auth config (Standard Kaniko setup)
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-
-    # -----------------------------------------------------------------------
-    # 2. Generate the .env file
-    # We create this in the root directory so the Dockerfile 'COPY' command picks it up.
-    # -----------------------------------------------------------------------
-    - echo "DOMAIN=$DOMAIN" >> .env
-    - echo "SEARCH_HUB_URL=$SEARCH_HUB_URL" >> .env
-    - echo "REPO_HUB_URL=$REPO_HUB_URL" >> .env
-
-    # (Optional) Verify the file content in logs (Don't do this if variables are secrets!)
-    - cat .env
-
-    # 3. Build and Push the image
     - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}" --destination "${CI_REGISTRY_IMAGE}:latest"
-
   rules:
     - if: $CI_COMMIT_BRANCH == "hammerhai"
 
-deploy-to-vm:
+deploy-fullstack-to-vm:
   stage: deploy
   image: alpine:latest
   before_script:
     - apk add --no-cache openssh-client
     - eval $(ssh-agent -s)
-
-    # 1. Create the SSH directory
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-
-    # 2. Write the variable to the correct file (id_ed25519)
-    # We still use 'tr -d \r' to clean up potential Windows formatting issues
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
-
-    # 3. Set permissions on the file
     - chmod 400 ~/.ssh/id_ed25519
-
-    # 4. Add the key to the SSH agent
     - ssh-add ~/.ssh/id_ed25519
-
-    # 5. Scan the VM's fingerprint
-    - ssh-keyscan $VM_IP >> ~/.ssh/known_hosts
+    - ssh-keyscan "$VM_IP" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-
   script:
-    - echo "Deploying to VM..."
-    - ssh $VM_USER@$VM_IP "
-      echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY &&
-      docker pull $CI_REGISTRY_IMAGE:latest &&
-      docker stop my-app-container || true &&
-      docker rm my-app-container || true &&
-      docker run -d --restart unless-stopped --name my-app-container --network host $CI_REGISTRY_IMAGE:latest &&
-      docker image prune -f"
+    - echo "Generating fullstack compose deployment files..."
+    - |
+      cat > docker-compose.fullstack.deploy.yml <<'YAML'
+      name: piveau-stack
+
+      services:
+        piveau-nextjs:
+          image: ${FRONTEND_IMAGE}
+          container_name: piveau-nextjs
+          ports:
+            - "${FRONTEND_PORT:-3000}:3000"
+          depends_on:
+            piveau-hub-search:
+              condition: service_started
+            piveau-hub-repo:
+              condition: service_started
+          environment:
+            DOMAIN: ${FRONTEND_DOMAIN:-http://localhost:3000}
+            SEARCH_HUB_URL: ${SEARCH_HUB_INTERNAL_URL:-http://piveau-hub-search:8080}
+            REPO_HUB_URL: ${REPO_HUB_INTERNAL_URL:-http://piveau-hub-repo:8080}
+            AUTH_DISABLED: ${AUTH_DISABLED:-true}
+            NEXT_PUBLIC_AUTH_DISABLED: ${NEXT_PUBLIC_AUTH_DISABLED:-true}
+            AUTH_SECRET: ${AUTH_SECRET:-change-me-dev-secret}
+            NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+            NEXT_PUBLIC_AUTH_URL: ${NEXT_PUBLIC_AUTH_URL:-http://localhost:3000}
+            AUTH_KEYCLOAK_ID: ${AUTH_KEYCLOAK_ID:-}
+            AUTH_KEYCLOAK_SECRET: ${AUTH_KEYCLOAK_SECRET:-}
+            AUTH_KEYCLOAK_ISSUER: ${AUTH_KEYCLOAK_ISSUER:-}
+          restart: unless-stopped
+
+        piveau-hub-repo:
+          image: registry.gitlab.com/piveau/hub/piveau-hub-repo:3.2.19
+          container_name: piveau-hub-repo
+          depends_on:
+            piveau-hub-search:
+              condition: service_started
+            virtuoso:
+              condition: service_started
+          ports:
+            - "${REPO_PORT:-8081}:8080"
+            - "${REPO_SHELL_PORT:-8085}:8085"
+            - "${REPO_DEBUG_PORT:-5002}:5000"
+          environment:
+            PIVEAU_HUB_SEARCH_SERVICE: '{"enabled":true,"url":"piveau-hub-search","port":8080,"api_key":"${PIVEAU_SEARCH_API_KEY:-dev-search-api-key}"}'
+            PIVEAU_HUB_API_KEY: ${PIVEAU_REPO_API_KEY:-yourRepoApiKey}
+            PIVEAU_HUB_SHELL_CONFIG: '{"http":{},"telnet":{}}'
+            PIVEAU_TRIPLESTORE_CONFIG: '{"address":"http://virtuoso:8890","clearGeoDataCatalogues":["*"]}'
+            JAVA_OPTS: ${PIVEAU_REPO_JAVA_OPTS:--Xms1g -Xmx2g}
+          logging:
+            options:
+              max-size: "50m"
+          restart: unless-stopped
+
+        piveau-hub-search:
+          image: registry.gitlab.com/piveau/hub/piveau-hub-search:5.1.8
+          container_name: piveau-hub-search
+          depends_on:
+            elasticsearch:
+              condition: service_healthy
+          ports:
+            - "${SEARCH_PORT:-8084}:8080"
+            - "${SEARCH_SHELL_PORT:-8086}:8081"
+          environment:
+            PIVEAU_HUB_SEARCH_API_KEY: ${PIVEAU_SEARCH_API_KEY:-dev-search-api-key}
+            PIVEAU_HUB_SEARCH_ES_CONFIG: '{"host":"elasticsearch","port":9200}'
+            PIVEAU_HUB_SEARCH_GAZETTEER_CONFIG: '{"url":"http://doesnotmatter.eu"}'
+            JAVA_OPTS: ${PIVEAU_SEARCH_JAVA_OPTS:--Xms1g -Xmx2g}
+          logging:
+            options:
+              max-size: "50m"
+          restart: unless-stopped
+
+        elasticsearch:
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.17.3
+          container_name: elasticsearch
+          ulimits:
+            memlock:
+              soft: -1
+              hard: -1
+          healthcheck:
+            test: ["CMD-SHELL", "curl -s -f http://localhost:9200/_cat/health >/dev/null || exit 1"]
+            interval: 5s
+            timeout: 3s
+            retries: 20
+          ports:
+            - "${ELASTICSEARCH_PORT:-9200}:9200"
+            - "${ELASTICSEARCH_TRANSPORT_PORT:-9300}:9300"
+          environment:
+            bootstrap.memory_lock: "true"
+            discovery.type: single-node
+            xpack.security.enabled: "false"
+            ES_JAVA_OPTS: ${ELASTICSEARCH_JAVA_OPTS:--Xms1g -Xmx1g}
+          volumes:
+            - elasticsearch-data:/usr/share/elasticsearch/data
+          logging:
+            options:
+              max-size: "50m"
+          restart: unless-stopped
+
+        virtuoso:
+          image: openlink/virtuoso-opensource-7:7.2.13-alpine
+          container_name: virtuoso
+          ports:
+            - "${VIRTUOSO_HTTP_PORT:-8890}:8890"
+            - "${VIRTUOSO_SQL_PORT:-1111}:1111"
+          environment:
+            DBA_PASSWORD: ${VIRTUOSO_DBA_PASSWORD:-dba}
+            VIRT_PARAMETERS_NUMBEROFBUFFERS: ${VIRT_PARAMETERS_NUMBEROFBUFFERS:-170000}
+            VIRT_PARAMETERS_MAXDIRTYBUFFERS: ${VIRT_PARAMETERS_MAXDIRTYBUFFERS:-130000}
+            VIRT_PARAMETERS_SERVERTHREADS: ${VIRT_PARAMETERS_SERVERTHREADS:-100}
+            VIRT_HTTPSERVER_SERVERTHREADS: ${VIRT_HTTPSERVER_SERVERTHREADS:-100}
+            VIRT_HTTPSERVER_MAXCLIENTCONNECTIONS: ${VIRT_HTTPSERVER_MAXCLIENTCONNECTIONS:-100}
+          volumes:
+            - virtuoso-data:/database
+          logging:
+            options:
+              max-size: "50m"
+          restart: unless-stopped
+
+      volumes:
+        virtuoso-data:
+        elasticsearch-data:
+      YAML
+    - |
+      cat > fullstack.env <<EOF
+      FRONTEND_IMAGE=${CI_REGISTRY_IMAGE}:latest
+      FRONTEND_PORT=${FRONTEND_PORT:-3000}
+      FRONTEND_DOMAIN=${FRONTEND_DOMAIN:-http://localhost:3000}
+      SEARCH_HUB_INTERNAL_URL=${SEARCH_HUB_INTERNAL_URL:-http://piveau-hub-search:8080}
+      REPO_HUB_INTERNAL_URL=${REPO_HUB_INTERNAL_URL:-http://piveau-hub-repo:8080}
+      AUTH_DISABLED=${AUTH_DISABLED:-true}
+      NEXT_PUBLIC_AUTH_DISABLED=${NEXT_PUBLIC_AUTH_DISABLED:-true}
+      AUTH_SECRET=${AUTH_SECRET:-change-me-dev-secret}
+      NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      NEXT_PUBLIC_AUTH_URL=${NEXT_PUBLIC_AUTH_URL:-http://localhost:3000}
+      AUTH_KEYCLOAK_ID=${AUTH_KEYCLOAK_ID:-}
+      AUTH_KEYCLOAK_SECRET=${AUTH_KEYCLOAK_SECRET:-}
+      AUTH_KEYCLOAK_ISSUER=${AUTH_KEYCLOAK_ISSUER:-}
+      PIVEAU_SEARCH_API_KEY=${PIVEAU_SEARCH_API_KEY:-dev-search-api-key}
+      PIVEAU_REPO_API_KEY=${PIVEAU_REPO_API_KEY:-yourRepoApiKey}
+      REPO_PORT=${REPO_PORT:-8081}
+      REPO_SHELL_PORT=${REPO_SHELL_PORT:-8085}
+      REPO_DEBUG_PORT=${REPO_DEBUG_PORT:-5002}
+      SEARCH_PORT=${SEARCH_PORT:-8084}
+      SEARCH_SHELL_PORT=${SEARCH_SHELL_PORT:-8086}
+      ELASTICSEARCH_PORT=${ELASTICSEARCH_PORT:-9200}
+      ELASTICSEARCH_TRANSPORT_PORT=${ELASTICSEARCH_TRANSPORT_PORT:-9300}
+      VIRTUOSO_HTTP_PORT=${VIRTUOSO_HTTP_PORT:-8890}
+      VIRTUOSO_SQL_PORT=${VIRTUOSO_SQL_PORT:-1111}
+      EOF
+    - echo "Copying deployment files to VM..."
+    - ssh "$VM_USER@$VM_IP" "mkdir -p ~/piveau-fullstack"
+    - scp docker-compose.fullstack.deploy.yml fullstack.env "$VM_USER@$VM_IP:~/piveau-fullstack/"
+    - echo "Deploying fullstack to VM..."
+    - |
+      ssh "$VM_USER@$VM_IP" "
+      set -e &&
+      cd ~/piveau-fullstack &&
+      echo \"$CI_REGISTRY_PASSWORD\" | docker login -u \"$CI_REGISTRY_USER\" --password-stdin \"$CI_REGISTRY\" &&
+      docker compose --env-file fullstack.env -f docker-compose.fullstack.deploy.yml pull &&
+      docker compose --env-file fullstack.env -f docker-compose.fullstack.deploy.yml up -d --remove-orphans &&
+      docker image prune -f
+      "
   rules:
     - if: $CI_COMMIT_BRANCH == "hammerhai"
