@@ -87,3 +87,7 @@ You can easily deploy Piveau (Next.js) with Docker Compose using the provided `d
 ```bash
 docker-compose up -d
 ```
+
+## License
+
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
