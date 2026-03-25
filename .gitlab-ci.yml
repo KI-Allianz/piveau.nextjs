@@ -45,7 +45,7 @@ deploy-fullstack-to-vm:
             piveau-hub-repo:
               condition: service_started
           environment:
-            NEXT_PUBLIC_DEFAULT_THEME=hammerhai
+            NEXT_PUBLIC_DEFAULT_THEME: hammerhai
             DOMAIN: ${FRONTEND_DOMAIN:-http://localhost:3000}
             SEARCH_HUB_URL: ${SEARCH_HUB_INTERNAL_URL:-http://piveau-hub-search:8080}
             REPO_HUB_URL: ${REPO_HUB_INTERNAL_URL:-http://piveau-hub-repo:8080}
