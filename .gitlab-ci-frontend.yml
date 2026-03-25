@@ -19,6 +19,7 @@ build-image:
     - echo "DOMAIN=$DOMAIN" >> .env
     - echo "SEARCH_HUB_URL=$SEARCH_HUB_URL" >> .env
     - echo "REPO_HUB_URL=$REPO_HUB_URL" >> .env
+    - echo "NEXT_PUBLIC_DEFAULT_THEME=hammerhai" >> .env
 
     # (Optional) Verify the file content in logs (Don't do this if variables are secrets!)
     - cat .env
