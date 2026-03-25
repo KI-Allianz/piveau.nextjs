@@ -82,10 +82,32 @@ Visit http://localhost:3000 to view the application.
 
 ## 🐳 Docker Deployment
 
-You can easily deploy Piveau (Next.js) with Docker Compose using the provided `docker-compose.yml` file.
+For frontend-only deployment (existing behavior), use:
 
 ```bash
 docker-compose up -d
+```
+
+For full stack deployment (frontend + backend services), use:
+
+- `piveau-nextjs` (this frontend)
+- `piveau-hub-repo`
+- `piveau-hub-search`
+- `elasticsearch`
+- `virtuoso`
+
+```bash
+docker-compose -f docker-compose.fullstack.yml up -d
+```
+
+Useful environment overrides (optional) can be set in your shell or in a compose `.env` file:
+
+```env
+FRONTEND_PORT=3000
+FRONTEND_DOMAIN=http://localhost:3000
+AUTH_DISABLED=true
+PIVEAU_SEARCH_API_KEY=dev-search-api-key
+PIVEAU_REPO_API_KEY=dev-repo-api-key
 ```
 
 ## License
