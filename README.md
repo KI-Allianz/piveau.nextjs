@@ -62,6 +62,8 @@ NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER=${AUTH_KEYCLOAK_ISSUER}
 
 NEXT_PUBLIC_DISABLE_THEME_SWITCHING="false" # Wether to allow theme switching in the URI
 NEXT_PUBLIC_DEFAULT_THEME=kiallianz # The default theme to use, if switching is disabled or no theme is set in the URI.
+
+API_KEYS="key1,key2" # Comma separated list of valid API keys for accessing protected routes.
 ```
 
 Run the following command to generate a secret for `AUTH_SECRET`:
