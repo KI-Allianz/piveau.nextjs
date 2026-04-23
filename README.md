@@ -48,7 +48,7 @@ SEARCH_HUB_URL="https://DOMAIN_OF_PIVEAU_BACKEND/hub/search/"
 REPO_HUB_URL="https://DOMAIN_OF_PIVEAU_BACKEND/hub/repo/"
 
 # Auth configuration
-AUTH_SECRET=<your secret>  # Added by `npx auth secret --copy`. Read more: https://cli.authjs.dev
+AUTH_SECRET=<your secret>  # Added by `npx auth secret`. Read more: https://cli.authjs.dev
 AUTH_KEYCLOAK_ID=<keycloak client id>
 AUTH_KEYCLOAK_SECRET=<keycloak secret>
 AUTH_KEYCLOAK_ISSUER=<keycloak issuer url>

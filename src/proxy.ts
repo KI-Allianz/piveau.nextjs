@@ -7,9 +7,16 @@ import {
   SupportedTheme,
   SupportedThemes,
 } from "./themes";
+import path from "path";
 
 const AUTH_DISABLED = process.env.AUTH_DISABLED === "true";
 const PROTECTED_PATHS = ["dataset", "model", "catalogues", "favourites"];
+
+const isValidApiKey = (req: NextRequest) => {
+  const apiKey = req.headers.get("Authorization")?.replace("Bearer ", "");
+  const validApiKeys = (process.env.API_KEYS || "").split(",");
+  return apiKey && validApiKeys.includes(apiKey);
+};
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -46,21 +53,26 @@ export default async function middleware(req: NextRequest) {
   }
 
   // Authentication handling (Runs only for protected paths)
-  const isProtected = PROTECTED_PATHS.some((path) => segments.includes(path));
+  // const isProtected = PROTECTED_PATHS.some((path) => segments.includes(path));
+  // const isProtected = pathname.includes("/catalogues");
 
-  if (isProtected && !AUTH_DISABLED) {
-    return (withAuth as any)(
-      function cb(req: NextRequest) {
-        return NextResponse.next({ headers: requestHeaders });
-      },
-      {
-        pages: { signIn: "/auth/signin" },
-        callbacks: {
-          authorized: ({ token }: { token: any }) => !!token,
-        },
-      },
-    )(req);
-  }
+  // if (isProtected && !AUTH_DISABLED) {
+  //   if (isValidApiKey(req)) {
+  //     return NextResponse.next({ headers: requestHeaders });
+  //   }
+
+  //   return (withAuth as any)(
+  //     function cb(req: NextRequest) {
+  //       return NextResponse.next({ headers: requestHeaders });
+  //     },
+  //     {
+  //       pages: { signIn: "/auth/signin" },
+  //       callbacks: {
+  //         authorized: ({ token }: { token: any }) => !!token,
+  //       },
+  //     },
+  //   )(req);
+  // }
 
   return NextResponse.next({ headers: requestHeaders });
 }

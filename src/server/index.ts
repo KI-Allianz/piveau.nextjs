@@ -25,63 +25,83 @@ export const appRouter = router({
       ?.items;
   }),
   search: {
-    datasets: protectedProcedure
-      .input(SearchParamsSchema)
-      .query(async (opts) => {
-        const { input } = opts;
+    datasets: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
+      const { input, ctx } = opts;
 
-        const res = await searchResource<SearchResult<Dataset>>({
-          baseUrl: process.env.SEARCH_HUB_URL || "",
-          params: {
-            ...input,
-            filters: "dataset",
-            includes: [
-              "id",
-              "title",
-              "description",
-              "languages",
-              "modified",
-              "issued",
-              "catalog.id",
-              "catalog.title",
-              "catalog.country.id",
-              "distributions.id",
-              "distributions.format.label",
-              "distributions.format.id",
-              "distributions.license",
-              "categories.label",
-              "keywords.label",
-              "publisher",
-            ],
-          },
-        });
+      const isAuthed = !!ctx.session?.user;
+      if (!isAuthed) {
+        const keywords = [...(input.facets?.keywords || [])];
+        keywords.push("public");
 
-        return res.data.result;
-      }),
-    catalogs: protectedProcedure
-      .input(SearchParamsSchema)
-      .query(async (opts) => {
-        const { input } = opts;
+        input.facets = {
+          ...input.facets,
+          keywords,
+        };
+      }
 
-        const res = await searchResource<SearchResult<Catalog>>({
-          baseUrl: process.env.SEARCH_HUB_URL || "",
-          params: {
-            ...input,
-            filters: "catalogue",
-            includes: [
-              "id",
-              "title",
-              "description",
-              "modified",
-              "issued",
-              "country",
-              "count",
-            ],
-          },
-        });
+      const res = await searchResource<SearchResult<Dataset>>({
+        baseUrl: process.env.SEARCH_HUB_URL || "",
+        params: {
+          ...input,
+          filters: "dataset",
+          includes: [
+            "id",
+            "title",
+            "description",
+            "languages",
+            "modified",
+            "issued",
+            "catalog.id",
+            "catalog.title",
+            "catalog.country.id",
+            "distributions.id",
+            "distributions.format.label",
+            "distributions.format.id",
+            "distributions.license",
+            "categories.label",
+            "keywords.label",
+            "publisher",
+          ],
+        },
+        // axiosInstance,
+      });
 
-        return res.data.result;
-      }),
+      return res.data.result;
+    }),
+    catalogs: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
+      const { input, ctx } = opts;
+
+      // const isAuthed = !!ctx.session?.user;
+      // if (!isAuthed) {
+      //   const keywords = [...(input.facets?.keywords || [])];
+      //   keywords.push("public");
+
+      //   input.facets = {
+      //     ...input.facets,
+      //     keywords,
+      //   };
+      // }
+
+      const res = await searchResource<SearchResult<Catalog>>({
+        baseUrl: process.env.SEARCH_HUB_URL || "",
+        params: {
+          ...input,
+          filters: "catalogue",
+          includes: [
+            "id",
+            "title",
+            "description",
+            "modified",
+            "issued",
+            "country",
+            "count",
+            "keywords.label",
+          ],
+        },
+      });
+
+      return res.data.result;
+    }),
   },
 });
 

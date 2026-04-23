@@ -5,7 +5,15 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { TRPCContext } from "./auth/types";
 
-export async function createTRPCContext() {
+export async function createTRPCContext(opts: { req: Request }) {
+  const apiKey = opts.req.headers.get("Authorization")?.replace("Bearer ", "");
+
+  const validApiKeys = (process.env.API_KEYS || "").split(",");
+  const isValid = apiKey && validApiKeys.includes(apiKey);
+  if (isValid) {
+    return { session: { user: { name: "API User" } } };
+  }
+
   const session = await getServerSession(authOptions);
 
   return {

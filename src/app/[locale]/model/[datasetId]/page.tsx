@@ -13,6 +13,8 @@ import { headers as getHeaders } from "next/headers";
 import { dataTypes, pickBestDataType } from "@/lib/content";
 import { getDataset } from "@/lib/dataset/api";
 import ModelDetailsHeader from "@/components/dataset/ModelDetailsHeader";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 interface Props {
   params: Promise<{ datasetId: string; locale: supportedLocales }>;
@@ -21,6 +23,7 @@ interface Props {
 export default async function ModelPage({ params }: Props) {
   const { datasetId, locale } = await params;
   const headers = await getHeaders();
+  const session = await getServerSession(authOptions);
 
   const urls = {
     SEARCH: process.env.SEARCH_HUB_URL!,
@@ -32,13 +35,24 @@ export default async function ModelPage({ params }: Props) {
   const match = pickBestDataType(accept, dataTypes);
 
   if (match) {
-    redirect(urls.REPO + `datasets/${datasetId}${match.value}`);
+    redirect(
+      `${process.env.DOMAIN}/${locale}/model/${datasetId}/raw?format=${match.value}`,
+    );
   }
 
   const translations = getTranslations(locale);
   // await getDatasetDirect(datasetId, urls)
   const response = await getDataset(datasetId, urls);
   // console.log(response);
+
+  const isAuthed = !!session?.user;
+  const isPublic = response.keywords?.some(
+    (k) => k.label.toLowerCase() === "public",
+  );
+  // const isPublic = true;
+  if (!isPublic && !isAuthed) {
+    redirect(`/auth/signin?callbackUrl=/${locale}/model/${datasetId}`);
+  }
 
   return (
     <div className="bg-background w-full max-w-[1920px] mx-auto shadow-[0_0_12px_rgba(0,0,0,0.17)]">

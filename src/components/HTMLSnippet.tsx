@@ -1,15 +1,21 @@
 // components/HtmlSnippet.tsx
-'use client';                       // this must run in the browser
+"use client"; // this must run in the browser
 
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
+import { useEffect, useState } from "react";
 
 type Props = {
   html: string;
 };
 
 export default function HtmlSnippet({ html }: Props) {
-  /** Sanitize first to avoid XSS */
-  const safe = DOMPurify.sanitize(html);
+  const [safeHtml, setSafeHtml] = useState("");
 
-  return <div dangerouslySetInnerHTML={{ __html: safe }} />;
+  useEffect(() => {
+    // This code only runs in the browser, where 'window' exists
+    setSafeHtml(DOMPurify.sanitize(html));
+  }, [html]);
+
+  // Return a placeholder or the raw text during SSR to avoid mismatch
+  return <div dangerouslySetInnerHTML={{ __html: safeHtml }} />;
 }
