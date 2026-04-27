@@ -30,8 +30,7 @@ export const appRouter = router({
 
       const isAuthed = !!ctx.session?.user;
       if (!isAuthed) {
-        const keywords = [...(input.facets?.keywords || [])];
-        keywords.push("public");
+        const keywords = ["public", ...(input.facets?.keywords || [])];
 
         input.facets = {
           ...input.facets,
@@ -65,6 +64,19 @@ export const appRouter = router({
         },
         // axiosInstance,
       });
+
+      // Filter results again | temporary solution
+      if (!isAuthed) {
+        res.data.result.results = res.data.result.results.filter((item) => {
+          const keywords = item?.keywords || [];
+          return keywords.some((keyword) => keyword.label === "public");
+        });
+
+        // No data leak of facets
+        if (res.data.result.results.length === 0) {
+          res.data.result.facets = [];
+        }
+      }
 
       return res.data.result;
     }),
