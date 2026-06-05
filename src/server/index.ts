@@ -28,7 +28,8 @@ export const appRouter = router({
     datasets: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
       const { input, ctx } = opts;
 
-      const isAuthed = !!ctx.session?.user;
+      const isAuthed =
+        !!ctx.session?.user || process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
       if (!isAuthed) {
         const keywords = ["public", ...(input.facets?.keywords || [])];
 
