@@ -66,7 +66,13 @@ export default function DatasetSearch({ catalog }: Props) {
 
           <div className="flex justify-between">
             <SearchTabSwitcher />
-            <SortButton />
+            <div className="flex gap-2 items-center">
+              <span className="text-muted-foreground">
+                {search.data &&
+                  `${search.data.count} ${translations.search.results}`}
+              </span>
+              <SortButton />
+            </div>
           </div>
         </div>
       }

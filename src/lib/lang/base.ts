@@ -30,6 +30,7 @@ export type translations = {
     };
     page: string;
     sort: Record<SortMode, string>;
+    results: string;
   };
   navigation: {
     navTitles: Record<NavItemId, string>;

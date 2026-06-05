@@ -32,6 +32,7 @@ export const de: translations = {
       [SortMode.NAME_DESC]: "Name Absteigend",
       [SortMode.LAST_ISSUED]: "Zuletzt veröffentlicht",
     },
+    results: " Ergebniss(e)",
   },
   navigation: {
     navTitles: {

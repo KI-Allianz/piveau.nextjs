@@ -48,11 +48,18 @@ export default function CatalogueSearch() {
         <CatalogCardSkeleton key={"dss" + index} />
       ))}
       searchBar={
-        <div className="flex items-center w-full gap-2">
-          <SearchFacet
-            placeholder={translations.search.placeholder.catalogues}
-          />
-          <SortButton className="h-9 p-5" />
+        <div className="flex flex-col w-full gap-2">
+          <div className="flex items-center w-full gap-2">
+            <SearchFacet
+              placeholder={translations.search.placeholder.catalogues}
+            />
+            <SortButton className="h-9 p-5" />
+          </div>
+
+          <span className="text-muted-foreground">
+            {search.data &&
+              `${search.data.count} ${translations.search.results}`}
+          </span>
         </div>
       }
     />
