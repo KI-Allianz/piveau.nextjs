@@ -1,2 +1,3 @@
-onlyBuiltDependencies:
-  - sharp
+allowBuilds:
+  cypress: true
+  sharp: true

@@ -3,6 +3,7 @@ name: piveau-stack
 services:
   piveau-nextjs:
     container_name: piveau-nextjs
+    image: ${FRONTEND_IMAGE}
     build:
       context: .
       dockerfile: Dockerfile
@@ -15,6 +16,7 @@ services:
       piveau-hub-repo:
         condition: service_started
     environment:
+      NEXT_PUBLIC_DEFAULT_THEME: hammerhai
       DOMAIN: ${FRONTEND_DOMAIN:-http://localhost:3000}
       SEARCH_HUB_URL: ${SEARCH_HUB_INTERNAL_URL:-http://piveau-hub-search:8080}
       REPO_HUB_URL: ${REPO_HUB_INTERNAL_URL:-http://piveau-hub-repo:8080}
@@ -78,7 +80,11 @@ services:
         soft: -1
         hard: -1
     healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:9200/_cat/health >/dev/null || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s -f http://localhost:9200/_cat/health >/dev/null || exit 1",
+        ]
       interval: 5s
       timeout: 3s
       retries: 20
