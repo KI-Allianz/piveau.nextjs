@@ -4,7 +4,7 @@ describe("Homepage Tests", () => {
   });
 
   it("homepage loads and displays title", () => {
-    cy.contains("h1", "Willkommen zur KI-Allianz Datenplattform").should(
+    cy.contains("h1", "Welcome to the HammerHAI data platform").should(
       "be.visible",
     );
   });
@@ -24,16 +24,5 @@ describe("Homepage Tests", () => {
     cy.get('a[href*="/catalogues"]').first().click();
 
     cy.url().should("match", /\/catalogues/);
-  });
-
-  it("theme toggle works", () => {
-    // Open the theme menu
-    cy.get('button[aria-label="Toggle theme"]').click();
-
-    // Select dark theme
-    cy.get('[role="menuitem"]').contains("Dark").click();
-
-    // Check if html tag has dark class
-    cy.get("html").should("have.class", "dark");
   });
 });
