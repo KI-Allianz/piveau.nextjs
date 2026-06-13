@@ -1,6 +1,6 @@
 describe("Dataset Tests", () => {
   beforeEach(function () {
-    cy.visit("/de/dataset");
+    cy.visit("/en/dataset");
   });
 
   it("dataset search page loads", () => {
