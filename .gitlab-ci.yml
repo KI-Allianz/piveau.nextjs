@@ -16,7 +16,6 @@ cypress-tests:
 
   variables:
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
-    NODE_ENV: "production"
     AUTH_DISABLED: "true"
     NEXT_PUBLIC_AUTH_DISABLED: "true"
     DOMAIN: "http://localhost:3000"
