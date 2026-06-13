@@ -29,8 +29,8 @@ export default async function DatasetPage({ params }: Props) {
   const session = await getServerSession(authOptions);
 
   const urls = {
-    SEARCH: process.env.SEARCH_HUB_URL!,
-    REPO: process.env.REPO_HUB_URL!,
+    SEARCH: process.env.SEARCH_HUB_URL!.replace(/^"|"$/g, ""),
+    REPO: process.env.REPO_HUB_URL!.replace(/^"|"$/g, ""),
   };
 
   // Content negotiation up front

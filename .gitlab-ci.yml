@@ -8,6 +8,7 @@ cache:
     files:
       - pnpm-lock.yaml
   paths:
+    - .pnpm-store
     - cache/Cypress/
 
 cypress-tests:
@@ -16,12 +17,16 @@ cypress-tests:
 
   variables:
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
-    NODE_ENV: "production"
+    AUTH_DISABLED: "true"
+    NEXT_PUBLIC_AUTH_DISABLED: "true"
+    DOMAIN: "http://localhost:3000"
+    SEARCH_HUB_URL: "https://ki-daten.hlrs.de/hub/search/"
+    REPO_HUB_URL: "https://ki-daten.hlrs.de/hub/repo/"
 
   before_script:
     - npm install -g pnpm
     - pnpm config set store-dir $CI_PROJECT_DIR/.pnpm-store
-    - pnpm install --frozen-lockfile --allow-root
+    - pnpm install --frozen-lockfile
 
   script:
     - pnpm dlx start-server-and-test dev http://localhost:3000 "npx cypress run"
