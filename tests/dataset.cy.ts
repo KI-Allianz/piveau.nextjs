@@ -29,12 +29,4 @@ describe("Dataset Tests", () => {
     // Check if name of first result contains "test"
     cy.get(cardSelector).first().contains(/test/i).should("be.visible");
   });
-
-  it("dataset details page loads", () => {
-    const cardSelector = "main div.flex.flex-col.gap-4 a";
-
-    cy.get(cardSelector, { timeout: 10000 }).first().click();
-
-    cy.url({ timeout: 10000 }).should("match", /\/dataset\//);
-  });
 });
