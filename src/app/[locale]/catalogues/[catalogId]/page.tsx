@@ -18,7 +18,7 @@ export default async function CatalogPage({ params }: Props) {
   const response = await getResourceById<
     StandardSchemaV1.InferOutput<typeof schemaCatalog>
   >({
-    baseUrl: process.env.SEARCH_HUB_URL!,
+    baseUrl: process.env.SEARCH_HUB_URL!.replace(/^"|"$/g, ""),
     resource: "catalogues",
     id: catalogId,
   });
