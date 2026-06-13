@@ -8,11 +8,13 @@ import { router } from "./trpc";
 import { SearchParamsSchema } from "./schemas/search";
 import { protectedProcedure, publicProcedure } from "./auth/procedures";
 
+const baseUrl = process.env.SEARCH_HUB_URL!.replace(/^"|"$/g, "");
+
 export const appRouter = router({
   categories: publicProcedure.query(async () => {
     try {
       const res = await searchResource<SearchResult<Dataset>>({
-        baseUrl: process.env.SEARCH_HUB_URL!,
+        baseUrl: baseUrl,
         params: {
           q: "",
           filters: "dataset",
@@ -46,7 +48,7 @@ export const appRouter = router({
 
       try {
         const res = await searchResource<SearchResult<Dataset>>({
-          baseUrl: process.env.SEARCH_HUB_URL || "",
+          baseUrl: baseUrl,
           params: {
             ...input,
             filters: "dataset",
@@ -107,7 +109,7 @@ export const appRouter = router({
 
       try {
         const res = await searchResource<SearchResult<Catalog>>({
-          baseUrl: process.env.SEARCH_HUB_URL || "",
+          baseUrl: baseUrl,
           params: {
             ...input,
             filters: "catalogue",
