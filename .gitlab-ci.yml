@@ -1,6 +1,43 @@
 stages:
+  - test
   - build
   - deploy
+
+cache:
+  key:
+    files:
+      - pnpm-lock.yaml
+  paths:
+    - .pnpm-store/
+    - cache/Cypress/
+
+cypress-tests:
+  stage: test
+  image: cypress/browsers:node-20.14.0-chrome-125-ff-124
+
+  variables:
+    STORE_PATH: "$CI_PROJECT_DIR/.pnpm-store"
+    CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
+    NODE_ENV: "production"
+
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@latest --activate
+    - pnpm config set store-dir $STORE_PATH
+
+    - pnpm install --frozen-lockfile --allow-root
+    - pnpm run build
+
+  script:
+    - pnpm dlx start-server-and-test start http://localhost:3000 "pnpm run test --browser chrome"
+
+  artifacts:
+    name: "cypress-results-$CI_COMMIT_REF_SLUG"
+    when: always
+    expire_in: 1 week
+    paths:
+      - cypress/videos
+      - cypress/screenshots
 
 build-image:
   stage: build
@@ -12,7 +49,7 @@ build-image:
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}" --destination "${CI_REGISTRY_IMAGE}:latest"
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "production" || $CI_COMMIT_BRANCH == "staging"
 
 deploy-fullstack-to-vm:
   stage: deploy
@@ -72,4 +109,4 @@ deploy-fullstack-to-vm:
       docker image prune -f
       "
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "production"
