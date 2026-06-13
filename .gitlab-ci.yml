@@ -19,11 +19,12 @@ cypress-tests:
     NODE_ENV: "production"
 
   before_script:
-    - pnpm ci
+    - npm install -g pnpm
+    - pnpm config set store-dir $CI_PROJECT_DIR/.pnpm-store
+    - pnpm install --frozen-lockfile --allow-root
 
   script:
-    - pnpm dev &
-    - npx cypress run --browser firefox
+    - pnpm dlx start-server-and-test dev http://localhost:3000 "npx cypress run"
 
   artifacts:
     name: "cypress-results-$CI_COMMIT_REF_SLUG"
