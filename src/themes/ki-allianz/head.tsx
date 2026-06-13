@@ -1,5 +1,7 @@
+import { Fragment } from "react";
+
 export const headElements: React.ReactNode[] = [
-  <>
+  <Fragment key="ki-allianz-head">
     <link rel="icon" sizes="32x32" href="themes/ki-allianz/favicon.svg" />
     <link
       rel="icon"
@@ -13,5 +15,5 @@ export const headElements: React.ReactNode[] = [
     ></meta>
     <title>KI-Allianz Datenplatform</title>
     <meta name="description" content="KI-Allianz Datenplattform" />
-  </>,
+  </Fragment>,
 ];

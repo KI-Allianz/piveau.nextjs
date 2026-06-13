@@ -1,5 +1,7 @@
+import { Fragment } from "react";
+
 export const headElements: React.ReactNode[] = [
-  <>
+  <Fragment key="hammerhai-head">
     <link rel="icon" sizes="32x32" href="themes/hammerhai/favicon-32x32.png" />
     <link
       rel="icon"
@@ -16,5 +18,5 @@ export const headElements: React.ReactNode[] = [
     ></meta>
     <title>Hammerhai data platform</title>
     <meta name="description" content="Hammerhai data platform" />
-  </>,
+  </Fragment>,
 ];

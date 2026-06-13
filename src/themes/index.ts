@@ -9,7 +9,7 @@ export const DefaultTheme: SupportedTheme =
 const THEME_SWITCHING_ENABLED =
   process.env.NEXT_PUBLIC_DISABLE_THEME_SWITCHING !== "true";
 
-const themeMap: Record<SupportedTheme, ProjectTheme> = {
+export const themeMap: Record<SupportedTheme, ProjectTheme> = {
   hammerhai: HammerTheme,
   kiallianz: KiAllianzTheme,
 };

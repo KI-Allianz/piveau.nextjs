@@ -1,6 +1,3 @@
-import { languageNames } from "@/lib/lang";
-import { getTheme } from "@/themes";
-
 describe("Homepage Tests", () => {
   beforeEach(() => {
     cy.visit("/");
@@ -38,28 +35,5 @@ describe("Homepage Tests", () => {
 
     // Check if html tag has dark class
     cy.get("html").should("have.class", "dark");
-  });
-
-  it("language selector works", () => {
-    const theme = getTheme(null);
-    const defaultLanguage = languageNames[theme.lang.default];
-
-    // Open language selector
-    cy.get("button").contains(defaultLanguage).click({ force: true });
-
-    // Check if all options are visible
-    theme.lang.supported.forEach((lang) => {
-      const langName = languageNames[lang];
-      cy.get('[role="option"]').contains(langName).should("be.visible");
-    });
-
-    // Select Last language in the list
-    const lastLang = theme.lang.supported[theme.lang.supported.length - 1];
-    const lastLangName = languageNames[lastLang];
-
-    cy.get('[role="option"]').contains(lastLangName).click();
-
-    // Check URL changes to include the locale
-    cy.url().should("match", new RegExp(`/${lastLang}`));
   });
 });

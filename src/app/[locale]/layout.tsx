@@ -28,7 +28,7 @@ export default async function RootLayout({
   const licenses = await getLicenses();
 
   return (
-    <html lang={locale} data-project={theme.id}>
+    <html lang={locale} data-project={theme.id} suppressHydrationWarning>
       <head>{theme.headElements}</head>
       <body
         className={`${theme.fonts.map((f) => f.variable).join(" ")} antialiased`}
