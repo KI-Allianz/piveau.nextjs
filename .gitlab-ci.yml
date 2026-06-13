@@ -19,17 +19,11 @@ cypress-tests:
     NODE_ENV: "production"
     AUTH_DISABLED: "true"
     NEXT_PUBLIC_AUTH_DISABLED: "true"
+    DOMAIN: "http://localhost:3000"
+    SEARCH_HUB_URL: "https://ki-daten.hlrs.de/hub/search/"
+    REPO_HUB_URL: "https://ki-daten.hlrs.de/hub/repo/"
 
   before_script:
-    # Import environment variables from sample.env, but only those that are not already set in the CI environment
-    - while read -r line || [ -n "$line" ]; do
-      if [[ ! "$line" =~ ^# ]] && [[ "$line" == *=* ]]; then
-      key="${line%%=*}";
-      value="${line#*=}";
-      eval "export $key=\"\${$key:-$value}\"";
-      fi;
-      done < sample.env
-
     - npm install -g pnpm
     - pnpm config set store-dir $CI_PROJECT_DIR/.pnpm-store
     - pnpm install --frozen-lockfile
