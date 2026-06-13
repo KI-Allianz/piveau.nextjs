@@ -45,7 +45,8 @@ export default async function ModelPage({ params }: Props) {
   const response = await getDataset(datasetId, urls);
   // console.log(response);
 
-  const isAuthed = !!session?.user;
+  const isAuthed =
+    !!session?.user || process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
   const isPublic = response.keywords?.some(
     (k) => k.label.toLowerCase() === "public",
   );

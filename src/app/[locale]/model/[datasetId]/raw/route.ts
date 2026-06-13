@@ -18,7 +18,8 @@ export async function canAccessModel(
   const isPublic = response.keywords?.some(
     (k) => k.label.toLowerCase() === "public",
   );
-  const isAuthed = !!session?.user;
+  const isAuthed =
+    !!session?.user || process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
 
   return {
     allowed: isPublic || isAuthed,
