@@ -5,7 +5,7 @@ import { ProjectTheme } from "./types";
 export const SupportedThemes = ["hammerhai", "kiallianz"];
 export type SupportedTheme = (typeof SupportedThemes)[number];
 export const DefaultTheme: SupportedTheme =
-  (process.env.NEXT_PUBLIC_DEFAULT_THEME as SupportedTheme) ?? "kiallianz";
+  (process.env.NEXT_PUBLIC_DEFAULT_THEME as SupportedTheme) ?? "hammerhai";
 const THEME_SWITCHING_ENABLED =
   process.env.NEXT_PUBLIC_DISABLE_THEME_SWITCHING !== "true";
 
@@ -16,12 +16,12 @@ export const themeMap: Record<SupportedTheme, ProjectTheme> = {
 
 export function getTheme(themeId: string | null): ProjectTheme {
   if (!THEME_SWITCHING_ENABLED) {
-    return themeMap[DefaultTheme] || KiAllianzTheme;
+    return themeMap[DefaultTheme] || HammerTheme;
   }
 
   if (themeId && SupportedThemes.includes(themeId as SupportedTheme)) {
     return themeMap[themeId as SupportedTheme];
   }
 
-  return themeMap[DefaultTheme] || KiAllianzTheme;
+  return themeMap[DefaultTheme] || HammerTheme;
 }
