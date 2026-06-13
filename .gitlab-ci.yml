@@ -16,11 +16,11 @@ cypress-tests:
 
   variables:
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
-    AUTH_DISABLED: "true"
-    NEXT_PUBLIC_AUTH_DISABLED: "true"
-    DOMAIN: "http://localhost:3000"
-    SEARCH_HUB_URL: "https://ki-daten.hlrs.de/hub/search/"
-    REPO_HUB_URL: "https://ki-daten.hlrs.de/hub/repo/"
+    AUTH_DISABLED: true
+    NEXT_PUBLIC_AUTH_DISABLED: true
+    DOMAIN: http://localhost:3000
+    SEARCH_HUB_URL: https://ki-daten.hlrs.de/hub/search/
+    REPO_HUB_URL: https://ki-daten.hlrs.de/hub/repo/
 
   before_script:
     - npm install -g pnpm
