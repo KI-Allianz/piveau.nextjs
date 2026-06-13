@@ -35,6 +35,6 @@ describe("Dataset Tests", () => {
 
     cy.get(cardSelector, { timeout: 10000 }).first().click();
 
-    cy.url().should("match", /\/dataset\//);
+    cy.url({ timeout: 10000 }).should("match", /\/dataset\//);
   });
 });

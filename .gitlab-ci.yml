@@ -8,6 +8,7 @@ cache:
     files:
       - pnpm-lock.yaml
   paths:
+    - .pnpm-store
     - cache/Cypress/
 
 cypress-tests:
