@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Archive, ChevronLeft, Tag } from "lucide-react";
+import { ChevronLeft, Tag } from "lucide-react";
 import Link from "next/link";
 
-import { Dataset, isAIModel, parseDate, UrlCollection } from "@/lib/utils";
+import { Dataset, isAIModel } from "@/lib/utils";
 import { getCategoryIcon } from "@/lib/icons";
 import { useLocale } from "@/hooks/useLocale";
 
@@ -14,22 +14,20 @@ import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFavouriteButton";
 import PublisherPopover from "@/components/dataset/PublisherPopover";
 import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
-import DatasetDetailsExportButton from "@/components/dataset/DatasetDetailsExportButton";
+import ObjectDetailsExportButton from "@/components/dataset/ObjectDetailsExportButton";
 import DatasetDetailsDescription from "@/components/dataset/DatasetDetailsDescription";
 import CatalogBadge from "./CatalogBadge";
 import DateBadge from "./DateBadge";
+import { getCleanUrl } from "@/hooks/useTheme";
 
 interface Props {
   dataset: Dataset;
   baseUrl: string;
-  urls: UrlCollection;
 }
 
-export default function ModelDetailsHeader({ dataset, urls }: Props) {
+export default function ModelDetailsHeader({ dataset, baseUrl }: Props) {
   const { locale, translateDict, translations } = useLocale();
   const router = useRouter();
-
-  const jsonldurl = urls.REPO + `datasets/${dataset.id}.jsonld`;
 
   return (
     <div className="w-full space-y-3">
@@ -44,8 +42,11 @@ export default function ModelDetailsHeader({ dataset, urls }: Props) {
 
         <div className="space-x-2">
           <DatasetDetailsFavouriteButton dataset={dataset} />
-          <ExampleCodePopover url={jsonldurl} isAIModel={isAIModel(dataset)} />
-          <DatasetDetailsExportButton id={dataset.id} urls={urls} />
+          <ExampleCodePopover
+            url={getCleanUrl(`${baseUrl}/de/model/${dataset.id}`)}
+            isAIModel={isAIModel(dataset)}
+          />
+          <ObjectDetailsExportButton id={dataset.id} type={"model"} />
         </div>
       </div>
 

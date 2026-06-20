@@ -1,8 +1,6 @@
-import DatasetDetailsHeader from "../../../../components/dataset/DatasetDetailsHeader";
 import DatasetDetailsDistributions from "../../../../components/dataset/DatasetDetailsDistributions";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import MapComponent from "@/components/MapComponent";
 import {
   Accordion,
   AccordionContent,
@@ -10,21 +8,21 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { getTranslations, supportedLocales } from "@/lib/lang";
-import DatasetDetailsChatbot from "@/components/dataset/DatasetDetailsChatbot";
 import { redirect } from "next/navigation";
 import { headers as getHeaders } from "next/headers";
 import { dataTypes, pickBestDataType } from "@/lib/content";
-import { getDataset } from "@/lib/dataset/api";
+import ModelDetailsHeader from "@/components/dataset/ModelDetailsHeader";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { BACKEND_URLS } from "@/lib/urls";
+import { getModel } from "@/lib/repo/model/api";
 
 interface Props {
-  params: Promise<{ datasetId: string; locale: supportedLocales }>;
+  params: Promise<{ id: string; locale: supportedLocales }>;
 }
 
-export default async function DatasetPage({ params }: Props) {
-  const { datasetId, locale } = await params;
+export default async function ModelPage({ params }: Props) {
+  const { id, locale } = await params;
   const headers = await getHeaders();
   const session = await getServerSession(authOptions);
 
@@ -34,14 +32,12 @@ export default async function DatasetPage({ params }: Props) {
 
   if (match) {
     redirect(
-      `${process.env.DOMAIN}/${locale}/dataset/${datasetId}/raw?format=${match.value}`,
+      `${process.env.DOMAIN}/${locale}/model/${id}/raw?format=${match.value}`,
     );
   }
 
   const translations = getTranslations(locale);
-  // await getDatasetDirect(datasetId, urls)
-  const response = await getDataset(datasetId, BACKEND_URLS);
-  // console.log(response);
+  const response = await getModel(id);
 
   const isAuthed =
     !!session?.user || process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
@@ -50,27 +46,26 @@ export default async function DatasetPage({ params }: Props) {
   );
   // const isPublic = true;
   if (!isPublic && !isAuthed) {
-    redirect(`/auth/signin?callbackUrl=/${locale}/dataset/${datasetId}`);
+    redirect(`/auth/signin?callbackUrl=/${locale}/model/${id}`);
   }
 
   return (
     <div className="bg-background w-full max-w-[1920px] mx-auto shadow-[0_0_12px_rgba(0,0,0,0.17)]">
       <Header />
       <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
-        <DatasetDetailsHeader
+        <ModelDetailsHeader
           dataset={response}
-          baseUrl={`${process.env.DOMAIN || "http://localhost:3000"}`}
-          urls={BACKEND_URLS}
+          baseUrl={process.env.DOMAIN || ""}
         />
 
         <Accordion
           type="multiple"
           className="w-full"
-          defaultValue={["distributions", "assistant", "map"]}
+          defaultValue={["distributions"]}
         >
           <AccordionItem value={"distributions"} className="py-2">
             <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-              {translations.dataset.distribution.title}
+              {translations.dataset.distribution.titleWeights}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
               <DatasetDetailsDistributions
@@ -79,24 +74,6 @@ export default async function DatasetPage({ params }: Props) {
               />
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value={"assistant"} className="py-2">
-            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-              {translations.dataset.assistant.title}
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsChatbot dataset={response} />
-            </AccordionContent>
-          </AccordionItem>
-          {response.spatial && (
-            <AccordionItem value={"map"} className="py-2">
-              <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-                {translations.dataset.map.title}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground pb-2">
-                <MapComponent geoJsonData={response.spatial} />
-              </AccordionContent>
-            </AccordionItem>
-          )}
         </Accordion>
       </div>
       <Footer />

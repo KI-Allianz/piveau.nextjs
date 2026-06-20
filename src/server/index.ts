@@ -8,30 +8,17 @@ import { router } from "./trpc";
 import { SearchParamsSchema } from "./schemas/search";
 import { publicProcedure } from "./auth/procedures";
 import { BACKEND_URLS } from "@/lib/urls";
+import { getDatasetCategories } from "@/lib/repo/dataset/api";
 
 const baseUrl = BACKEND_URLS.SEARCH;
 
 export const appRouter = router({
   categories: publicProcedure.query(async () => {
-    try {
-      const res = await searchResource<SearchResult<Dataset>>({
-        baseUrl: baseUrl,
-        params: {
-          q: "",
-          filters: "dataset",
-          limit: 1,
-          page: 0,
-          includes: ["categories.label"],
-        },
-      });
-
-      return res.data.result.facets.find((facet) => facet.id === "categories")
-        ?.items;
-    } catch (error) {
-      console.error("Failed to fetch categories:", error);
-      throw new Error("Failed to fetch categories from Search Hub Upstream");
-    }
+    return await getDatasetCategories();
   }),
+
+  dataset: {},
+
   search: {
     datasets: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
       const { input, ctx } = opts;
@@ -94,6 +81,7 @@ export const appRouter = router({
         throw new Error("Failed to fetch from Search Hub Upstream");
       }
     }),
+
     catalogs: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
       const { input, ctx } = opts;
 

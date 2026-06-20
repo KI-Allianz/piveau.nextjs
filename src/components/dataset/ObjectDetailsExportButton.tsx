@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { useLocale } from "@/hooks/useLocale";
 import { dataTypes } from "@/lib/content";
-import { Dataset, UrlCollection } from "@/lib/utils";
+import { Dataset, ObjectType } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,14 +18,15 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { fixThemeUrl } from "@/hooks/useTheme";
 
 interface Props {
-  id: NonNullable<Dataset["distributions"]>[number]["id"];
-  urls: UrlCollection;
+  id: NonNullable<Dataset["id"]>;
+  type: ObjectType;
 }
 
-export default function DatasetDetailsExportButton({ id, urls }: Props) {
-  const { translations } = useLocale();
+export default function ObjectDetailsExportButton({ id, type }: Props) {
+  const { translations, locale, theme } = useLocale();
 
   return (
     <DropdownMenu>
@@ -42,17 +43,19 @@ export default function DatasetDetailsExportButton({ id, urls }: Props) {
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
-                {dataTypes.map((type) => (
-                  <DropdownMenuItem key={type.value}>
+                {dataTypes.map((format) => (
+                  <DropdownMenuItem key={format.value}>
                     <Link
-                      href={urls.REPO + `datasets/${id}${type.value}`}
-                      key={type.value}
+                      href={fixThemeUrl(`/${locale}/${type}/${id}`, theme)}
+                      key={format.value}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-between w-full gap-4"
                     >
-                      {type.label}
-                      <DropdownMenuShortcut>{type.value}</DropdownMenuShortcut>
+                      {format.label}
+                      <DropdownMenuShortcut>
+                        {format.value}
+                      </DropdownMenuShortcut>
                     </Link>
                   </DropdownMenuItem>
                 ))}

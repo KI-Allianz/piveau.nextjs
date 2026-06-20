@@ -1,8 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { parse, parseISO } from "date-fns";
-import {StandardSchemaV1} from "@standard-schema/spec";
-import {schemaDataset} from "@piveau/sdk-core/model";
+import { StandardSchemaV1 } from "@standard-schema/spec";
+import { schemaCatalog, schemaDataset } from "@piveau/sdk-core/model";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -22,31 +22,41 @@ export function parseDate(dateString: string | undefined | null): Date | null {
 }
 
 export function formatString(str: string, ...replacements: string[]): string {
-  return str.replace(/{(\d+)}/g, function(match, number) {
+  return str.replace(/{(\d+)}/g, function (match, number) {
     return typeof replacements[number] != "undefined"
       ? replacements[number]
       : match;
   });
 }
 
-export type Dataset = StandardSchemaV1.InferOutput<typeof schemaDataset>
+export type Dataset = StandardSchemaV1.InferOutput<typeof schemaDataset>;
+export type Catalogue = StandardSchemaV1.InferOutput<typeof schemaCatalog>;
 
 export const aiModelFormats = ["ONNX", "Hugging Face Hub format"];
 export const aiModelKeywords = ["ai-model"];
 
 export function isAIModel(dataset: Dataset): boolean {
-
-  if (dataset.keywords && dataset.keywords?.map((keyword) => keyword.id)
-    .filter((keyword) => keyword && aiModelKeywords.includes(keyword))?.length > 0) {
-    return true
+  if (
+    dataset.keywords &&
+    dataset.keywords
+      ?.map((keyword) => keyword.id)
+      .filter((keyword) => keyword && aiModelKeywords.includes(keyword))
+      ?.length > 0
+  ) {
+    return true;
+  } else if (
+    dataset.distributions &&
+    dataset.distributions
+      ?.map((dist) => dist.format?.id)
+      .filter((format) => format && aiModelFormats.includes(format))?.length > 0
+  ) {
+    return true;
   }
-  else if (dataset.distributions && dataset.distributions?.map((dist) => dist.format?.id)
-    .filter((format) => format && aiModelFormats.includes(format))?.length > 0) {
-    return true
-  }
 
-  return false
+  return false;
 }
+
+export type ObjectType = "dataset" | "model";
 
 export type UrlCollection = {
   SEARCH: string;
@@ -66,4 +76,4 @@ export const sortModeTypes = {
   [SortMode.NAME_ASC]: "asc",
   [SortMode.NAME_DESC]: "desc",
   [SortMode.LAST_ISSUED]: "desc",
-}
+};

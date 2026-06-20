@@ -3,33 +3,24 @@ import { Suspense } from "react";
 import DatasetSearch from "@/components/dataset/DatasetSearch";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getResourceById } from "@piveau/sdk-core";
 import { supportedLocales } from "@/lib/lang";
-import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaCatalog } from "@piveau/sdk-core/model";
-import { BACKEND_URLS } from "@/lib/urls";
+import { getCatalogue } from "@/lib/repo/catalogue/api";
 
 interface Props {
-  params: Promise<{ catalogId: string; locale: supportedLocales }>;
+  params: Promise<{ id: string; locale: supportedLocales }>;
 }
 
 export default async function CatalogPage({ params }: Props) {
-  const { catalogId } = await params;
+  const { id } = await params;
 
-  const response = await getResourceById<
-    StandardSchemaV1.InferOutput<typeof schemaCatalog>
-  >({
-    baseUrl: BACKEND_URLS.SEARCH,
-    resource: "catalogues",
-    id: catalogId,
-  });
+  const response = await getCatalogue(id);
 
   return (
     <div className="bg-background w-full max-w-[1920px] mx-auto shadow-[0_0_12px_rgba(0,0,0,0.17)]">
       <Header />
       <div className="px-10 pt-20 w-full max-w-7xl mx-auto">
         <Suspense>
-          <DatasetSearch catalog={response.result} />
+          <DatasetSearch catalog={response} />
         </Suspense>
       </div>
       <Footer />

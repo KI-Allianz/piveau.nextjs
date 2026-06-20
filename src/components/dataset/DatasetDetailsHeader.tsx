@@ -1,17 +1,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Archive, ChevronLeft, Tag } from "lucide-react";
+import { ChevronLeft, Tag } from "lucide-react";
 import Link from "next/link";
 
 import { useLocale } from "@/hooks/useLocale";
-import { Dataset, isAIModel, parseDate, UrlCollection } from "@/lib/utils";
+import { Dataset, isAIModel } from "@/lib/utils";
 import { extractParserRepository } from "@/lib/code/examples";
 import { getCategoryIcon } from "@/lib/icons";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import DatasetDetailsExportButton from "@/components/dataset/DatasetDetailsExportButton";
+import ObjectDetailsExportButton from "@/components/dataset/ObjectDetailsExportButton";
 import DatasetDetailsDescription from "@/components/dataset/DatasetDetailsDescription";
 import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
@@ -24,14 +24,9 @@ import { fixThemeUrl, getCleanUrl } from "@/hooks/useTheme";
 interface Props {
   dataset: Dataset;
   baseUrl: string;
-  urls: UrlCollection;
 }
 
-export default function DatasetDetailsHeader({
-  dataset,
-  baseUrl,
-  urls,
-}: Props) {
+export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
   const { locale, translateDict, translations, theme } = useLocale();
   const router = useRouter();
 
@@ -53,7 +48,7 @@ export default function DatasetDetailsHeader({
             customParser={extractParserRepository(dataset, translateDict)}
             isAIModel={isAIModel(dataset)}
           />
-          <DatasetDetailsExportButton id={dataset.id} urls={urls} />
+          <ObjectDetailsExportButton id={dataset.id} type={"model"} />
         </div>
       </div>
 
