@@ -21,14 +21,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { fixThemeUrl } from "@/hooks/useTheme";
 
 interface Props {
   id: NonNullable<Dataset["distributions"]>[number]["id"];
-  urls: UrlCollection;
 }
 
-export function DistributionLinkedDataButton({ id, urls }: Props) {
-  const { translations } = useLocale();
+export function DistributionLinkedDataButton({ id }: Props) {
+  const { translations, locale, theme } = useLocale();
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
 
@@ -51,7 +51,10 @@ export function DistributionLinkedDataButton({ id, urls }: Props) {
             <CommandGroup>
               {dataTypes.map((status) => (
                 <Link
-                  href={urls.REPO + `distributions/${id}${status.value}`}
+                  href={fixThemeUrl(
+                    `/${locale}/distribution/${id}/raw?format=${status.value}`,
+                    theme,
+                  )}
                   key={status.value}
                   target="_blank"
                   rel="noopener noreferrer"

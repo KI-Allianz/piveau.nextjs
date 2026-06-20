@@ -14,7 +14,6 @@ import { dataTypes, pickBestDataType } from "@/lib/content";
 import ModelDetailsHeader from "@/components/dataset/ModelDetailsHeader";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { BACKEND_URLS } from "@/lib/urls";
 import { getModel } from "@/lib/repo/model/api";
 
 interface Props {
@@ -68,10 +67,7 @@ export default async function ModelPage({ params }: Props) {
               {translations.dataset.distribution.titleWeights}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsDistributions
-                dataset={response}
-                urls={BACKEND_URLS}
-              />
+              <DatasetDetailsDistributions dataset={response} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

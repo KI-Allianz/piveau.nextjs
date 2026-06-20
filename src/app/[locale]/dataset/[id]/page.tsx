@@ -17,7 +17,6 @@ import { dataTypes, pickBestDataType } from "@/lib/content";
 import { getDataset } from "@/lib/repo/dataset/api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { BACKEND_URLS } from "@/lib/urls";
 
 interface Props {
   params: Promise<{ id: string; locale: supportedLocales }>;
@@ -72,10 +71,7 @@ export default async function DatasetPage({ params }: Props) {
               {translations.dataset.distribution.title}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsDistributions
-                dataset={response}
-                urls={BACKEND_URLS}
-              />
+              <DatasetDetailsDistributions dataset={response} />
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value={"assistant"} className="py-2">

@@ -46,7 +46,10 @@ export default function ObjectDetailsExportButton({ id, type }: Props) {
                 {dataTypes.map((format) => (
                   <DropdownMenuItem key={format.value}>
                     <Link
-                      href={fixThemeUrl(`/${locale}/${type}/${id}`, theme)}
+                      href={fixThemeUrl(
+                        `/${locale}/${type}/${id}/raw?format=${format.value}`,
+                        theme,
+                      )}
                       key={format.value}
                       target="_blank"
                       rel="noopener noreferrer"

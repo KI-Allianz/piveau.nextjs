@@ -20,10 +20,9 @@ import { DistributionLicense } from "@/components/distributions/DistributionLice
 
 interface Props {
   distribution: NonNullable<Dataset["distributions"]>[number];
-  urls: UrlCollection;
 }
 
-export default function DistributionCard({ distribution, urls }: Props) {
+export default function DistributionCard({ distribution }: Props) {
   const { translateDict, dateLocale } = useLocale();
 
   // console.log(distribution)
@@ -67,7 +66,7 @@ export default function DistributionCard({ distribution, urls }: Props) {
             access_urls={distribution.access_url}
             download_urls={distribution.download_url}
           />
-          <DistributionLinkedDataButton id={distribution.id} urls={urls} />
+          <DistributionLinkedDataButton id={distribution.id} />
         </div>
       </div>
     </Card>
