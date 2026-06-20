@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDataset } from "@/lib/dataset/api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { BACKEND_URLS } from "@/lib/urls";
 
 // lib/auth-check.ts
 export async function canAccessDataset(
@@ -32,17 +33,12 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
   const { datasetId } = await params;
   const session = await getServerSession(authOptions);
 
-  const urls = {
-    SEARCH: process.env.SEARCH_HUB_URL!.replace(/^"|"$/g, ""),
-    REPO: process.env.REPO_HUB_URL!.replace(/^"|"$/g, ""),
-  };
-
   const apiKey = req.headers.get("Authorization")?.replace("Bearer ", "");
   const isValidApiKey = (process.env.API_KEYS || "")
     .split(",")
     .includes(apiKey || "");
 
-  const { allowed } = await canAccessDataset(datasetId, session, urls);
+  const { allowed } = await canAccessDataset(datasetId, session, BACKEND_URLS);
 
   if (!allowed && !isValidApiKey) {
     return new NextResponse("Unauthorized", { status: 401 });
@@ -52,7 +48,7 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
   const format = searchParams.get("format");
   const typeConfig = dataTypes.find((t) => t.value === format);
 
-  const res = await fetch(`${urls.REPO}datasets/${datasetId}${format}`);
+  const res = await fetch(`${BACKEND_URLS.REPO}datasets/${datasetId}${format}`);
   const data = await res.text();
 
   return new NextResponse(data, {

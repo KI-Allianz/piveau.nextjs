@@ -6,9 +6,10 @@ import {
 } from "@piveau/sdk-core";
 import { router } from "./trpc";
 import { SearchParamsSchema } from "./schemas/search";
-import { protectedProcedure, publicProcedure } from "./auth/procedures";
+import { publicProcedure } from "./auth/procedures";
+import { BACKEND_URLS } from "@/lib/urls";
 
-const baseUrl = process.env.SEARCH_HUB_URL!.replace(/^"|"$/g, "");
+const baseUrl = BACKEND_URLS.SEARCH;
 
 export const appRouter = router({
   categories: publicProcedure.query(async () => {

@@ -15,6 +15,7 @@ import { getDataset } from "@/lib/dataset/api";
 import ModelDetailsHeader from "@/components/dataset/ModelDetailsHeader";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { BACKEND_URLS } from "@/lib/urls";
 
 interface Props {
   params: Promise<{ datasetId: string; locale: supportedLocales }>;
@@ -24,11 +25,6 @@ export default async function ModelPage({ params }: Props) {
   const { datasetId, locale } = await params;
   const headers = await getHeaders();
   const session = await getServerSession(authOptions);
-
-  const urls = {
-    SEARCH: process.env.SEARCH_HUB_URL!.replace(/^"|"$/g, ""),
-    REPO: process.env.REPO_HUB_URL!.replace(/^"|"$/g, ""),
-  };
 
   // Content negotiation up front
   const accept = headers.get("accept") ?? "";
@@ -42,7 +38,7 @@ export default async function ModelPage({ params }: Props) {
 
   const translations = getTranslations(locale);
   // await getDatasetDirect(datasetId, urls)
-  const response = await getDataset(datasetId, urls);
+  const response = await getDataset(datasetId, BACKEND_URLS);
   // console.log(response);
 
   const isAuthed =
@@ -62,7 +58,7 @@ export default async function ModelPage({ params }: Props) {
         <ModelDetailsHeader
           dataset={response}
           baseUrl={process.env.DOMAIN || ""}
-          urls={urls}
+          urls={BACKEND_URLS}
         />
 
         <Accordion
@@ -75,7 +71,10 @@ export default async function ModelPage({ params }: Props) {
               {translations.dataset.distribution.titleWeights}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsDistributions dataset={response} urls={urls} />
+              <DatasetDetailsDistributions
+                dataset={response}
+                urls={BACKEND_URLS}
+              />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
