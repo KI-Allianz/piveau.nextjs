@@ -1,4 +1,10 @@
-import { LinkIcon, Mail, MapPin, Phone, Users } from "lucide-react";
+import {
+  Mail,
+  MapPin,
+  Phone,
+  SquareArrowOutUpRightIcon,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { Dataset } from "@piveau/sdk-core";
 
@@ -42,7 +48,7 @@ export default function PublisherPopover({ publisher, contact_point }: Props) {
 
           {publisher?.homepage && (
             <Link href={publisher?.homepage}>
-              <LinkIcon className="hover:text-blue-600 cursor-pointer transition-all duration-200" />
+              <SquareArrowOutUpRightIcon className="hover:text-blue-600 cursor-pointer transition-all duration-200" />
             </Link>
           )}
           {publisher?.email && (
@@ -75,7 +81,7 @@ export default function PublisherPopover({ publisher, contact_point }: Props) {
                 {contact.url?.map((url) => (
                   <Link href={url}>
                     <p className="flex items-center gap-2 text-sm text-blue-600 hover:underline break-all">
-                      <LinkIcon size={15} />
+                      <SquareArrowOutUpRightIcon size={15} />
                       {url}
                     </p>
                   </Link>
