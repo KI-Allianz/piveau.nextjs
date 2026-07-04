@@ -74,6 +74,8 @@ export const en: translations = {
     lastModified: "Last Modified",
     issuedOn: "Issued On",
     daysOld: "days old",
+    publisher: "Publisher",
+    providedBy: "Provided by",
   },
   catalogue: {
     title: "Title",

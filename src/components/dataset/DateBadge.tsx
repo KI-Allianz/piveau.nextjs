@@ -60,7 +60,7 @@ export default function DateBadge({ modified, issued }: Props) {
       onClick={(e) => toggle(e)}
     >
       <div className="bg-black text-white p-1.5 rounded-xl w-fit group-hover:bg-black/80 transition-all duration-200">
-        {showAge ? <CalendarClock size={18} /> : <Calendar size={18} />}
+        {showAge ? <CalendarClock size={24} /> : <Calendar size={24} />}
       </div>
       <span className="line-clamp-1">
         {showAge && age !== null

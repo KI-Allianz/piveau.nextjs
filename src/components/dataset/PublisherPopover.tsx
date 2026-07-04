@@ -13,6 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useLocale } from "@/hooks/useLocale";
 
 interface Props {
   publisher: Dataset["publisher"];
@@ -27,19 +28,29 @@ function clampString(str: string, maxLength: number) {
 }
 
 export default function PublisherPopover({ publisher, contact_point }: Props) {
+  const { translations } = useLocale();
+
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <div className="flex w-fit items-center gap-2 font-semibold group transition-all duration-200 hover:bg-secondary cursor-pointer rounded-lg p-1">
+        <div className="flex w-fit items-center gap-2 group transition-all duration-200 hover:bg-secondary cursor-pointer rounded-lg p-1">
           <div className="bg-black text-white p-1.5 rounded-xl w-fit group-hover:bg-black/80 transition-all duration-200">
-            <Users size={18} />
+            <Users size={24} />
           </div>
-          <span className="line-clamp-1">
-            {clampString(
-              publisher?.name || contact_point?.at(0)?.name || "Publisher",
-              50,
-            )}
-          </span>
+          <div className="flex flex-col">
+            <span
+              className="text-xs text-muted-foreground"
+              style={{ marginBottom: "-1px" }}
+            >
+              {translations.dataset.publisher}
+            </span>
+            <span className="line-clamp-1 font-semibold">
+              {clampString(
+                publisher?.name || contact_point?.at(0)?.name || "Publisher",
+                50,
+              )}
+            </span>
+          </div>
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-[450px] rounded-2xl flex flex-col gap-4">

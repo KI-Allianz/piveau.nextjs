@@ -69,6 +69,8 @@ export type translations = {
     lastModified: string;
     issuedOn: string;
     daysOld: string;
+    publisher: string;
+    providedBy: string;
   };
   catalogue: {
     title: string;

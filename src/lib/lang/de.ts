@@ -75,6 +75,8 @@ export const de: translations = {
     lastModified: "Zuletzt geändert",
     issuedOn: "Ausgestellt am",
     daysOld: "Tage alt",
+    publisher: "Herausgeber",
+    providedBy: "Bereitgestellt von",
   },
   catalogue: {
     title: "Titel",

@@ -20,6 +20,7 @@ import PublisherPopover from "@/components/dataset/PublisherPopover";
 import CatalogBadge from "./CatalogBadge";
 import DateBadge from "./DateBadge";
 import { fixThemeUrl, getCleanUrl } from "@/hooks/useTheme";
+import ObjectDetailsBanner from "./ObjectDetailsBanner";
 
 interface Props {
   dataset: Dataset;
@@ -58,16 +59,7 @@ export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
         </h1>
       </div>
 
-      <div className="flex justify-center py-5">
-        <div className="flex flex-row justify-between items-center gap-20 bg-card py-5 px-6 rounded-2xl w-fit">
-          <CatalogBadge catalog={dataset.catalog} />
-          <DateBadge modified={dataset.modified} issued={dataset.issued} />
-          <PublisherPopover
-            publisher={dataset.publisher}
-            contact_point={dataset.contact_point}
-          />
-        </div>
-      </div>
+      <ObjectDetailsBanner data={dataset} />
 
       <div className="pt-3 flex flex-wrap gap-2">
         {dataset.keywords?.map((keyword) => (
