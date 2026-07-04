@@ -76,6 +76,11 @@ export const en: translations = {
     daysOld: "days old",
     publisher: "Publisher",
     providedBy: "Provided by",
+    report: {
+      title: "Report page",
+      description:
+        "Do you want to report an issue with this page? Please contact us at",
+    },
   },
   catalogue: {
     title: "Title",

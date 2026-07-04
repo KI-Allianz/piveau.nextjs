@@ -71,6 +71,10 @@ export type translations = {
     daysOld: string;
     publisher: string;
     providedBy: string;
+    report: {
+      title: string;
+      description: string;
+    };
   };
   catalogue: {
     title: string;

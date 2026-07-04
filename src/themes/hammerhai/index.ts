@@ -28,6 +28,11 @@ export const HammerTheme: ProjectTheme = {
     enableLanguageSelector: false,
     enableThemeToggle: false,
   },
+  config: {
+    support: {
+      email: "info@hlrs.de",
+    },
+  },
 
   lang: {
     default: "en",

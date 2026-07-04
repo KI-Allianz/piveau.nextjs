@@ -23,6 +23,12 @@ export const KiAllianzTheme: ProjectTheme = {
     enableThemeToggle: true,
   },
 
+  config: {
+    support: {
+      email: "info@hlrs.de",
+    },
+  },
+
   lang: {
     default: "de",
     supported: ["de"],

@@ -12,12 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFavouriteButton";
-import PublisherPopover from "@/components/dataset/PublisherPopover";
 import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 import ObjectDetailsExportButton from "@/components/dataset/ObjectDetailsExportButton";
 import DatasetDetailsDescription from "@/components/dataset/DatasetDetailsDescription";
-import CatalogBadge from "./CatalogBadge";
-import DateBadge from "./DateBadge";
 import { getCleanUrl } from "@/hooks/useTheme";
 import ObjectDetailsBanner from "./ObjectDetailsBanner";
 

@@ -16,18 +16,20 @@ import DatasetDetailsDescription from "@/components/dataset/DatasetDetailsDescri
 import ExampleCodePopover from "@/components/dataset/ExampleCodePopover";
 import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFavouriteButton";
-import PublisherPopover from "@/components/dataset/PublisherPopover";
-import CatalogBadge from "./CatalogBadge";
-import DateBadge from "./DateBadge";
 import { fixThemeUrl, getCleanUrl } from "@/hooks/useTheme";
 import ObjectDetailsBanner from "./ObjectDetailsBanner";
 
 interface Props {
   dataset: Dataset;
   baseUrl: string;
+  supportEmail?: string;
 }
 
-export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
+export default function DatasetDetailsHeader({
+  dataset,
+  baseUrl,
+  supportEmail,
+}: Props) {
   const { locale, translateDict, translations, theme } = useLocale();
   const router = useRouter();
 
@@ -59,7 +61,7 @@ export default function DatasetDetailsHeader({ dataset, baseUrl }: Props) {
         </h1>
       </div>
 
-      <ObjectDetailsBanner data={dataset} />
+      <ObjectDetailsBanner data={dataset} supportEmail={supportEmail} />
 
       <div className="pt-3 flex flex-wrap gap-2">
         {dataset.keywords?.map((keyword) => (

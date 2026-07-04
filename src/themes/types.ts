@@ -18,6 +18,12 @@ export interface ProjectTheme {
     enableThemeToggle: boolean;
   };
 
+  config: {
+    support: {
+      email: string;
+    };
+  };
+
   lang: {
     default: supportedLocales;
     supported: supportedLocales[];

@@ -77,6 +77,11 @@ export const de: translations = {
     daysOld: "Tage alt",
     publisher: "Herausgeber",
     providedBy: "Bereitgestellt von",
+    report: {
+      title: "Seite melden",
+      description:
+        "Möchten Sie ein Problem mit dieser Seite melden? Bitte kontaktieren Sie uns unter",
+    },
   },
   catalogue: {
     title: "Titel",
