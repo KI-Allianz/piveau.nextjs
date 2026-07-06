@@ -47,7 +47,17 @@ build-image:
   script:
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}" --destination "${CI_REGISTRY_IMAGE}:latest"
+
+    - EXTRA_TAG=""
+    - if [ "$CI_COMMIT_BRANCH" = "production" ]; then EXTRA_TAG="--destination ${CI_REGISTRY_IMAGE}:latest"; fi
+
+    - |
+      /kaniko/executor \
+        --context "${CI_PROJECT_DIR}" \
+        --dockerfile "${CI_PROJECT_DIR}/Dockerfile" \
+        --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}" \
+        --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_BRANCH}" \
+        ${EXTRA_TAG}
   rules:
     - if: $CI_COMMIT_BRANCH == "production" || $CI_COMMIT_BRANCH == "staging"
 

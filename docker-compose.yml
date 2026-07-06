@@ -1,6 +1,7 @@
 services:
   piveau-nextjs:
     container_name: piveau-nextjs
+    image: docker.gitlab.gwdg.de/hammerhai/data/catalog-frontend:${TAG:-latest}
     # all that is needed to build prod live image
     build:
       context: .
