@@ -61,6 +61,30 @@ build-image:
   rules:
     - if: $CI_COMMIT_BRANCH == "production" || $CI_COMMIT_BRANCH == "staging"
 
+trigger-deploy:
+  stage: deploy
+  image: curlimages/curl:latest
+  script:
+    - |
+      ENV_UPPER=$(echo "${CI_COMMIT_BRANCH}" | tr '[:lower:]' '[:upper:]')
+
+      eval "TARGET_IP=\$${ENV_UPPER}_IP"
+      eval "TARGET_SECRET=\$${ENV_UPPER}_SECRET"
+
+      if [ -z "$TARGET_IP" ]; then
+        echo "ERROR: ${ENV_UPPER}_IP is not defined in GitLab CI/CD variables!"
+        exit 1
+      fi
+
+      echo "Triggering deployment to ${CI_COMMIT_BRANCH} environment at ${TARGET_IP}..."
+
+      curl -X POST \
+        -H "X-Webhook-Token: ${TARGET_SECRET}" \
+        -H "X-Deploy-Env: ${CI_COMMIT_BRANCH}" \
+        "http://${TARGET_IP}/hooks/redeploy-app"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "production"
+
 deploy-fullstack-to-vm:
   stage: deploy
   image: alpine:latest
