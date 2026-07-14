@@ -85,62 +85,62 @@ trigger-deploy:
   rules:
     - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "production"
 
-deploy-fullstack-to-vm:
-  stage: deploy
-  image: alpine:latest
-  before_script:
-    - apk add --no-cache openssh-client
-    - eval $(ssh-agent -s)
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
-    - chmod 400 ~/.ssh/id_ed25519
-    - ssh-add ~/.ssh/id_ed25519
-    - ssh-keyscan "$VM_IP" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-  script:
-    - echo "Generating fullstack compose deployment files..."
-    - |
-      cat > fullstack.env <<EOF
-      FRONTEND_IMAGE=${CI_REGISTRY_IMAGE}:latest
-      FRONTEND_PORT=${FRONTEND_PORT:-3000}
-      FRONTEND_DOMAIN=${FRONTEND_DOMAIN:-http://localhost:3000}
-      SEARCH_HUB_INTERNAL_URL=${SEARCH_HUB_INTERNAL_URL:-http://piveau-hub-search:8080}
-      REPO_HUB_INTERNAL_URL=${REPO_HUB_INTERNAL_URL:-http://piveau-hub-repo:8080}
-      AUTH_DISABLED=${AUTH_DISABLED:-true}
-      NEXT_PUBLIC_AUTH_DISABLED=${NEXT_PUBLIC_AUTH_DISABLED:-true}
-      AUTH_SECRET=${AUTH_SECRET:-change-me-dev-secret}
-      NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
-      NEXT_PUBLIC_AUTH_URL=${NEXT_PUBLIC_AUTH_URL:-http://localhost:3000}
-      AUTH_KEYCLOAK_ID=${AUTH_KEYCLOAK_ID:-}
-      AUTH_KEYCLOAK_SECRET=${AUTH_KEYCLOAK_SECRET:-}
-      AUTH_KEYCLOAK_ISSUER=${AUTH_KEYCLOAK_ISSUER:-}
-      PIVEAU_SEARCH_API_KEY=${PIVEAU_SEARCH_API_KEY:-dev-search-api-key}
-      PIVEAU_REPO_API_KEY=${PIVEAU_REPO_API_KEY:-yourRepoApiKey}
-      REPO_PORT=${REPO_PORT:-8081}
-      REPO_SHELL_PORT=${REPO_SHELL_PORT:-8085}
-      REPO_DEBUG_PORT=${REPO_DEBUG_PORT:-5002}
-      SEARCH_PORT=${SEARCH_PORT:-8084}
-      SEARCH_SHELL_PORT=${SEARCH_SHELL_PORT:-8086}
-      ELASTICSEARCH_PORT=${ELASTICSEARCH_PORT:-9200}
-      ELASTICSEARCH_TRANSPORT_PORT=${ELASTICSEARCH_TRANSPORT_PORT:-9300}
-      VIRTUOSO_HTTP_PORT=${VIRTUOSO_HTTP_PORT:-8890}
-      VIRTUOSO_SQL_PORT=${VIRTUOSO_SQL_PORT:-1111}
-      EOF
-    - echo "Copying deployment files to VM..."
-    - ssh "$VM_USER@$VM_IP" "mkdir -p ~/piveau-fullstack"
-    - scp fullstack.docker-compose.yml fullstack.env "$VM_USER@$VM_IP:~/piveau-fullstack/"
-    - echo "Deploying fullstack to VM..."
-    - |
-      ssh "$VM_USER@$VM_IP" "
-      set -e &&
-      cd ~/piveau-fullstack &&
-      echo \"$CI_REGISTRY_PASSWORD\" | docker login -u \"$CI_REGISTRY_USER\" --password-stdin \"$CI_REGISTRY\" &&
-      # Remove all existing containers to avoid host port conflicts (e.g. 3000 already bound)
-      docker ps -aq | xargs -r docker rm -f &&
-      docker compose --env-file fullstack.env -f fullstack.docker-compose.yml pull &&
-      docker compose --env-file fullstack.env -f fullstack.docker-compose.yml up -d --remove-orphans &&
-      docker image prune -f
-      "
-  rules:
-    - if: $CI_COMMIT_BRANCH == "production"
+# deploy-fullstack-to-vm:
+#   stage: deploy
+#   image: alpine:latest
+#   before_script:
+#     - apk add --no-cache openssh-client
+#     - eval $(ssh-agent -s)
+#     - mkdir -p ~/.ssh
+#     - chmod 700 ~/.ssh
+#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+#     - chmod 400 ~/.ssh/id_ed25519
+#     - ssh-add ~/.ssh/id_ed25519
+#     - ssh-keyscan "$VM_IP" >> ~/.ssh/known_hosts
+#     - chmod 644 ~/.ssh/known_hosts
+#   script:
+#     - echo "Generating fullstack compose deployment files..."
+#     - |
+#       cat > fullstack.env <<EOF
+#       FRONTEND_IMAGE=${CI_REGISTRY_IMAGE}:latest
+#       FRONTEND_PORT=${FRONTEND_PORT:-3000}
+#       FRONTEND_DOMAIN=${FRONTEND_DOMAIN:-http://localhost:3000}
+#       SEARCH_HUB_INTERNAL_URL=${SEARCH_HUB_INTERNAL_URL:-http://piveau-hub-search:8080}
+#       REPO_HUB_INTERNAL_URL=${REPO_HUB_INTERNAL_URL:-http://piveau-hub-repo:8080}
+#       AUTH_DISABLED=${AUTH_DISABLED:-true}
+#       NEXT_PUBLIC_AUTH_DISABLED=${NEXT_PUBLIC_AUTH_DISABLED:-true}
+#       AUTH_SECRET=${AUTH_SECRET:-change-me-dev-secret}
+#       NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+#       NEXT_PUBLIC_AUTH_URL=${NEXT_PUBLIC_AUTH_URL:-http://localhost:3000}
+#       AUTH_KEYCLOAK_ID=${AUTH_KEYCLOAK_ID:-}
+#       AUTH_KEYCLOAK_SECRET=${AUTH_KEYCLOAK_SECRET:-}
+#       AUTH_KEYCLOAK_ISSUER=${AUTH_KEYCLOAK_ISSUER:-}
+#       PIVEAU_SEARCH_API_KEY=${PIVEAU_SEARCH_API_KEY:-dev-search-api-key}
+#       PIVEAU_REPO_API_KEY=${PIVEAU_REPO_API_KEY:-yourRepoApiKey}
+#       REPO_PORT=${REPO_PORT:-8081}
+#       REPO_SHELL_PORT=${REPO_SHELL_PORT:-8085}
+#       REPO_DEBUG_PORT=${REPO_DEBUG_PORT:-5002}
+#       SEARCH_PORT=${SEARCH_PORT:-8084}
+#       SEARCH_SHELL_PORT=${SEARCH_SHELL_PORT:-8086}
+#       ELASTICSEARCH_PORT=${ELASTICSEARCH_PORT:-9200}
+#       ELASTICSEARCH_TRANSPORT_PORT=${ELASTICSEARCH_TRANSPORT_PORT:-9300}
+#       VIRTUOSO_HTTP_PORT=${VIRTUOSO_HTTP_PORT:-8890}
+#       VIRTUOSO_SQL_PORT=${VIRTUOSO_SQL_PORT:-1111}
+#       EOF
+#     - echo "Copying deployment files to VM..."
+#     - ssh "$VM_USER@$VM_IP" "mkdir -p ~/piveau-fullstack"
+#     - scp fullstack.docker-compose.yml fullstack.env "$VM_USER@$VM_IP:~/piveau-fullstack/"
+#     - echo "Deploying fullstack to VM..."
+#     - |
+#       ssh "$VM_USER@$VM_IP" "
+#       set -e &&
+#       cd ~/piveau-fullstack &&
+#       echo \"$CI_REGISTRY_PASSWORD\" | docker login -u \"$CI_REGISTRY_USER\" --password-stdin \"$CI_REGISTRY\" &&
+#       # Remove all existing containers to avoid host port conflicts (e.g. 3000 already bound)
+#       docker ps -aq | xargs -r docker rm -f &&
+#       docker compose --env-file fullstack.env -f fullstack.docker-compose.yml pull &&
+#       docker compose --env-file fullstack.env -f fullstack.docker-compose.yml up -d --remove-orphans &&
+#       docker image prune -f
+#       "
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "production"
