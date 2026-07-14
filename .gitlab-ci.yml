@@ -81,9 +81,11 @@ trigger-deploy:
 
       echo "Triggering deployment to ${CI_COMMIT_BRANCH} environment at ${TARGET_IP}..."
 
-      curl -X POST \
+      curl --fail-with-body --silent --show-error \
+        -H "Content-Type: application/json" \
         -H "X-Webhook-Token: ${TARGET_SECRET}" \
         -H "X-Deploy-Env: ${CI_COMMIT_BRANCH}" \
+        --data '{}' \
         "http://${TARGET_IP}/hooks/redeploy-app"
   rules:
     - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "production"
