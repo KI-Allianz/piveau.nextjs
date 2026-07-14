@@ -5,6 +5,19 @@ node_modules/
 .next/
 dist/
 
+# Package-manager and CI caches are not application source. In particular,
+# Cypress's generated TypeScript bundles must not be type-checked by Next.js.
+.pnpm-store/
+cache/
+
+# Test output
+coverage/
+test-results/
+playwright-report/
+blob-report/
+cypress/screenshots/
+cypress/videos/
+
 Dockerfile
 docker-compose.yml
 *.docker-compose.yml
