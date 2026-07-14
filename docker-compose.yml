@@ -14,6 +14,3 @@ services:
     #command: sleep infinity
     # env_file:
     # - ./.dockerenv
-    environment:
-      SEARCH_HUB_URL: ${SEARCH_HUB_URL:?SEARCH_HUB_URL is required}
-      REPO_HUB_URL: ${REPO_HUB_URL:?REPO_HUB_URL is required}
