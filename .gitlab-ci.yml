@@ -41,6 +41,9 @@ cypress-tests:
 
 build-image:
   stage: build
+  # This job installs dependencies inside the Docker build, so restoring the
+  # host-side pnpm and Cypress caches only bloats the Kaniko build context.
+  cache: []
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
