@@ -75,21 +75,28 @@ export default function SupportSection() {
 
             {/* Description Text */}
             <div className="md:flex md:space-x-8 mb-10">
-              <div className="md:w-1/3">
-                <p className="text-sm md:text-base">
-                  This project has received funding from the European High
-                  Performance Computing Joint Undertaking under grant agreement
-                  No. 101234027.
+              <div className="md:w-1/2">
+                <p className="text-sm md:text-base text-justify">
+		  This project has received funding from the European 
+		  High Performance Computing Joint Undertaking under 
+		  grant agreement No. 101234027. It is co-funded by the 
+		  European Commission, the German Federal Ministry of Research, 
+		  Technology and Space (BMFTR), 
+		  the Baden-Württemberg Ministry of Science, Research and the Arts, 
+		  the Bavarian State Ministry of Science and the Arts and 
+		  the Lower Saxony Ministry of Science and Culture.
                 </p>
               </div>
 
-              <div className="md:w-2/3 mt-4 md:mt-0">
-                <p className="text-sm md:text-base">
-                  This project is co-funded by the European Commission, the
-                  German Federal Ministry of Research, Technology and Space
-                  (BMFTR), the Baden-Württemberg Ministry of Science, Research
-                  and the Arts, the Bavarian State Ministry of Science and the
-                  Arts, and the Lower Saxony Ministry of Science and Culture.
+              <div className="md:w-1/2 mt-4 md:mt-0">
+                <p className="text-sm md:text-base text-justify">
+		  The acquisition and operation of the EuroHPC Al-optimised 
+		  supercomputer is funded jointly by the EuroHPC Joint Undertaking, 
+		  through the European Union's Digital Europe Programme, as well as 
+		  by the German Federal Ministry of Research, Technology and Space (BMFTR) 
+		  and the Baden-Württemberg Ministry of Science, Research and the Arts. 
+		  Views and opinions expressed are those of the author(s) only and do not 
+		  necessarily reflect those of the European Union or the EuroHPC JU.
                 </p>
               </div>
             </div>

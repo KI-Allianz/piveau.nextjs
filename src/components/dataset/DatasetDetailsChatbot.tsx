@@ -43,7 +43,7 @@ export default function DatasetDetailsChatbot({ dataset, className }: Props) {
 
       try {
         const res = await fetch(
-          "https://ask.ki-allianz.de/metadataassistant/",
+          "https://piveau.hlrs.de/metadataassistant",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
