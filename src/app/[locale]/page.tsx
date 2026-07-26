@@ -28,7 +28,7 @@ export default async function MainPage({ params }: Props) {
         <div className="flex flex-col gap-4">
           <SearchPreview />
 
-          <CategorySlider locale={locale} />
+	  {/*<CategorySlider locale={locale} /> */}
         </div>
       </div>
 
