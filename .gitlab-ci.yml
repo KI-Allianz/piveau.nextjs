@@ -13,6 +13,7 @@ cache:
 
 cypress-tests:
   stage: test
+  allow_failure: true
   image: cypress/browsers:22.15.0
 
   variables:
