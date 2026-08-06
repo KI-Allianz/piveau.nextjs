@@ -18,6 +18,7 @@ export const KiAllianzTheme: ProjectTheme = {
     enableSystem: true,
   },
   headElements: headElements,
+  showCategorySlider: true,
   footer: {
     enableLanguageSelector: false,
     enableThemeToggle: true,

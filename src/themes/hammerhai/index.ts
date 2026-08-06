@@ -24,6 +24,7 @@ export const HammerTheme: ProjectTheme = {
     forcedTheme: "light",
   },
   headElements: headElements,
+  showCategorySlider: false,
   footer: {
     enableLanguageSelector: false,
     enableThemeToggle: false,
