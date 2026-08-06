@@ -14,9 +14,14 @@ type ApiResponse = { response?: string; [k: string]: any } | string | null;
 type Props = {
   dataset: Dataset;
   className?: string;
+  backendUrl: string;
 };
 
-export default function DatasetDetailsChatbot({ dataset, className }: Props) {
+export default function DatasetDetailsChatbot({
+  dataset,
+  className,
+  backendUrl,
+}: Props) {
   const [userInput, setUserInput] = useState("");
   const { translations } = useLocale();
   const [response, setResponse] = useState<ApiResponse>(null);
@@ -42,17 +47,14 @@ export default function DatasetDetailsChatbot({ dataset, className }: Props) {
       setError(null);
 
       try {
-        const res = await fetch(
-          "https://piveau.hlrs.de/metadataassistant",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              user_input: userInput,
-              json_data: JSON.stringify(ds),
-            }),
-          },
-        );
+        const res = await fetch(backendUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_input: userInput,
+            json_data: JSON.stringify(ds),
+          }),
+        });
 
         if (!res.ok) {
           const maybeJson = await res.json().catch(() => null);

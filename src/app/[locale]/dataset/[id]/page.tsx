@@ -80,7 +80,13 @@ export default async function DatasetPage({ params }: Props) {
               {translations.dataset.assistant.title}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsChatbot dataset={response} />
+              <DatasetDetailsChatbot
+                dataset={response}
+                backendUrl={
+                  process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL ||
+                  "https://piveau.hlrs.de/metadataassistant"
+                }
+              />
             </AccordionContent>
           </AccordionItem>
           {response.spatial && (
