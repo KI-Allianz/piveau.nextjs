@@ -13,6 +13,7 @@ export interface ProjectTheme {
 
   headElements: React.ReactNode[];
 
+  showCategorySlider: boolean;
   footer: {
     enableLanguageSelector: boolean;
     enableThemeToggle: boolean;
