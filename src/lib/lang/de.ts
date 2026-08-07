@@ -82,6 +82,7 @@ export const de: translations = {
       description:
         "Möchten Sie ein Problem mit dieser Seite melden? Bitte kontaktieren Sie uns unter",
     },
+    featured: "Empfohlene Datensätze",
   },
   catalogue: {
     title: "Titel",

@@ -75,6 +75,7 @@ export type translations = {
       title: string;
       description: string;
     };
+    featured: string;
   };
   catalogue: {
     title: string;

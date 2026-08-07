@@ -6,6 +6,7 @@ import { SearchPreview } from "@/components/homepage/SearchPreview";
 import { headers } from "next/headers";
 import { getTheme } from "@/themes";
 import { SupportSection } from "@/components/SupportSection";
+import { FeaturedDatasets } from "@/components/homepage/FeaturedDatasets";
 
 interface Props {
   params: Promise<{ locale: supportedLocales }>;
@@ -29,6 +30,7 @@ export default async function MainPage({ params }: Props) {
           <SearchPreview />
 
           {theme.showCategorySlider && <CategorySlider locale={locale} />}
+          {theme.showFeaturedDatasets && <FeaturedDatasets />}
         </div>
       </div>
 

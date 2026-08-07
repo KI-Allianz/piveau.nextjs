@@ -81,6 +81,7 @@ export const en: translations = {
       description:
         "Do you want to report an issue with this page? Please contact us at",
     },
+    featured: "Featured Datasets",
   },
   catalogue: {
     title: "Title",

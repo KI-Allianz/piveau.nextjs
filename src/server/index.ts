@@ -17,7 +17,42 @@ export const appRouter = router({
     return await getDatasetCategories();
   }),
 
-  dataset: {},
+  dataset: {
+    featured: publicProcedure.query(async () => {
+      try {
+        const res = await searchResource<SearchResult<Dataset>>({
+          baseUrl: baseUrl,
+          params: {
+            limit: 3,
+            filters: "dataset",
+            includes: [
+              "id",
+              "title",
+              "description",
+              "languages",
+              "modified",
+              "issued",
+              "catalog.id",
+              "catalog.title",
+              "catalog.country.id",
+              "distributions.id",
+              "distributions.format.label",
+              "distributions.format.id",
+              "distributions.license",
+              "categories.label",
+              "keywords.label",
+              "publisher",
+            ],
+          },
+        });
+
+        return res.data.result.results;
+      } catch (error) {
+        console.error("Search Resource Failed:", error);
+        throw new Error("Failed to fetch from Search Hub Upstream");
+      }
+    }),
+  },
 
   search: {
     datasets: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
