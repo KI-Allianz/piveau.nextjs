@@ -44,6 +44,9 @@ export const en: translations = {
     signIn: "Sign In",
     signOut: "Sign Out",
   },
+  models: {
+    featured: "Featured Models",
+  },
   dataset: {
     distribution: {
       title: "Available Data",

@@ -26,6 +26,7 @@ export const HammerTheme: ProjectTheme = {
   headElements: headElements,
   showCategorySlider: false,
   showFeaturedDatasets: true,
+  showFeaturedModels: true,
   footer: {
     enableLanguageSelector: false,
     enableThemeToggle: false,

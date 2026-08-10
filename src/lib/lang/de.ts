@@ -45,6 +45,9 @@ export const de: translations = {
     signIn: "Anmelden",
     signOut: "Abmelden",
   },
+  models: {
+    featured: "Empfohlene Modelle",
+  },
   dataset: {
     distribution: {
       title: "Verfügbare Daten",

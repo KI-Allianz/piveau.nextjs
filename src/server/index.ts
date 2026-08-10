@@ -17,14 +17,21 @@ export const appRouter = router({
     return await getDatasetCategories();
   }),
 
-  dataset: {
-    featured: publicProcedure.query(async () => {
+  featured: {
+    dataset: publicProcedure.query(async (opts) => {
+      const { ctx } = opts;
+
       try {
+        const isAuthed =
+          !!ctx.session?.user ||
+          process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
+
         const res = await searchResource<SearchResult<Dataset>>({
           baseUrl: baseUrl,
           params: {
             limit: 3,
             filters: "dataset",
+            facets: isAuthed ? undefined : { keywords: ["public"] },
             includes: [
               "id",
               "title",
@@ -46,6 +53,74 @@ export const appRouter = router({
           },
         });
 
+        if (!isAuthed) {
+          res.data.result.results = res.data.result.results.filter((item) => {
+            const keywords = item?.keywords || [];
+            return keywords.some((keyword) => keyword.label === "public");
+          });
+
+          // No data leak of facets
+          if (res.data.result.results.length === 0) {
+            res.data.result.facets = [];
+          }
+        }
+        return res.data.result.results;
+      } catch (error) {
+        console.error("Search Resource Failed:", error);
+        throw new Error("Failed to fetch from Search Hub Upstream");
+      }
+    }),
+    models: publicProcedure.query(async (opts) => {
+      const { ctx } = opts;
+
+      try {
+        const isAuthed =
+          !!ctx.session?.user ||
+          process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
+
+        let keywords = ["ai-model"];
+        if (!isAuthed) {
+          keywords.push("public");
+        }
+
+        const res = await searchResource<SearchResult<Dataset>>({
+          baseUrl: baseUrl,
+          params: {
+            limit: 3,
+            filters: "dataset",
+            facets: { keywords },
+            includes: [
+              "id",
+              "title",
+              "description",
+              "languages",
+              "modified",
+              "issued",
+              "catalog.id",
+              "catalog.title",
+              "catalog.country.id",
+              "distributions.id",
+              "distributions.format.label",
+              "distributions.format.id",
+              "distributions.license",
+              "categories.label",
+              "keywords.label",
+              "publisher",
+            ],
+          },
+        });
+
+        if (!isAuthed) {
+          res.data.result.results = res.data.result.results.filter((item) => {
+            const keywords = item?.keywords || [];
+            return keywords.some((keyword) => keyword.label === "public");
+          });
+
+          // No data leak of facets
+          if (res.data.result.results.length === 0) {
+            res.data.result.facets = [];
+          }
+        }
         return res.data.result.results;
       } catch (error) {
         console.error("Search Resource Failed:", error);

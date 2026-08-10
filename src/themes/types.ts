@@ -15,6 +15,7 @@ export interface ProjectTheme {
 
   showCategorySlider: boolean;
   showFeaturedDatasets: boolean;
+  showFeaturedModels: boolean;
   footer: {
     enableLanguageSelector: boolean;
     enableThemeToggle: boolean;

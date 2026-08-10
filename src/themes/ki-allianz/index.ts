@@ -20,6 +20,7 @@ export const KiAllianzTheme: ProjectTheme = {
   headElements: headElements,
   showCategorySlider: true,
   showFeaturedDatasets: true,
+  showFeaturedModels: true,
   footer: {
     enableLanguageSelector: false,
     enableThemeToggle: true,

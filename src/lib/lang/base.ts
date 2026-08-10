@@ -39,6 +39,9 @@ export type translations = {
     signIn: string;
     signOut: string;
   };
+  models: {
+    featured: string;
+  };
   dataset: {
     distribution: {
       title: string;
