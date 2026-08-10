@@ -19,6 +19,11 @@ const navItems = [
     external: false,
   },
   {
+    id: NavItemId.MODELS,
+    href: "/dataset?tab=models",
+    external: false,
+  },
+  {
     id: NavItemId.CATALOGUES,
     href: "/catalogues",
     external: false,

@@ -36,6 +36,7 @@ export const en: translations = {
   navigation: {
     navTitles: {
       [NavItemId.DATASETS]: "Datasets",
+      [NavItemId.MODELS]: "Models",
       [NavItemId.CATALOGUES]: "Catalogues",
       [NavItemId.FAVOURITES]: "Favourites",
     },

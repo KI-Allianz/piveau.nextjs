@@ -3,6 +3,7 @@ import { SortMode } from "@/lib/utils";
 
 export enum NavItemId {
   DATASETS = "datasets",
+  MODELS = "models",
   CATALOGUES = "catalogues",
   FAVOURITES = "favourites",
 }
