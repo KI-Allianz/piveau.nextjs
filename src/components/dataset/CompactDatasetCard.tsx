@@ -37,7 +37,7 @@ export default function CompactDatasetCard({ dataset }: Props) {
         `/${locale}/${isModel ? "model" : "dataset"}/${dataset.id}`,
         theme,
       )}
-      className="w-full"
+      className="w-full  h-full"
     >
       <Card className="w-full  h-full group hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer gap-3">
         <CardHeader className="gap-3">
@@ -71,7 +71,7 @@ export default function CompactDatasetCard({ dataset }: Props) {
               .join(" ")}
           />
           <div className="flex flex-col gap-4">
-            <CardDescription className="flex-2/3 snippet line-clamp-10">
+            <CardDescription className="flex-2/3 snippet line-clamp-6">
               <HtmlSnippet
                 html={
                   translateDict(dataset.description).slice(0, 205) +

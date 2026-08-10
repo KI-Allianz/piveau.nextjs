@@ -29,7 +29,7 @@ export const appRouter = router({
         const res = await searchResource<SearchResult<Dataset>>({
           baseUrl: baseUrl,
           params: {
-            limit: 3,
+            limit: 10,
             filters: "dataset",
             facets: isAuthed ? undefined : { keywords: ["public"] },
             includes: [
@@ -62,6 +62,7 @@ export const appRouter = router({
           // No data leak of facets
           if (res.data.result.results.length === 0) {
             res.data.result.facets = [];
+            res.data.result.count = 0;
           }
         }
         return res.data.result.results;
@@ -86,7 +87,7 @@ export const appRouter = router({
         const res = await searchResource<SearchResult<Dataset>>({
           baseUrl: baseUrl,
           params: {
-            limit: 3,
+            limit: 10,
             filters: "dataset",
             facets: { keywords },
             includes: [

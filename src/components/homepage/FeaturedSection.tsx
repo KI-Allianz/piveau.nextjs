@@ -1,52 +1,83 @@
 "use client";
 
-import { DynamicSkeleton } from "../ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 import CompactDatasetCard from "../dataset/CompactDatasetCard";
-import { useMediaQuery } from "usehooks-ts";
 import { Dataset } from "@/lib/utils";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { useRef } from "react";
 
 interface FeaturedSectionProps {
   title: string;
-  // Accept the tRPC query result object directly
   queryResult: {
     isPending: boolean;
     data: Dataset[] | undefined;
   };
+  autoplayOffset?: number;
 }
 
-export function FeaturedSection({ title, queryResult }: FeaturedSectionProps) {
-  const fits2 = useMediaQuery("(max-width: 1000px)");
-  const fits1 = useMediaQuery("(max-width: 700px)");
-  const amountOfCards = fits1 ? 1 : fits2 ? 2 : 3;
+export function FeaturedSection({
+  title,
+  queryResult,
+  autoplayOffset = 0,
+}: FeaturedSectionProps) {
+  const autoplayPlugin = useRef(
+    Autoplay({ delay: 5000 + autoplayOffset, stopOnInteraction: false }),
+  );
 
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-lg text-muted-foreground font-semibold pl-3">
-        {title}
-      </h2>
-      {queryResult.isPending ? (
-        <div className="py-2 rounded-xl flex-1 justify-around flex gap-2 overflow-hidden">
-          {[...Array(amountOfCards).keys()].map((_, index) => (
-            <DynamicSkeleton
-              className="w-full rounded-2xl border"
-              key={"skeleton-" + index}
-            >
-              <span className="text-transparent">
-                {Array.from({ length: 97 }).map((_, index) => "FILL\n")}
-              </span>
-            </DynamicSkeleton>
-          ))}
-        </div>
-      ) : (
-        <div className="flex-1 flex justify-around py-2 gap-2 rounded-4xl">
-          {queryResult.data &&
-            queryResult.data
-              ?.slice(0, amountOfCards)
-              .map((dataset) => (
-                <CompactDatasetCard dataset={dataset} key={dataset.id} />
+      <div className="">
+        <Carousel
+          plugins={[autoplayPlugin.current]}
+          opts={{
+            loop: true,
+            //slidesToScroll: 3, // Ratchets by exactly 3 items at a time
+            align: "start",
+          }}
+          className="w-full"
+        >
+          <div className="flex justify-between px-3 pb-1">
+            <h2 className="text-lg text-muted-foreground font-semibold">
+              {title}
+            </h2>
+            <div className="space-x-3">
+              <CarouselPrevious className="translate-0" />
+              <CarouselNext className="translate-0" />
+            </div>
+          </div>
+          <CarouselContent className="">
+            {queryResult.isPending &&
+              [...Array(10).keys()].map((_, index) => (
+                <CarouselItem
+                  key={"skeleton-" + index}
+                  className="pl-3 md:basis-1/2 lg:basis-1/3 h-70"
+                >
+                  <Skeleton
+                    className="rounded-2xl border h-70"
+                    key={"skeleton-" + index}
+                  ></Skeleton>
+                </CarouselItem>
               ))}
-        </div>
-      )}
+
+            {queryResult.data &&
+              queryResult.data.map((dataset) => (
+                <CarouselItem
+                  key={dataset.id}
+                  className="pl-4 md:basis-1/2 lg:basis-1/3 h-70"
+                >
+                  <CompactDatasetCard dataset={dataset} />
+                </CarouselItem>
+              ))}
+          </CarouselContent>
+        </Carousel>
+      </div>
     </div>
   );
 }
