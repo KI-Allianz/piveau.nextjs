@@ -11,11 +11,21 @@ export interface ProjectTheme {
   fonts: NextFontWithVariable[];
   themeProvider?: ThemeProviderProps;
 
-  headElements: React.ReactNode[];
-
-  showCategorySlider: boolean;
-  showFeaturedDatasets: boolean;
-  showFeaturedModels: boolean;
+  meta: {
+    headElements: React.ReactNode[];
+  };
+  header: {
+    navItems: Array<{
+      id: string;
+      href: string;
+      external: boolean;
+    }>;
+  };
+  homepage: {
+    showCategorySlider: boolean;
+    showFeaturedDatasets: boolean;
+    showFeaturedModels: boolean;
+  };
   footer: {
     enableLanguageSelector: boolean;
     enableThemeToggle: boolean;
@@ -34,6 +44,7 @@ export interface ProjectTheme {
       supportedLocales,
       | {
           title: string;
+          [key: string]: string; // Allows arbitrary additional keys with string values
         }
       | undefined
     >;

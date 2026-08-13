@@ -29,7 +29,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} data-project={theme.id} suppressHydrationWarning>
-      <head>{theme.headElements}</head>
+      <head>{theme.meta.headElements}</head>
       <body
         className={`${theme.fonts.map((f) => f.variable).join(" ")} antialiased`}
       >

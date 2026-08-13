@@ -41,9 +41,11 @@ export default async function MainPage({ params }: Props) {
         <div className="flex flex-col gap-4">
           <SearchPreview />
 
-          {theme.showCategorySlider && <CategorySlider locale={locale} />}
-          {theme.showFeaturedDatasets && <FeaturedDatasets />}
-          {theme.showFeaturedModels && <FeaturedModels />}
+          {theme.homepage.showCategorySlider && (
+            <CategorySlider locale={locale} />
+          )}
+          {theme.homepage.showFeaturedDatasets && <FeaturedDatasets />}
+          {theme.homepage.showFeaturedModels && <FeaturedModels />}
         </div>
       </div>
 

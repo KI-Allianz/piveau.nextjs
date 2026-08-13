@@ -42,6 +42,10 @@ export default function Header() {
   const theme = useTheme();
   const clientTheme = getClientTheme(theme.id);
 
+  const mappedNavItems = theme.header.navItems
+    .map((i) => ({ ...i, isTheme: true }))
+    .concat(navItems.map((i) => ({ ...i, isTheme: false })));
+
   return (
     <header className="header">
       <div className="pt-4 mx-4 justify-center flex">
@@ -55,7 +59,7 @@ export default function Header() {
             </Link>
             <div className="flex items-center h-12" id="navbarNav">
               <ul className="flex flex-row mt-0">
-                {navItems.map((item, i) => {
+                {mappedNavItems.map((item, i) => {
                   return (
                     <li
                       key={`navItem@${i}`}
@@ -71,7 +75,11 @@ export default function Header() {
                           "text-black dark:text-white pt-1 block mx-6 font-bold text-[1.1rem] transition-[padding-bottom] duration-300 pb-[3px] border-b-2 border-b-black dark:border-b-white hover:text-[#000AFA] hover:border-b-[#000AFA] dark:hover:text-[#7777FF] dark:hover:border-b-[#7777FF] hover:cursor-pointer hover:border-b-[3px] hover:pb-[5px] data-[active=true]:text-[#000AFA] data-[active=true]:border-b-[#000AFA] data-[active=true]:cursor-pointer data-[active=true]:border-b-[3px] "
                         }
                       >
-                        {translations.navigation.navTitles[item.id]}
+                        {item.isTheme
+                          ? theme.lang.translations[locale]?.[item.id]
+                          : translations.navigation.navTitles[
+                              item.id as NavItemId
+                            ]}
                       </Link>
                     </li>
                   );

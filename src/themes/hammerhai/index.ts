@@ -23,10 +23,24 @@ export const HammerTheme: ProjectTheme = {
     defaultTheme: "light",
     forcedTheme: "light",
   },
-  headElements: headElements,
-  showCategorySlider: false,
-  showFeaturedDatasets: true,
-  showFeaturedModels: true,
+
+  meta: {
+    headElements: headElements,
+  },
+  header: {
+    navItems: [
+      {
+        id: "home",
+        href: "https://www.hammerhai.eu/",
+        external: true,
+      },
+    ],
+  },
+  homepage: {
+    showCategorySlider: false,
+    showFeaturedDatasets: true,
+    showFeaturedModels: true,
+  },
   footer: {
     enableLanguageSelector: false,
     enableThemeToggle: false,
@@ -44,6 +58,7 @@ export const HammerTheme: ProjectTheme = {
       de: undefined,
       en: {
         title: "Welcome to the HammerHAI data platform",
+        home: "Home",
       },
     },
   },

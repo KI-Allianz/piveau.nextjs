@@ -17,10 +17,17 @@ export const KiAllianzTheme: ProjectTheme = {
     defaultTheme: "system",
     enableSystem: true,
   },
-  headElements: headElements,
-  showCategorySlider: true,
-  showFeaturedDatasets: true,
-  showFeaturedModels: true,
+  meta: {
+    headElements: headElements,
+  },
+  header: {
+    navItems: [],
+  },
+  homepage: {
+    showCategorySlider: true,
+    showFeaturedDatasets: true,
+    showFeaturedModels: true,
+  },
   footer: {
     enableLanguageSelector: false,
     enableThemeToggle: true,
