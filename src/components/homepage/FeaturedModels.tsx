@@ -10,8 +10,10 @@ export function FeaturedModels() {
 
   return (
     <FeaturedSection
-      title={translations.models.featured}
+      title={translations.model.featured}
       queryResult={search}
+      browseAllText={translations.model.browseAll}
+      browseAllLink="dataset/?tab=models"
     />
   );
 }

@@ -12,6 +12,8 @@ export function FeaturedDatasets() {
     <FeaturedSection
       title={translations.dataset.featured}
       queryResult={search}
+      browseAllText={translations.dataset.browseAll}
+      browseAllLink="dataset/"
     />
   );
 }

@@ -39,8 +39,9 @@ export type translations = {
     signIn: string;
     signOut: string;
   };
-  models: {
+  model: {
     featured: string;
+    browseAll: string;
   };
   dataset: {
     distribution: {
@@ -80,6 +81,7 @@ export type translations = {
       description: string;
     };
     featured: string;
+    browseAll: string;
   };
   catalogue: {
     title: string;

@@ -45,8 +45,9 @@ export const de: translations = {
     signIn: "Anmelden",
     signOut: "Abmelden",
   },
-  models: {
+  model: {
     featured: "Empfohlene Modelle",
+    browseAll: "Alle Modelle anzeigen",
   },
   dataset: {
     distribution: {
@@ -87,6 +88,7 @@ export const de: translations = {
         "Möchten Sie ein Problem mit dieser Seite melden? Bitte kontaktieren Sie uns unter",
     },
     featured: "Empfohlene Datensätze",
+    browseAll: "Alle Datensätze anzeigen",
   },
   catalogue: {
     title: "Titel",

@@ -12,6 +12,9 @@ import {
 } from "../ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { useRef } from "react";
+import Link from "next/link";
+import { useLocale } from "@/hooks/useLocale";
+import { fixThemeUrl } from "@/hooks/useTheme";
 
 interface FeaturedSectionProps {
   title: string;
@@ -20,13 +23,19 @@ interface FeaturedSectionProps {
     data: Dataset[] | undefined;
   };
   autoplayOffset?: number;
+  browseAllText: string;
+  browseAllLink: string;
 }
 
 export function FeaturedSection({
   title,
   queryResult,
   autoplayOffset = 0,
+  browseAllText,
+  browseAllLink,
 }: FeaturedSectionProps) {
+  const { locale, theme } = useLocale();
+
   const autoplayPlugin = useRef(
     Autoplay({ delay: 5000 + autoplayOffset, stopOnInteraction: false }),
   );
@@ -53,7 +62,7 @@ export function FeaturedSection({
             </div>
           </div>
           <CarouselContent className="">
-            {queryResult.isPending &&
+            {(queryResult.isPending || queryResult.data === undefined) &&
               [...Array(10).keys()].map((_, index) => (
                 <CarouselItem
                   key={"skeleton-" + index}
@@ -77,6 +86,14 @@ export function FeaturedSection({
               ))}
           </CarouselContent>
         </Carousel>
+      </div>
+      <div className="w-full flex justify-center py-5">
+        <Link
+          href={fixThemeUrl(`/${locale}/${browseAllLink}`, theme)}
+          className=" underline underline-offset-6 decoration-2 decoration-primary font-semibold hover:text-primary/80 hover:cursor-pointer hover:underline-offset-8 transition-all duration-200"
+        >
+          + {browseAllText}
+        </Link>
       </div>
     </div>
   );

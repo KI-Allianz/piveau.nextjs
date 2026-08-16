@@ -9,13 +9,9 @@ import { useLocale } from "@/hooks/useLocale";
 import { fixThemeUrl, useTheme } from "@/hooks/useTheme";
 import { Skeleton } from "../ui/skeleton";
 
-interface Props {
-  locale: supportedLocales;
-}
-
-export function CategorySlider({ locale }: Props) {
+export function CategorySlider() {
   const search = trpc.categories.useQuery();
-  const { translateDict } = useLocale();
+  const { locale, translateDict } = useLocale();
   const theme = useTheme();
 
   return (
