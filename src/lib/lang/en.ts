@@ -32,6 +32,7 @@ export const en: translations = {
       [SortMode.LAST_ISSUED]: "Last Issued",
     },
     results: " result(s)",
+    loginToSeeMore: "Login to see more...",
   },
   navigation: {
     navTitles: {
