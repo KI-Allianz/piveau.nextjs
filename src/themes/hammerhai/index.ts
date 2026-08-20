@@ -30,7 +30,7 @@ export const HammerTheme: ProjectTheme = {
   header: {
     navItems: [
       {
-        id: "home",
+        id: "hammerhai",
         href: "https://www.hammerhai.eu/",
         external: true,
       },
@@ -58,7 +58,7 @@ export const HammerTheme: ProjectTheme = {
       de: undefined,
       en: {
         title: "Welcome to the HammerHAI data platform",
-        home: "Home",
+        hammerhai: "HammerHAI",
       },
     },
   },
