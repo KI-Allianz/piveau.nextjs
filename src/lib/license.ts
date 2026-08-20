@@ -1,78 +1,87 @@
 // src/getLicenses.ts
-import {rdfParser} from "rdf-parse"; // note: default import (not { rdfParser })
+import { rdfParser } from "rdf-parse"; // note: default import (not { rdfParser })
 import fs from "fs";
-import {DataFactory, Store, NamedNode, Literal, Quad_Subject} from "n3";
+import { DataFactory, Store, NamedNode, Literal, Quad_Subject } from "n3";
 import { Readable } from "stream";
 import path from "node:path";
 
 const { namedNode } = DataFactory;
 
 // Prefixes
-const RDF   = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-const RDFS  = "http://www.w3.org/2000/01/rdf-schema#";
-const SKOS  = "http://www.w3.org/2004/02/skos/core#";
-const SKOSXL= "http://www.w3.org/2008/05/skos-xl#";
-const DCT   = "http://purl.org/dc/terms/";
-const DC    = "http://purl.org/dc/elements/1.1/";
-const FOAF  = "http://xmlns.com/foaf/0.1/";
+const RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+const RDFS = "http://www.w3.org/2000/01/rdf-schema#";
+const SKOS = "http://www.w3.org/2004/02/skos/core#";
+const SKOSXL = "http://www.w3.org/2008/05/skos-xl#";
+const DCT = "http://purl.org/dc/terms/";
+const DC = "http://purl.org/dc/elements/1.1/";
+const FOAF = "http://xmlns.com/foaf/0.1/";
 
 // Types
 export type LicenseEntry = {
   uri: string;
-  identifier?: string;        // dc:identifier (e.g., "dl-zero-de/2.0")
-  label?: string;             // best label (pref: skos-xl literalForm -> skos:prefLabel -> rdfs:label)
-  altLabels?: string[];       // skos:altLabel[*]
-  homepage?: string;          // foaf:homepage IRI
-  references?: string[];      // dct:references IRIs
-  usageType?: string;         // dct:type literal (e.g., "Freie Nutzung")
-  inScheme?: string;          // scheme IRI
-  topConceptOf?: string[];    // skos:topConceptOf[*]
-  types?: string[];           // rdf:type[*]
+  identifier?: string; // dc:identifier (e.g., "dl-zero-de/2.0")
+  label?: string; // best label (pref: skos-xl literalForm -> skos:prefLabel -> rdfs:label)
+  altLabels?: string[]; // skos:altLabel[*]
+  homepage?: string; // foaf:homepage IRI
+  references?: string[]; // dct:references IRIs
+  usageType?: string; // dct:type literal (e.g., "Freie Nutzung")
+  inScheme?: string; // scheme IRI
+  topConceptOf?: string[]; // skos:topConceptOf[*]
+  types?: string[]; // rdf:type[*]
 };
 
 // Utilities
 function getObjects(store: Store, s: Quad_Subject, pIri: string) {
-  return store.getQuads(s, namedNode(pIri), null, null).map(q => q.object);
+  return store.getQuads(s, namedNode(pIri), null, null).map((q) => q.object);
 }
 
 function getLiteralValues(store: Store, s: Quad_Subject, pIri: string) {
-  return getObjects(store, s, pIri)
-    .filter(o => o.termType === "Literal") as Literal[];
+  return getObjects(store, s, pIri).filter(
+    (o) => o.termType === "Literal",
+  ) as Literal[];
 }
 
 function getIriValues(store: Store, s: Quad_Subject, pIri: string) {
   return getObjects(store, s, pIri)
-    .filter(o => o.termType === "NamedNode")
-    .map(o => (o as NamedNode).value);
+    .filter((o) => o.termType === "NamedNode")
+    .map((o) => (o as NamedNode).value);
 }
 
 // Extract skos-xl prefLabel literalForm (handles the blank node)
 function getSkosXLLiteralForms(store: Store, s: Quad_Subject): Literal[] {
   const results: Literal[] = [];
   for (const xlNode of getObjects(store, s, SKOS + "prefLabel")) {
-    if (xlNode.termType !== "BlankNode" && xlNode.termType !== "NamedNode") continue;
+    if (xlNode.termType !== "BlankNode" && xlNode.termType !== "NamedNode")
+      continue;
     // xlNode --skosxl:literalForm--> Literal
     store
       .getQuads(xlNode as any, namedNode(SKOSXL + "literalForm"), null, null)
-      .forEach(q => {
+      .forEach((q) => {
         if (q.object.termType === "Literal") results.push(q.object as Literal);
       });
   }
   return results;
 }
 
-function pickBestLabelFrom(lits: Literal[], langPrefs: string[]): string | undefined {
+function pickBestLabelFrom(
+  lits: Literal[],
+  langPrefs: string[],
+): string | undefined {
   if (!lits.length) return undefined;
   // Try language preferences in order (e.g., ["de","en",""])
   for (const pref of langPrefs) {
-    const m = lits.find(l => (l.language || "") === pref);
+    const m = lits.find((l) => (l.language || "") === pref);
     if (m) return m.value;
   }
   // Fallback to first literal
   return lits[0].value;
 }
 
-function bestLabel(store: Store, s: Quad_Subject, langPrefs = ["de", "en", ""]): string | undefined {
+function bestLabel(
+  store: Store,
+  s: Quad_Subject,
+  langPrefs = ["de", "en", ""],
+): string | undefined {
   // Priority: skos-xl literalForm > skos:prefLabel > rdfs:label
   const xl = getSkosXLLiteralForms(store, s);
   const skosPref = getLiteralValues(store, s, SKOS + "prefLabel");
@@ -97,15 +106,18 @@ async function quadsToStore(quadStream: Readable): Promise<Store> {
 }
 
 export async function getDCATLicenses(): Promise<Record<string, LicenseEntry>> {
-  const filePath = path.join(process.cwd(), 'assets', 'licenses-dcat.rdf');
-  const contentType= "application/rdf+xml",
-    baseIRI    = "http://dcat-ap.de/def/licenses",
-    schemeIRI  = "http://dcat-ap.de/def/licenses",
-    langPrefs  = ["de", "en", ""]
+  const filePath = path.join(process.cwd(), "assets", "licenses-dcat.rdf");
+  const contentType = "application/rdf+xml",
+    baseIRI = "http://dcat-ap.de/def/licenses",
+    schemeIRI = "http://dcat-ap.de/def/licenses",
+    langPrefs = ["de", "en", ""];
 
   // 1) Parse RDF/XML into RDFJS quad stream
   const textStream = fs.createReadStream(filePath);
-  const quadStream = rdfParser.parse(textStream as any, { contentType, baseIRI }) as unknown as Readable;
+  const quadStream = rdfParser.parse(textStream as any, {
+    contentType,
+    baseIRI,
+  }) as unknown as Readable;
 
   // 2) Load into N3 store
   const store = await quadsToStore(quadStream);
@@ -115,19 +127,20 @@ export async function getDCATLicenses(): Promise<Record<string, LicenseEntry>> {
   const scheme = namedNode(schemeIRI);
   const candidateSubjects = store
     .getQuads(null, namedNode(SKOS + "inScheme"), scheme, null)
-    .map(q => q.subject)
+    .map((q) => q.subject);
 
   // 4) Build result
   const result: Record<string, LicenseEntry> = {};
   for (const s of candidateSubjects) {
     const uri = s.value;
 
-    const identifier = getLiteralValues(store, s, DC + "identifier")[0]?.value
-      ?? getLiteralValues(store, s, DCT + "identifier")[0]?.value;
+    const identifier =
+      getLiteralValues(store, s, DC + "identifier")[0]?.value ??
+      getLiteralValues(store, s, DCT + "identifier")[0]?.value;
 
     const altLabels = getLiteralValues(store, s, SKOS + "altLabel")
       .sort((a, b) => (a.language || "").localeCompare(b.language || ""))
-      .map(l => l.value);
+      .map((l) => l.value);
 
     const homepage = getIriValues(store, s, FOAF + "homepage")[0];
     const references = getIriValues(store, s, DCT + "references");
@@ -139,7 +152,10 @@ export async function getDCATLicenses(): Promise<Record<string, LicenseEntry>> {
 
     const label = bestLabel(store, s, langPrefs);
 
-    result[uri] = {
+    // Remove protocol prefixes (http:// or https://) from the URI for easier keying
+    const cleanedUri = uri.replace(/^https?:\/\//, "");
+
+    result[cleanedUri] = {
       uri,
       identifier,
       label,
@@ -156,8 +172,10 @@ export async function getDCATLicenses(): Promise<Record<string, LicenseEntry>> {
   return result;
 }
 
-export async function getEuropeLicenses(): Promise<Record<string, LicenseEntry>> {
-  const filePath = path.join(process.cwd(), 'assets', 'licenses-skos.rdf');
+export async function getEuropeLicenses(): Promise<
+  Record<string, LicenseEntry>
+> {
+  const filePath = path.join(process.cwd(), "assets", "licenses-skos.rdf");
   const contentType = "application/rdf+xml";
   const baseIRI = "http://publications.europa.eu/resource/authority/licence";
   const schemeIRI = "http://publications.europa.eu/resource/authority/licence";
@@ -165,7 +183,10 @@ export async function getEuropeLicenses(): Promise<Record<string, LicenseEntry>>
 
   // 1) Parse RDF/XML into RDFJS quad stream
   const textStream = fs.createReadStream(filePath);
-  const quadStream = rdfParser.parse(textStream as any, { contentType, baseIRI }) as unknown as Readable;
+  const quadStream = rdfParser.parse(textStream as any, {
+    contentType,
+    baseIRI,
+  }) as unknown as Readable;
 
   // 2) Load into N3 store
   const store = await quadsToStore(quadStream);
@@ -174,7 +195,7 @@ export async function getEuropeLicenses(): Promise<Record<string, LicenseEntry>>
   const scheme = namedNode(schemeIRI);
   const candidateSubjects = store
     .getQuads(null, namedNode(SKOS + "inScheme"), scheme, null)
-    .map(q => q.subject);
+    .map((q) => q.subject);
 
   // 4) Build result
   const result: Record<string, LicenseEntry> = {};
@@ -191,7 +212,7 @@ export async function getEuropeLicenses(): Promise<Record<string, LicenseEntry>>
     // altLabels: multilingual
     const altLabels = getLiteralValues(store, s, SKOS + "altLabel")
       .sort((a, b) => (a.language || "").localeCompare(b.language || ""))
-      .map(l => l.value);
+      .map((l) => l.value);
 
     // label: best prefLabel
     const label = bestLabel(store, s, langPrefs);
@@ -204,7 +225,9 @@ export async function getEuropeLicenses(): Promise<Record<string, LicenseEntry>>
     const types = getIriValues(store, s, RDF + "type");
 
     for (const reference of references) {
-      result[reference] = {
+      const cleanedUri = reference.replace(/^https?:\/\//, "");
+
+      result[cleanedUri] = {
         uri,
         identifier,
         label,
@@ -220,12 +243,14 @@ export async function getEuropeLicenses(): Promise<Record<string, LicenseEntry>>
   return result;
 }
 
-
 // Main: parse licenses as a dict keyed by concept URI
 export async function getLicenses(): Promise<Record<string, LicenseEntry>> {
   const licenses = await getDCATLicenses();
   const europeLicenses = await getEuropeLicenses();
   // Merge Europe licenses (may overwrite DCAT ones if same URI)
   Object.assign(licenses, europeLicenses);
+
+  // console.log(licenses);
+  // console.log(europeLicenses);
   return licenses;
 }

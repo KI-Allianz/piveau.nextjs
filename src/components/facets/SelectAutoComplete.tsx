@@ -22,20 +22,20 @@ import {
 import { useLocale } from "@/hooks/useLocale";
 import { Badge } from "@/components/ui/badge";
 import { facetIds } from "@/lib/lang/facets";
-import {getCategoryIcon} from "@/lib/icons";
+import { getCategoryIcon } from "@/lib/icons";
 
 interface Props {
   defaultValue: string[];
   facet: Facet;
   onSelectAction: (value: string | undefined) => void;
-  showIcon: boolean
+  showIcon: boolean;
 }
 
 export function SelectAutoComplete({
   defaultValue,
   facet,
   onSelectAction,
-  showIcon
+  showIcon,
 }: Props) {
   const { translateDict, translations, translateFacet } = useLocale();
   const [open, setOpen] = React.useState(false);
@@ -48,17 +48,17 @@ export function SelectAutoComplete({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between"
+          className="w-full justify-between overflow-hidden"
         >
           {values.length > 0
             ? translateDict(
-              facet.items.find((item) => item.id === values[0])?.title,
-            )
+                facet.items.find((item) => item.id === values[0])?.title,
+              )
             : formatString(
-              translations.search.facets.select,
-              translateFacet(facet.id as facetIds) ||
-              translateDict(facet.title),
-            )}
+                translations.search.facets.select,
+                translateFacet(facet.id as facetIds) ||
+                  translateDict(facet.title),
+              )}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -77,7 +77,7 @@ export function SelectAutoComplete({
             </CommandEmpty>
             <CommandGroup>
               {facet.items
-                .sort(function(a, b) {
+                .sort(function (a, b) {
                   {
                     /* if (a.title < b.title) { */
                   }
@@ -120,9 +120,7 @@ export function SelectAutoComplete({
                     />
                     {showIcon && getCategoryIcon(item.id)}
                     {translateDict(item.title)}
-                    <Badge className="ml-auto">
-                      {item.count}
-                    </Badge>
+                    <Badge className="ml-auto">{item.count}</Badge>
                   </CommandItem>
                 ))}
             </CommandGroup>
