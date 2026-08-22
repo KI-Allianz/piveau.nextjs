@@ -83,7 +83,7 @@ trigger-deploy:
 
       echo "Triggering deployment to ${CI_COMMIT_BRANCH} environment at ${TARGET_IP}..."
 
-      curl --fail-with-body --silent --show-error \
+      curl --fail-with-body --show-error \
         -H "Content-Type: application/json" \
         -H "X-Webhook-Token: ${TARGET_SECRET}" \
         -H "X-Deploy-Env: ${CI_COMMIT_BRANCH}" \

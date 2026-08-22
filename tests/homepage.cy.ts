@@ -10,8 +10,18 @@ describe("Homepage Tests", () => {
   });
 
   it("homepage displays categories", () => {
-    // Check if at least one category card exists and is visible
-    cy.get(".flex.flex-col.items-center.w-40").first().should("be.visible");
+    cy.request("/api/deployment").then((response) => {
+      const showCategories =
+        response.body.theme.data.homepage.showCategorySlider;
+
+      if (showCategories) {
+        // If enabled in the theme, verify it exists and is visible
+        cy.get(".flex.flex-col.items-center.w-40").first().should("be.visible");
+      } else {
+        // If disabled in the theme, ensure it does not exist on the page
+        cy.get(".flex.flex-col.items-center.w-40").should("not.exist");
+      }
+    });
   });
 
   it("navigation to datasets page", () => {
