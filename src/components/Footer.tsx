@@ -13,6 +13,9 @@ export default function Footer() {
   const theme = useTheme();
   const functions = getClientTheme(theme.id);
 
+  const commitHash = process.env.NEXT_PUBLIC_GIT_COMMIT_HASH || "development";
+  const shortHash = commitHash.slice(0, 7);
+
   return (
     <footer className="">
       <div className="pt-4 mx-4 justify-center flex">
@@ -39,6 +42,18 @@ export default function Footer() {
             {theme.footer.enableLanguageSelector && <LanguageSelector />}
           </div>
         </nav>
+      </div>
+
+      <div className="text-muted-foreground text-sm p-1">
+        deployment{": "}
+        <a
+          href={`https://gitlab.gwdg.de/hammerhai/data/catalog/catalog-frontend/-/commit/${commitHash}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:no-underline"
+        >
+          {shortHash}
+        </a>
       </div>
     </footer>
   );
