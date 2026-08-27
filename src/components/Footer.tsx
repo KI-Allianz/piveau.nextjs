@@ -14,7 +14,7 @@ export default function Footer() {
   const functions = getClientTheme(theme.id);
 
   const commitHash = process.env.NEXT_PUBLIC_GIT_COMMIT_HASH || "development";
-  const shortHash = commitHash.slice(0, 7);
+  const shortHash = commitHash.slice(0, 8);
 
   return (
     <footer className="">
