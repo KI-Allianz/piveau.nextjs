@@ -1,12 +1,13 @@
-"use client"
+"use client";
 
 import SortButton from "@/components/facets/SortButton";
-import {useMemo} from "react";
-import {useLocale} from "@/hooks/useLocale";
+import { useMemo } from "react";
+import { useLocale } from "@/hooks/useLocale";
 import DatasetCard from "@/components/dataset/DatasetCard";
-import {useSearchParams} from "next/navigation";
-import {Dataset} from "@/lib/utils";
-
+import { useSearchParams } from "next/navigation";
+import { Dataset } from "@/lib/utils";
+import { Card, CardContent } from "../ui/card";
+import { BadgeQuestionMark } from "lucide-react";
 
 export default function FavouritesList() {
   const { translateDict } = useLocale();
@@ -18,7 +19,7 @@ export default function FavouritesList() {
     const favs = localStorage.getItem(localStorageKey);
 
     if (favs) {
-      const favMap = JSON.parse(favs) as Record<string, Dataset>
+      const favMap = JSON.parse(favs) as Record<string, Dataset>;
       const favList = Object.values(favMap);
 
       // Sort
@@ -36,7 +37,7 @@ export default function FavouritesList() {
         //   return new Date(b.modified).getTime() - new Date(a.modified).getTime();
         // }
         return 0;
-      })
+      });
     }
 
     return [];
@@ -50,11 +51,18 @@ export default function FavouritesList() {
         </div>
       </div>
 
-      {favourites
-        .map((fav) => (
+      {favourites.map((fav) => (
         <DatasetCard key={"ds" + fav.id} dataset={fav} />
       ))}
-
+      {favourites.length === 0 && (
+        <Card className="w-full">
+          <CardContent className="w-full flex gap-3 justify-center text-muted-foreground">
+            <BadgeQuestionMark />
+            No favourites found. Add some datasets to your favourites to see
+            them here.
+          </CardContent>
+        </Card>
+      )}
     </main>
-  )
+  );
 }
