@@ -31,7 +31,7 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
 
     return new NextResponse(res, {
       headers: {
-        "Content-Type": typeConfig?.mimes[1] || "application/octet-stream",
+        "Content-Type": typeConfig?.mimes[0] || "application/octet-stream",
       },
     });
   } catch (error) {

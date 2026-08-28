@@ -26,11 +26,16 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
     return new NextResponse("Unsupported format", { status: 400 });
   }
 
-  const res = await getRawModel(id, typeConfig.value);
+  try {
+    const res = await getRawModel(id, typeConfig.value);
 
-  return new NextResponse(res, {
-    headers: {
-      "Content-Type": typeConfig?.mimes[1] || "application/octet-stream",
-    },
-  });
+    return new NextResponse(res, {
+      headers: {
+        "Content-Type": typeConfig?.mimes[0] || "application/octet-stream",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching raw dataset:", error);
+    return new NextResponse("Failed to fetch model", { status: 500 });
+  }
 }
