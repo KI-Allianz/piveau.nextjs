@@ -10,7 +10,10 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
 
   const { searchParams } = new URL(req.url);
   const format = searchParams.get("format");
-
-  const res = fetch(`${BACKEND_URLS.REPO}distributions/${id}${format}`, {});
+  const res = await fetch(
+    `${BACKEND_URLS.REPO}distributions/${id}${format}`,
+    {},
+  );
+  res.headers.set("Content-Disposition", `inline; filename="${id}"`);
   return res;
 }
