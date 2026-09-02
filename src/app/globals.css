@@ -5,10 +5,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
-    font-family: var(--default-font-family);
-}
-
 @theme inline {
     --theme-font-family: ui-sans-serif, system-ui;
     --default-font-family: var(--theme-font-family);
