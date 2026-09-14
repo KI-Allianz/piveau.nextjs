@@ -14,6 +14,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { fixThemeUrl } from "@/hooks/useTheme";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface Props {
   dataset: Dataset;
@@ -37,18 +38,28 @@ export default function DatasetBreadcrumbs({
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink
-              href={fixThemeUrl(
-                `/${locale}/catalogues/${dataset.catalog.id}`,
-                theme,
-              )}
-              className="flex gap-2 items-center"
-            >
-              <Archive size={16} />
-              {translateDict(dataset.catalog.title)}
-            </BreadcrumbLink>
-          </BreadcrumbItem>
+          <Tooltip delayDuration={200}>
+            <TooltipContent side="bottom">
+              <p>{translateDict(dataset.catalog.title)}</p>
+            </TooltipContent>
+            <TooltipTrigger className="flex">
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  href={fixThemeUrl(
+                    `/${locale}/catalogues/${dataset.catalog.id}`,
+                    theme,
+                  )}
+                  className="flex gap-2 items-center"
+                >
+                  <Archive size={16} />
+                  {translateDict(dataset.catalog.title).slice(0, 30) +
+                    (translateDict(dataset.catalog.title).length > 30
+                      ? "..."
+                      : "")}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            </TooltipTrigger>
+          </Tooltip>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbPage>
