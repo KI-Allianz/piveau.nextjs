@@ -34,61 +34,65 @@ export default function DatasetCard({ dataset }: Props) {
   ];
 
   return (
-    <Link
-      href={fixThemeUrl(
-        `/${locale}/${isModel ? "model" : "dataset"}/${dataset.id}`,
-        theme,
-      )}
-      className="w-full"
-    >
-      <Card className="w-full hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer gap-3">
-        <CardHeader className="gap-3">
-          <CardTitle>
-            <h2 className="text-2xl text-wrap">
+    <Card className="relative group w-full hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer gap-3">
+      <CardHeader className="gap-3">
+        <CardTitle>
+          <h2 className="text-2xl text-wrap">
+            <Link
+              href={fixThemeUrl(
+                `/${locale}/${isModel ? "model" : "dataset"}/${dataset.id}`,
+                theme,
+              )}
+              className="after:absolute after:inset-0 after:content-[''] focus:outline-none"
+            >
               {translateDict(dataset.title)}
-            </h2>
-          </CardTitle>
-          <div className="flex gap-2 items-center justify-between">
-            <div onClick={(e) => e.preventDefault()}>
-              <PublisherPopover
-                publisher={dataset.publisher}
-                contact_point={dataset.contact_point}
-              />
-            </div>
-            <div className="flex gap-2 items-center">
-              <DateBadge modified={dataset.modified} issued={dataset.issued} />
+            </Link>
+          </h2>
+        </CardTitle>
+        <div className="flex gap-2 items-center justify-between">
+          <div className="relative z-10">
+            <PublisherPopover
+              publisher={dataset.publisher}
+              contact_point={dataset.contact_point}
+            />
+          </div>
+          <div className="flex gap-2 items-center">
+            <DateBadge modified={dataset.modified} issued={dataset.issued} />
+            <div className="relative z-10">
               <CatalogBadge catalog={dataset.catalog} />
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-4">
-            <CardDescription className="flex-2/3 snippet">
-              <HtmlSnippet
-                html={
-                  translateDict(dataset.description).slice(0, 205) +
-                  (translateDict(dataset.description).length > 205 ? "..." : "")
-                }
-              />
-            </CardDescription>
-            {(formatTags.length > 0 || isModel) && (
-              <div className="flex flex-wrap gap-2 flex-1/3">
-                {isModel && (
-                  <Badge
-                    variant={"outline"}
-                    className="bg-amber-100 dark:bg-amber-500 text-amber-800 dark:text-black border-amber-300"
-                  >
-                    {translations.dataset.aiModel}
-                  </Badge>
-                )}
-                {formatTags.map((format) => (
-                  <Badge variant={"secondary"}>{format}</Badge>
-                ))}
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col gap-4">
+          <CardDescription className="flex-2/3 snippet">
+            <HtmlSnippet
+              html={
+                translateDict(dataset.description).slice(0, 205) +
+                (translateDict(dataset.description).length > 205 ? "..." : "")
+              }
+            />
+          </CardDescription>
+          {(formatTags.length > 0 || isModel) && (
+            <div className="flex flex-wrap gap-2 flex-1/3">
+              {isModel && (
+                <Badge
+                  variant={"outline"}
+                  className="bg-amber-100 dark:bg-amber-500 text-amber-800 dark:text-black border-amber-300"
+                >
+                  {translations.dataset.aiModel}
+                </Badge>
+              )}
+              {formatTags.map((format) => (
+                <Badge key={format} variant={"secondary"}>
+                  {format}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   output: "standalone",
   /* config options here */
   outputFileTracingIncludes: {
-    // adjust the route path to the one that needs the file
     "/": ["./assets/licenses-dcat.rdf", "./assets/licenses-skos.rdf"],
   },
   images: {
@@ -16,6 +15,19 @@ const nextConfig: NextConfig = {
         pathname: "/wp-content/uploads/**",
       },
     ],
+  },
+  // Proxy /api/assistant to the internal Agent API on the backend VM
+  async rewrites() {
+    return [
+      {
+        source: "/api/assistant",
+        destination: process.env.INTERNAL_AGENT_URL || "http://10.254.1.15:8000/",
+      },
+      {
+        source: "/api/assistant/:path*",
+        destination: `${process.env.INTERNAL_AGENT_URL || "http://10.254.1.15:8000/"}:path*`,
+      },
+    ];
   },
 };
 
