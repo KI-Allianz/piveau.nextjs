@@ -61,10 +61,10 @@ build-image:
         --dockerfile "${CI_PROJECT_DIR}/Dockerfile" \
         --build-arg GIT_COMMIT_HASH="${CI_COMMIT_SHA}" \
         --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}" \
-        --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_BRANCH}" \
+        --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}" \
         ${EXTRA_TAG}
   rules:
-    - if: $CI_COMMIT_BRANCH == "production" || $CI_COMMIT_BRANCH == "staging"
+    - if: $CI_COMMIT_BRANCH == "production" || $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "feature/mcp-assistant-proxy"
 
 trigger-deploy:
   stage: deploy
