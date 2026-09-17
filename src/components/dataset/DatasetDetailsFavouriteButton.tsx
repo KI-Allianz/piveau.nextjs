@@ -7,9 +7,10 @@ import { useLocale } from "@/hooks/useLocale";
 import { Dataset } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "../ui/spinner";
 
 interface Props {
-  dataset: Dataset;
+  dataset?: Dataset;
 }
 
 export default function DatasetDetailsFavouriteButton({ dataset }: Props) {
@@ -19,6 +20,7 @@ export default function DatasetDetailsFavouriteButton({ dataset }: Props) {
 
   const isFavourite = useMemo(() => {
     if (typeof window === "undefined") return false;
+    if (!dataset) return false;
     const favourites = localStorage.getItem(localStorageKey);
 
     if (favourites) {
@@ -30,6 +32,7 @@ export default function DatasetDetailsFavouriteButton({ dataset }: Props) {
 
   const toggle = () => {
     if (typeof window === "undefined") return;
+    if (!dataset) return;
     const favourites = localStorage.getItem(localStorageKey);
     let favouriteMap: Record<string, Dataset> = {};
 
@@ -49,7 +52,16 @@ export default function DatasetDetailsFavouriteButton({ dataset }: Props) {
     setRerender(!rerender);
   };
 
-  return (
+  return !dataset ? (
+    <Button
+      variant={"secondary"}
+      className="transition-all duration-300"
+      disabled
+    >
+      <Spinner />
+      <span>{translations.dataset.favourite.add}</span>
+    </Button>
+  ) : (
     <Button
       variant={isFavourite ? "default" : "secondary"}
       onClick={toggle}

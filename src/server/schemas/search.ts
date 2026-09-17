@@ -55,3 +55,7 @@ export const SearchParamsSchema = SearchParamsWithFacetsSchema.extend({
    */
   // filters: z.union([z.string(), z.array(z.string())]).optional(),
 });
+
+export const GetParamsSchema = z.object({
+  id: z.string(),
+});

@@ -1,22 +1,8 @@
-import DatasetDetailsHeader from "../../../../components/dataset/DatasetDetailsHeader";
-import DatasetDetailsDistributions from "../../../../components/dataset/DatasetDetailsDistributions";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import MapComponent from "@/components/MapComponent";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { getTranslations, supportedLocales } from "@/lib/lang";
-import DatasetDetailsChatbot from "@/components/dataset/DatasetDetailsChatbot";
+import { supportedLocales } from "@/lib/lang";
 import { redirect } from "next/navigation";
 import { headers as getHeaders } from "next/headers";
 import { dataTypes, pickBestDataType } from "@/lib/content";
-import { getDataset } from "@/lib/repo/dataset/api";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import DatasetDetails from "@/components/dataset/DatasetDetails";
 
 interface Props {
   params: Promise<{ id: string; locale: supportedLocales }>;
@@ -25,7 +11,6 @@ interface Props {
 export default async function DatasetPage({ params }: Props) {
   const { id, locale } = await params;
   const headers = await getHeaders();
-  const session = await getServerSession(authOptions);
 
   // Content negotiation up front
   const accept = headers.get("accept") ?? "";
@@ -37,71 +22,5 @@ export default async function DatasetPage({ params }: Props) {
     );
   }
 
-  const translations = getTranslations(locale);
-  // await getDatasetDirect(id, urls)
-  const response = await getDataset(id);
-  // console.log(response);
-
-  const isAuthed =
-    !!session?.user || process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
-  const isPublic = response.keywords?.some(
-    (k) => k.label.toLowerCase() === "public",
-  );
-  // const isPublic = true;
-  if (!isPublic && !isAuthed) {
-    redirect(`/auth/signin?callbackUrl=/${locale}/dataset/${id}`);
-  }
-
-  return (
-    <div className="bg-background w-full max-w-[1920px] mx-auto shadow-[0_0_12px_rgba(0,0,0,0.17)]">
-      <Header />
-      <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
-        <DatasetDetailsHeader
-          dataset={response}
-          baseUrl={`${process.env.DOMAIN || "http://localhost:3000"}`}
-          supportEmail={process.env.NEXT_PUBLIC_SUPPORT_EMAIL}
-        />
-
-        <Accordion
-          type="multiple"
-          className="w-full"
-          defaultValue={["distributions", "assistant", "map"]}
-        >
-          <AccordionItem value={"distributions"} className="py-2">
-            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-              {translations.dataset.distribution.title}
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsDistributions dataset={response} />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value={"assistant"} className="py-2">
-            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-              {translations.dataset.assistant.title}
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsChatbot
-                dataset={response}
-                backendUrl={
-                  process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL ||
-                  "https://piveau.hlrs.de/metadataassistant"
-                }
-              />
-            </AccordionContent>
-          </AccordionItem>
-          {response.spatial && (
-            <AccordionItem value={"map"} className="py-2">
-              <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-                {translations.dataset.map.title}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground pb-2">
-                <MapComponent geoJsonData={response.spatial} />
-              </AccordionContent>
-            </AccordionItem>
-          )}
-        </Accordion>
-      </div>
-      <Footer />
-    </div>
-  );
+  return <DatasetDetails id={id} />;
 }

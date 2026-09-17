@@ -5,7 +5,7 @@ import { useLocale } from "@/hooks/useLocale";
 import { FeaturedSection } from "./FeaturedSection";
 
 export function FeaturedModels() {
-  const search = trpc.featured.models.useQuery();
+  const search = trpc.model.featured.useQuery();
   const { translations } = useLocale();
 
   return (

@@ -5,7 +5,7 @@ import { useLocale } from "@/hooks/useLocale";
 import { FeaturedSection } from "./FeaturedSection";
 
 export function FeaturedDatasets() {
-  const search = trpc.featured.dataset.useQuery();
+  const search = trpc.dataset.featured.useQuery();
   const { translations } = useLocale();
 
   return (

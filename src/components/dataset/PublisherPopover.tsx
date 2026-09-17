@@ -46,14 +46,14 @@ export default function PublisherPopover({ publisher, contact_point }: Props) {
             </span>
             <span className="line-clamp-1 font-semibold">
               {clampString(
-                publisher?.name || contact_point?.at(0)?.name || "Publisher",
+                publisher?.name || contact_point?.at(0)?.name || "Unknown",
                 50,
               )}
             </span>
           </div>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-[450px] rounded-2xl flex flex-col gap-4">
+      <PopoverContent className="w-112.5 rounded-2xl flex flex-col gap-4">
         <div className="text-xl font-semibold flex gap-4 items-center">
           <h2>{publisher?.name || "Publisher Information"}</h2>
 

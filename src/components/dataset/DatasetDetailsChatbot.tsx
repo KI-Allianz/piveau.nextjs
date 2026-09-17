@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 type ApiResponse = { response?: string; [k: string]: any } | string | null;
 
 type Props = {
-  dataset: Dataset;
+  dataset?: Dataset;
   className?: string;
   backendUrl: string;
 };
@@ -40,8 +40,12 @@ export default function DatasetDetailsChatbot({
   }, [response]);
 
   const submitQuestion = useCallback(
-    async (ds: Dataset) => {
+    async (ds?: Dataset) => {
       if (!userInput.trim() || isLoading) return;
+      if (!ds) {
+        setError("Dataset is not available.");
+        return;
+      }
 
       setIsLoading(true);
       setError(null);

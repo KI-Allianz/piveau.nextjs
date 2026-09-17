@@ -18,20 +18,24 @@ import DatasetBreadcrumbs from "@/components/dataset/DatasetBreadcrumbs";
 import DatasetDetailsFavouriteButton from "@/components/dataset/DatasetDetailsFavouriteButton";
 import { fixThemeUrl, getCleanUrl } from "@/hooks/useTheme";
 import ObjectDetailsBanner from "./ObjectDetailsBanner";
+import { Skeleton } from "../ui/skeleton";
 
 interface Props {
-  dataset: Dataset;
+  data?: Dataset;
   baseUrl: string;
   supportEmail?: string;
+  isAiModel: boolean;
 }
 
 export default function DatasetDetailsHeader({
-  dataset,
+  data,
   baseUrl,
   supportEmail,
+  isAiModel,
 }: Props) {
   const { locale, translateDict, translations, theme } = useLocale();
   const router = useRouter();
+  const type = isAiModel ? "model" : "dataset";
 
   return (
     <div className="w-full space-y-3">
@@ -41,30 +45,47 @@ export default function DatasetDetailsHeader({
             <ChevronLeft />
             {translations.navigation.back}
           </Button>
-          <DatasetBreadcrumbs dataset={dataset} />
+          <DatasetBreadcrumbs dataset={data} isAiModel={isAiModel} />
         </div>
 
         <div className="space-x-2">
-          <DatasetDetailsFavouriteButton dataset={dataset} />
+          <DatasetDetailsFavouriteButton dataset={data} />
           <ExampleCodePopover
-            url={getCleanUrl(`${baseUrl}/de/dataset/${dataset.id}`)}
-            customParser={extractParserRepository(dataset, translateDict)}
-            isAIModel={isAIModel(dataset)}
+            isLoading={!data}
+            url={getCleanUrl(`${baseUrl}/de/${type}/${data?.id}`)}
+            customParser={
+              isAiModel
+                ? extractParserRepository(translateDict, data)
+                : undefined
+            }
+            isAIModel={!data || isAIModel(data)}
           />
-          <ObjectDetailsExportButton id={dataset.id} type={"model"} />
+
+          <ObjectDetailsExportButton id={data?.id} type={type} />
         </div>
       </div>
 
       <div className="pt-7">
-        <h1 className="text-4xl font-semibold text-center">
-          {translateDict(dataset.title)}
+        <h1 className="text-4xl font-semibold text-center items-center flex flex-col">
+          {!data ? (
+            <Skeleton className="h-10 w-2/3 bg-muted-foreground/30" />
+          ) : (
+            translateDict(data?.title)
+          )}
         </h1>
       </div>
 
-      <ObjectDetailsBanner data={dataset} supportEmail={supportEmail} />
+      <ObjectDetailsBanner data={data} supportEmail={supportEmail} />
 
       <div className="pt-3 flex flex-wrap gap-2">
-        {dataset.keywords?.map((keyword) => (
+        {!data &&
+          Array.from({ length: 8 }).map((_, index) => (
+            <Skeleton
+              key={index}
+              className="h-5 w-32 bg-muted-foreground/30 border border-black/10"
+            />
+          ))}{" "}
+        {data?.keywords?.map((keyword) => (
           <Link
             key={keyword.id}
             href={fixThemeUrl(
@@ -81,7 +102,7 @@ export default function DatasetDetailsHeader({
             </Badge>
           </Link>
         ))}
-        {dataset.categories?.map((category) => (
+        {data?.categories?.map((category) => (
           <Link
             key={category.id}
             href={fixThemeUrl(
@@ -101,7 +122,13 @@ export default function DatasetDetailsHeader({
       </div>
 
       <div>
-        <DatasetDetailsDescription description={dataset.description} />
+        {!data ? (
+          <div className="flex justify-center">
+            <Skeleton className="h-20 w-[90%] bg-muted-foreground/30" />
+          </div>
+        ) : (
+          <DatasetDetailsDescription description={data?.description} />
+        )}
       </div>
     </div>
   );

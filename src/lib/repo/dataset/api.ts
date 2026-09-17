@@ -7,6 +7,7 @@ import { Dataset } from "@/lib/utils";
 import { parseIntoDataset, parseRawDCAT } from "@/lib/repo/dataset/parse";
 import { BACKEND_URLS } from "@/lib/urls";
 import { canAccessObject } from "@/lib/repo/common/api";
+import { AxiosInstance } from "axios";
 
 export async function canAccessDataset(id: string, session: any) {
   const response = await getDataset(id);
@@ -17,9 +18,13 @@ export async function canAccessDataset(id: string, session: any) {
   return canAccessObject(isPublic, session);
 }
 
-export async function getDataset(id: string): Promise<Dataset> {
+export async function getDataset(
+  id: string,
+  axiosInstance?: AxiosInstance,
+): Promise<Dataset> {
   const response = await getResourceById<Dataset>({
     baseUrl: BACKEND_URLS.SEARCH,
+    axiosInstance: axiosInstance,
     resource: "datasets",
     id: id,
   });

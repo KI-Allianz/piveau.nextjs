@@ -57,10 +57,10 @@ export function getRawCodeExample(type: CodeExampleType | ModelExampleType) {
 }
 
 export function extractParserRepository(
-  dataset: Dataset,
   translateDict: (item?: string | Record<string, string> | null) => string,
+  dataset?: Dataset,
 ): string | undefined {
-  return dataset.distributions
+  return dataset?.distributions
     ?.find((d) => translateDict(d.title).toLowerCase() === "parser repository")
     ?.access_url?.at(0);
 }
