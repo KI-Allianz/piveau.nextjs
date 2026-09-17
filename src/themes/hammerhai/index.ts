@@ -58,6 +58,8 @@ export const HammerTheme: ProjectTheme = {
       de: undefined,
       en: {
         title: "Welcome to the HammerHAI data platform",
+        description:
+          "Unlock manufacturing and engineering data for AI. The HammerHAI Data Platform brings together relevant datasets and AI models from federated sources and connects directly to the AI Factory through DCAT-based interoperability. For registered HammerHAI users, upcoming capabilities include AI-driven  pipelines for AI-ready data and provides fine-grained management and sharing of datasets and models.",
         hammerhai: "HammerHAI",
       },
     },
