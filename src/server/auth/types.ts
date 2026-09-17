@@ -1,9 +1,8 @@
-import {createTRPCContext} from "@/server/trpc";
-import {Session} from "next-auth";
-
+import { ExtendedSession } from "@/app/api/auth/[...nextauth]/route";
+import { createTRPCContext } from "@/server/trpc";
 
 export type TRPCContext = Awaited<ReturnType<typeof createTRPCContext>>;
 export type AuthedTRPCContext = TRPCContext & {
-  session: Session;
-  user: NonNullable<Session>["user"];
+  session: ExtendedSession;
+  user: NonNullable<ExtendedSession>["user"];
 };

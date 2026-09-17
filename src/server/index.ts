@@ -9,8 +9,24 @@ import { SearchParamsSchema } from "./schemas/search";
 import { publicProcedure } from "./auth/procedures";
 import { BACKEND_URLS } from "@/lib/urls";
 import { getDatasetCategories } from "@/lib/repo/dataset/api";
+import axios from "axios";
+import { ExtendedSession } from "@/app/api/auth/[...nextauth]/route";
 
 const baseUrl = BACKEND_URLS.SEARCH;
+
+function getAxiosInstance(ctx: {
+  isAuthed: boolean;
+  session: ExtendedSession | null;
+}) {
+  return axios.create({
+    baseURL: baseUrl,
+    headers: {
+      Authorization: ctx.isAuthed
+        ? `Bearer ${ctx.session?.accessToken}`
+        : undefined,
+    },
+  });
+}
 
 export const appRouter = router({
   categories: publicProcedure.query(async () => {
@@ -22,16 +38,13 @@ export const appRouter = router({
       const { ctx } = opts;
 
       try {
-        const isAuthed =
-          !!ctx.session?.user ||
-          process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
-
         const res = await searchResource<SearchResult<Dataset>>({
           baseUrl: baseUrl,
+          axiosInstance: getAxiosInstance(ctx),
           params: {
             limit: 10,
             filters: "dataset",
-            facets: isAuthed ? undefined : { keywords: ["public"] },
+            facets: ctx.isAuthed ? undefined : { keywords: ["public"] },
             includes: [
               "id",
               "title",
@@ -53,7 +66,7 @@ export const appRouter = router({
           },
         });
 
-        if (!isAuthed) {
+        if (!ctx.isAuthed) {
           res.data.result.results = res.data.result.results.filter((item) => {
             const keywords = item?.keywords || [];
             return keywords.some((keyword) => keyword.label === "public");
@@ -75,17 +88,14 @@ export const appRouter = router({
       const { ctx } = opts;
 
       try {
-        const isAuthed =
-          !!ctx.session?.user ||
-          process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
-
         let keywords = ["ai-model"];
-        if (!isAuthed) {
+        if (!ctx.isAuthed) {
           keywords.push("public");
         }
 
         const res = await searchResource<SearchResult<Dataset>>({
           baseUrl: baseUrl,
+          axiosInstance: getAxiosInstance(ctx),
           params: {
             limit: 10,
             filters: "dataset",
@@ -111,7 +121,7 @@ export const appRouter = router({
           },
         });
 
-        if (!isAuthed) {
+        if (!ctx.isAuthed) {
           res.data.result.results = res.data.result.results.filter((item) => {
             const keywords = item?.keywords || [];
             return keywords.some((keyword) => keyword.label === "public");
@@ -134,9 +144,7 @@ export const appRouter = router({
     datasets: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
       const { input, ctx } = opts;
 
-      const isAuthed =
-        !!ctx.session?.user || process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
-      if (!isAuthed) {
+      if (!ctx.isAuthed) {
         const keywords = ["public", ...(input.facets?.keywords || [])];
 
         input.facets = {
@@ -148,6 +156,7 @@ export const appRouter = router({
       try {
         const res = await searchResource<SearchResult<Dataset>>({
           baseUrl: baseUrl,
+          axiosInstance: getAxiosInstance(ctx),
           params: {
             ...input,
             filters: "dataset",
@@ -174,7 +183,7 @@ export const appRouter = router({
         });
 
         // Filter results again | temporary solution
-        if (!isAuthed) {
+        if (!ctx.isAuthed) {
           res.data.result.results = res.data.result.results.filter((item) => {
             const keywords = item?.keywords || [];
             return keywords.some((keyword) => keyword.label === "public");
@@ -210,6 +219,7 @@ export const appRouter = router({
       try {
         const res = await searchResource<SearchResult<Catalog>>({
           baseUrl: baseUrl,
+          axiosInstance: getAxiosInstance(ctx),
           params: {
             ...input,
             filters: "catalogue",
