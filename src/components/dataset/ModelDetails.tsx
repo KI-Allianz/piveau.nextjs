@@ -22,7 +22,7 @@ interface Props {
 export default function ModelDetails({ id }: Props) {
   const { locale, translations } = useLocale();
   const router = useRouter();
-  const { data, error } = trpc.dataset.get.useQuery({ id });
+  const { data, error } = trpc.model.get.useQuery({ id });
 
   useEffect(() => {
     if (error?.data?.httpStatus === 401) {

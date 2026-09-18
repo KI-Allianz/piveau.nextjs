@@ -6,8 +6,10 @@ import {
 import { Dataset } from "@/lib/utils";
 import { parseIntoDataset, parseRawDCAT } from "@/lib/repo/dataset/parse";
 import { BACKEND_URLS } from "@/lib/urls";
-import { canAccessObject } from "@/lib/repo/common/api";
+import { SearchParamsSchema } from "@/server/schemas/search";
+import { canAccessObject, handleAxiosError } from "@/lib/repo/common/api";
 import { AxiosInstance } from "axios";
+import z from "zod";
 
 export async function canAccessDataset(id: string, session: any) {
   const response = await getDataset(id);
@@ -22,22 +24,67 @@ export async function getDataset(
   id: string,
   axiosInstance?: AxiosInstance,
 ): Promise<Dataset> {
-  const response = await getResourceById<Dataset>({
-    baseUrl: BACKEND_URLS.SEARCH,
-    axiosInstance: axiosInstance,
-    resource: "datasets",
-    id: id,
-  });
+  try {
+    const response = await getResourceById<Dataset>({
+      baseUrl: BACKEND_URLS.SEARCH,
+      axiosInstance: axiosInstance,
+      resource: "datasets",
+      id: id,
+    });
 
-  return response.result;
+    return response.result;
+  } catch (error) {
+    console.error("Failed to fetch dataset:", error);
+    handleAxiosError(error);
+  }
 }
 
-export async function getDatasetCategories(): Promise<
-  SearchResult<Dataset>["result"]["facets"][0]["items"]
-> {
+export async function searchDatasets(
+  params: z.infer<typeof SearchParamsSchema>,
+  axiosInstance?: AxiosInstance,
+) {
   try {
     const res = await searchResource<SearchResult<Dataset>>({
       baseUrl: BACKEND_URLS.SEARCH,
+      axiosInstance,
+      params: {
+        ...params,
+        filters: "dataset",
+        includes: [
+          "id",
+          "title",
+          "description",
+          "languages",
+          "modified",
+          "issued",
+          "catalog.id",
+          "catalog.title",
+          "catalog.country.id",
+          "distributions.id",
+          "distributions.format.label",
+          "distributions.format.id",
+          "distributions.license",
+          "categories.label",
+          "keywords.label",
+          "publisher",
+        ],
+      },
+    });
+
+    return res.data.result;
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+    handleAxiosError(error);
+  }
+}
+
+export async function getDatasetCategories(
+  axiosInstance?: AxiosInstance,
+): Promise<SearchResult<Dataset>["result"]["facets"][0]["items"]> {
+  try {
+    const res = await searchResource<SearchResult<Dataset>>({
+      baseUrl: BACKEND_URLS.SEARCH,
+      axiosInstance,
       params: {
         q: "",
         filters: "dataset",
@@ -53,8 +100,19 @@ export async function getDatasetCategories(): Promise<
     );
   } catch (error) {
     console.error("Failed to fetch categories:", error);
-    throw new Error("Failed to fetch categories from Search Hub Upstream");
+    handleAxiosError(error);
   }
+}
+
+export async function getFeaturedDatasets(axiosInstance?: AxiosInstance) {
+  const res = await searchDatasets(
+    {
+      limit: 10,
+    },
+    axiosInstance,
+  );
+
+  return res.results;
 }
 
 export async function getRawDataset(id: string, type: string) {
