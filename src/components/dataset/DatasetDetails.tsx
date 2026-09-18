@@ -27,7 +27,7 @@ export default function DatasetDetails({ id }: Props) {
   const { data, error } = trpc.dataset.get.useQuery({ id });
 
   useEffect(() => {
-    if (error?.data?.httpStatus === 401) {
+    if (error?.data?.httpStatus === 401 || error?.data?.httpStatus === 403) {
       router.push(`/auth/signin?callbackUrl=/${locale}/dataset/${id}`);
     }
   }, [error, locale]);

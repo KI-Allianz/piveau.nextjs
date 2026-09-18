@@ -40,6 +40,8 @@ export function FeaturedSection({
     Autoplay({ delay: 5000 + autoplayOffset, stopOnInteraction: false }),
   );
 
+  console.log("FeaturedSection queryResult:", queryResult);
+
   return (
     <div className="flex flex-col gap-2">
       <div className="">
