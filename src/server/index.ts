@@ -17,14 +17,16 @@ const baseUrl = BACKEND_URLS.SEARCH;
 
 function getAxiosInstance(ctx: {
   isAuthed: boolean;
+  isAuthEnabled: boolean;
   session: ExtendedSession | null;
 }) {
   return axios.create({
     baseURL: baseUrl,
     headers: {
-      Authorization: ctx.isAuthed
-        ? `Bearer ${ctx.session?.accessToken}`
-        : undefined,
+      Authorization:
+        ctx.isAuthed && ctx.isAuthEnabled
+          ? `Bearer ${ctx.session?.accessToken}`
+          : undefined,
     },
   });
 }

@@ -22,6 +22,7 @@ export async function createTRPCContext(opts: { req: Request }) {
         accessToken: apiKey,
       },
       isAuthed: true,
+      isAuthEnabled: process.env.NEXT_PUBLIC_AUTH_DISABLED !== "true",
     };
   }
 
@@ -33,6 +34,7 @@ export async function createTRPCContext(opts: { req: Request }) {
     session, // might be null if not logged in
     isAuthed:
       !!session?.user || process.env.NEXT_PUBLIC_AUTH_DISABLED === "true",
+    isAuthEnabled: process.env.NEXT_PUBLIC_AUTH_DISABLED !== "true",
   };
 }
 
