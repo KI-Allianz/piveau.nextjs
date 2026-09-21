@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/breadcrumb";
 import { fixThemeUrl } from "@/hooks/useTheme";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Skeleton } from "../ui/skeleton";
 
 interface Props {
-  dataset: Dataset;
+  dataset?: Dataset;
   isAiModel?: boolean;
 }
 
@@ -38,28 +39,37 @@ export default function DatasetBreadcrumbs({
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
-          <Tooltip delayDuration={200}>
-            <TooltipContent side="bottom">
-              <p>{translateDict(dataset.catalog.title)}</p>
-            </TooltipContent>
-            <TooltipTrigger className="flex">
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  href={fixThemeUrl(
-                    `/${locale}/catalogues/${dataset.catalog.id}`,
-                    theme,
-                  )}
-                  className="flex gap-2 items-center"
-                >
-                  <Archive size={16} />
-                  {translateDict(dataset.catalog.title).slice(0, 30) +
-                    (translateDict(dataset.catalog.title).length > 30
-                      ? "..."
-                      : "")}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </TooltipTrigger>
-          </Tooltip>
+          {!dataset ? (
+            <BreadcrumbItem>
+              <BreadcrumbPage className="flex gap-2 items-center text-muted-foreground">
+                <Archive size={16} />
+                <Skeleton className="h-4 w-42 rounded-md bg-muted-foreground/30" />
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          ) : (
+            <Tooltip delayDuration={200}>
+              <TooltipContent side="bottom">
+                <p>{translateDict(dataset?.catalog.title)}</p>
+              </TooltipContent>
+              <TooltipTrigger className="flex">
+                <BreadcrumbItem>
+                  <BreadcrumbLink
+                    href={fixThemeUrl(
+                      `/${locale}/catalogues/${dataset?.catalog.id}`,
+                      theme,
+                    )}
+                    className="flex gap-2 items-center"
+                  >
+                    <Archive size={16} />
+                    {translateDict(dataset?.catalog.title).slice(0, 30) +
+                      (translateDict(dataset?.catalog.title).length > 30
+                        ? "..."
+                        : "")}
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+              </TooltipTrigger>
+            </Tooltip>
+          )}
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbPage>

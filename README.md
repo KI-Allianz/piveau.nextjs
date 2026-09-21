@@ -65,6 +65,7 @@ NEXT_PUBLIC_CHATBOT_BACKEND_URL=https://piveau.hlrs.de/metadataassistant
 NEXT_PUBLIC_DISABLE_THEME_SWITCHING="false" # Wether to allow theme switching in the URI
 NEXT_PUBLIC_DEFAULT_THEME=hammerhai # The default theme to use, if switching is disabled or no theme is set in the URI.
 
+# Needs to be keycloak token of api user
 API_KEYS="key1,key2" # Comma separated list of valid API keys for accessing protected routes.
 ```
 

@@ -5,9 +5,10 @@ import { Dataset } from "@piveau/sdk-core";
 import { useLocale } from "@/hooks/useLocale";
 import { fixThemeUrl } from "@/hooks/useTheme";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Skeleton } from "../ui/skeleton";
 
 interface Props {
-  catalog: Dataset["catalog"];
+  catalog?: Dataset["catalog"];
 }
 
 export default function CatalogBadge({ catalog }: Props) {
@@ -15,12 +16,12 @@ export default function CatalogBadge({ catalog }: Props) {
 
   return (
     <Link
-      href={fixThemeUrl(`/${locale}/catalogues/${catalog.id}`, theme)}
+      href={fixThemeUrl(`/${locale}/catalogues/${catalog?.id}`, theme)}
       className="w-fit min-w-fit"
     >
       <Tooltip delayDuration={200}>
         <TooltipContent side="bottom">
-          <p>{translateDict(catalog.title)}</p>
+          <p>{translateDict(catalog?.title)}</p>
         </TooltipContent>
         <TooltipTrigger className="flex items-center gap-2 group transition-all duration-200 hover:bg-secondary cursor-pointer rounded-lg p-1">
           <div className="bg-(--main-accent) text-white p-1.5 rounded-xl w-fit group-hover:bg-(--main-accent)/80 transition-all duration-200">
@@ -34,8 +35,12 @@ export default function CatalogBadge({ catalog }: Props) {
               {translations.dataset.providedBy}
             </span>
             <span className="font-bold line-clamp-1">
-              {translateDict(catalog.title).slice(0, 30) +
-                (translateDict(catalog.title).length > 30 ? "..." : "")}
+              {!catalog ? (
+                <Skeleton className="h-4 w-32 bg-muted-foreground/30 mt-1" />
+              ) : (
+                translateDict(catalog?.title).slice(0, 30) +
+                (translateDict(catalog?.title).length > 30 ? "..." : "")
+              )}
             </span>
           </div>
         </TooltipTrigger>

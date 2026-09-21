@@ -6,33 +6,100 @@ import {
 import { Dataset } from "@/lib/utils";
 import { parseIntoDataset, parseRawDCAT } from "@/lib/repo/dataset/parse";
 import { BACKEND_URLS } from "@/lib/urls";
-import { canAccessObject } from "@/lib/repo/common/api";
+import { SearchParamsSchema } from "@/server/schemas/search";
+import { handleAxiosErrorForTRPC } from "@/lib/repo/common/api";
+import axios, { AxiosInstance } from "axios";
+import z from "zod";
 
-export async function canAccessDataset(id: string, session: any) {
-  const response = await getDataset(id);
+export async function getDataset(
+  id: string,
+  axiosInstance?: AxiosInstance,
+): Promise<Dataset> {
+  try {
+    const response = await getResourceById<Dataset>({
+      baseUrl: BACKEND_URLS.SEARCH,
+      axiosInstance: axiosInstance,
+      resource: "datasets",
+      id: id,
+    });
 
-  const isPublic =
-    response.keywords?.some((k) => k.label.toLowerCase() === "public") || false;
-
-  return canAccessObject(isPublic, session);
+    return response.result;
+  } catch (error) {
+    console.error("Failed to fetch dataset:", error);
+    handleAxiosErrorForTRPC(error);
+  }
 }
 
-export async function getDataset(id: string): Promise<Dataset> {
-  const response = await getResourceById<Dataset>({
-    baseUrl: BACKEND_URLS.SEARCH,
-    resource: "datasets",
-    id: id,
-  });
+export async function getRawDataset(
+  id: string,
+  type: string,
+  axiosInstance = axios.create(),
+) {
+  const response = await axiosInstance.get(
+    `${BACKEND_URLS.REPO}datasets/${id}${type}`,
+  );
 
-  return response.result;
+  return await response.data;
 }
 
-export async function getDatasetCategories(): Promise<
-  SearchResult<Dataset>["result"]["facets"][0]["items"]
-> {
+export async function getRawDistribution(
+  id: string,
+  type: string,
+  axiosInstance = axios.create(),
+) {
+  const response = await axiosInstance.get(
+    `${BACKEND_URLS.REPO}distributions/${id}${type}`,
+  );
+
+  return await response.data;
+}
+
+export async function searchDatasets(
+  params: z.infer<typeof SearchParamsSchema>,
+  axiosInstance?: AxiosInstance,
+) {
   try {
     const res = await searchResource<SearchResult<Dataset>>({
       baseUrl: BACKEND_URLS.SEARCH,
+      axiosInstance,
+      params: {
+        ...params,
+        filters: "dataset",
+        includes: [
+          "id",
+          "title",
+          "description",
+          "languages",
+          "modified",
+          "issued",
+          "catalog.id",
+          "catalog.title",
+          "catalog.country.id",
+          "distributions.id",
+          "distributions.format.label",
+          "distributions.format.id",
+          "distributions.license",
+          "categories.label",
+          "keywords.label",
+          "publisher",
+        ],
+      },
+    });
+
+    return res.data.result;
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+    handleAxiosErrorForTRPC(error);
+  }
+}
+
+export async function getDatasetCategories(
+  axiosInstance?: AxiosInstance,
+): Promise<SearchResult<Dataset>["result"]["facets"][0]["items"]> {
+  try {
+    const res = await searchResource<SearchResult<Dataset>>({
+      baseUrl: BACKEND_URLS.SEARCH,
+      axiosInstance,
       params: {
         q: "",
         filters: "dataset",
@@ -48,20 +115,19 @@ export async function getDatasetCategories(): Promise<
     );
   } catch (error) {
     console.error("Failed to fetch categories:", error);
-    throw new Error("Failed to fetch categories from Search Hub Upstream");
+    handleAxiosErrorForTRPC(error);
   }
 }
 
-export async function getRawDataset(id: string, type: string) {
-  try {
-    const res = await fetch(`${BACKEND_URLS.REPO}datasets/${id}${type}`);
-    const data = await res.text();
+export async function getFeaturedDatasets(axiosInstance?: AxiosInstance) {
+  const res = await searchDatasets(
+    {
+      limit: 10,
+    },
+    axiosInstance,
+  );
 
-    return data;
-  } catch (error) {
-    console.error("Failed to fetch raw dataset:", error);
-    throw new Error("Failed to fetch raw dataset from Repository Upstream");
-  }
+  return res.results;
 }
 
 export async function getDatasetDirect(id: string): Promise<any> {

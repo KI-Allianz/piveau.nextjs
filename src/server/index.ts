@@ -1,236 +1,89 @@
-import {
-  Dataset,
-  Catalog,
-  searchResource,
-  SearchResult,
-} from "@piveau/sdk-core";
 import { router } from "./trpc";
-import { SearchParamsSchema } from "./schemas/search";
+import { GetParamsSchema, SearchParamsSchema } from "./schemas/search";
 import { publicProcedure } from "./auth/procedures";
 import { BACKEND_URLS } from "@/lib/urls";
-import { getDatasetCategories } from "@/lib/repo/dataset/api";
+import {
+  getDataset,
+  getDatasetCategories,
+  getFeaturedDatasets,
+  searchDatasets,
+} from "@/lib/repo/dataset/api";
+import axios from "axios";
+import { ExtendedSession } from "@/app/api/auth/[...nextauth]/route";
+import { getFeaturedModels, getModel } from "@/lib/repo/model/api";
+import { getCatalogue, searchCatalogues } from "@/lib/repo/catalogue/api";
 
-const baseUrl = BACKEND_URLS.SEARCH;
+export function getAxiosInstance(
+  ctx: {
+    isAuthed: boolean;
+    isAuthEnabled: boolean;
+    session: ExtendedSession | null;
+  },
+  baseUrl: string = BACKEND_URLS.SEARCH,
+) {
+  return axios.create({
+    baseURL: baseUrl,
+    headers: {
+      Authorization:
+        ctx.isAuthed && ctx.isAuthEnabled
+          ? `Bearer ${ctx.session?.accessToken}`
+          : undefined,
+    },
+  });
+}
 
 export const appRouter = router({
-  categories: publicProcedure.query(async () => {
-    return await getDatasetCategories();
+  categories: publicProcedure.query(async (opts) => {
+    const { ctx } = opts;
+
+    return await getDatasetCategories(getAxiosInstance(ctx));
   }),
 
-  featured: {
-    dataset: publicProcedure.query(async (opts) => {
+  dataset: {
+    featured: publicProcedure.query(async (opts) => {
       const { ctx } = opts;
 
-      try {
-        const isAuthed =
-          !!ctx.session?.user ||
-          process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
-
-        const res = await searchResource<SearchResult<Dataset>>({
-          baseUrl: baseUrl,
-          params: {
-            limit: 10,
-            filters: "dataset",
-            facets: isAuthed ? undefined : { keywords: ["public"] },
-            includes: [
-              "id",
-              "title",
-              "description",
-              "languages",
-              "modified",
-              "issued",
-              "catalog.id",
-              "catalog.title",
-              "catalog.country.id",
-              "distributions.id",
-              "distributions.format.label",
-              "distributions.format.id",
-              "distributions.license",
-              "categories.label",
-              "keywords.label",
-              "publisher",
-            ],
-          },
-        });
-
-        if (!isAuthed) {
-          res.data.result.results = res.data.result.results.filter((item) => {
-            const keywords = item?.keywords || [];
-            return keywords.some((keyword) => keyword.label === "public");
-          });
-
-          // No data leak of facets
-          if (res.data.result.results.length === 0) {
-            res.data.result.facets = [];
-            res.data.result.count = 0;
-          }
-        }
-        return res.data.result.results;
-      } catch (error) {
-        console.error("Search Resource Failed:", error);
-        throw new Error("Failed to fetch from Search Hub Upstream");
-      }
+      return await getFeaturedDatasets(getAxiosInstance(ctx));
     }),
-    models: publicProcedure.query(async (opts) => {
-      const { ctx } = opts;
 
-      try {
-        const isAuthed =
-          !!ctx.session?.user ||
-          process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
+    search: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
+      const { input, ctx } = opts;
 
-        let keywords = ["ai-model"];
-        if (!isAuthed) {
-          keywords.push("public");
-        }
+      return await searchDatasets(input, getAxiosInstance(ctx));
+    }),
 
-        const res = await searchResource<SearchResult<Dataset>>({
-          baseUrl: baseUrl,
-          params: {
-            limit: 10,
-            filters: "dataset",
-            facets: { keywords },
-            includes: [
-              "id",
-              "title",
-              "description",
-              "languages",
-              "modified",
-              "issued",
-              "catalog.id",
-              "catalog.title",
-              "catalog.country.id",
-              "distributions.id",
-              "distributions.format.label",
-              "distributions.format.id",
-              "distributions.license",
-              "categories.label",
-              "keywords.label",
-              "publisher",
-            ],
-          },
-        });
+    get: publicProcedure.input(GetParamsSchema).query(async (opts) => {
+      const { input, ctx } = opts;
 
-        if (!isAuthed) {
-          res.data.result.results = res.data.result.results.filter((item) => {
-            const keywords = item?.keywords || [];
-            return keywords.some((keyword) => keyword.label === "public");
-          });
-
-          // No data leak of facets
-          if (res.data.result.results.length === 0) {
-            res.data.result.facets = [];
-          }
-        }
-        return res.data.result.results;
-      } catch (error) {
-        console.error("Search Resource Failed:", error);
-        throw new Error("Failed to fetch from Search Hub Upstream");
-      }
+      return await getDataset(input.id, getAxiosInstance(ctx));
     }),
   },
 
-  search: {
-    datasets: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
-      const { input, ctx } = opts;
+  model: {
+    featured: publicProcedure.query(async (opts) => {
+      const { ctx } = opts;
 
-      const isAuthed =
-        !!ctx.session?.user || process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
-      if (!isAuthed) {
-        const keywords = ["public", ...(input.facets?.keywords || [])];
-
-        input.facets = {
-          ...input.facets,
-          keywords,
-        };
-      }
-
-      try {
-        const res = await searchResource<SearchResult<Dataset>>({
-          baseUrl: baseUrl,
-          params: {
-            ...input,
-            filters: "dataset",
-            includes: [
-              "id",
-              "title",
-              "description",
-              "languages",
-              "modified",
-              "issued",
-              "catalog.id",
-              "catalog.title",
-              "catalog.country.id",
-              "distributions.id",
-              "distributions.format.label",
-              "distributions.format.id",
-              "distributions.license",
-              "categories.label",
-              "keywords.label",
-              "publisher",
-            ],
-          },
-          // axiosInstance,
-        });
-
-        // Filter results again | temporary solution
-        if (!isAuthed) {
-          res.data.result.results = res.data.result.results.filter((item) => {
-            const keywords = item?.keywords || [];
-            return keywords.some((keyword) => keyword.label === "public");
-          });
-
-          // No data leak of facets
-          if (res.data.result.results.length === 0) {
-            res.data.result.facets = [];
-          }
-        }
-
-        return res.data.result;
-      } catch (error) {
-        console.error("Search Resource Failed:", error);
-        throw new Error("Failed to fetch from Search Hub Upstream");
-      }
+      return await getFeaturedModels(getAxiosInstance(ctx));
     }),
 
-    catalogs: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
+    get: publicProcedure.input(GetParamsSchema).query(async (opts) => {
       const { input, ctx } = opts;
 
-      // const isAuthed = !!ctx.session?.user;
-      // if (!isAuthed) {
-      //   const keywords = [...(input.facets?.keywords || [])];
-      //   keywords.push("public");
+      return await getModel(input.id, getAxiosInstance(ctx));
+    }),
+  },
 
-      //   input.facets = {
-      //     ...input.facets,
-      //     keywords,
-      //   };
-      // }
+  catalogue: {
+    search: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
+      const { input, ctx } = opts;
 
-      try {
-        const res = await searchResource<SearchResult<Catalog>>({
-          baseUrl: baseUrl,
-          params: {
-            ...input,
-            filters: "catalogue",
-            includes: [
-              "id",
-              "title",
-              "description",
-              "modified",
-              "issued",
-              "country",
-              "count",
-              "keywords.label",
-            ],
-          },
-        });
+      return await searchCatalogues(input, getAxiosInstance(ctx));
+    }),
 
-        return res.data.result;
-      } catch (error) {
-        console.error("Search Resource Failed:", error);
-        throw new Error("Failed to fetch from Search Hub Upstream");
-      }
+    get: publicProcedure.input(GetParamsSchema).query(async (opts) => {
+      const { input, ctx } = opts;
+
+      return await getCatalogue(input.id, getAxiosInstance(ctx));
     }),
   },
 });

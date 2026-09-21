@@ -21,7 +21,7 @@ import {
 import { fixThemeUrl } from "@/hooks/useTheme";
 
 interface Props {
-  id: NonNullable<Dataset["id"]>;
+  id?: NonNullable<Dataset["id"]>;
   type: ObjectType;
 }
 
@@ -30,7 +30,7 @@ export default function ObjectDetailsExportButton({ id, type }: Props) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild disabled={!id}>
         <Button variant="outline">
           <Menu />
         </Button>

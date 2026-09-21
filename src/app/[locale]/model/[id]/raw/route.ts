@@ -1,23 +1,18 @@
-import { dataTypes } from "@/lib/content";
 import { NextRequest, NextResponse } from "next/server";
-import { canAccessModel, getRawModel } from "@/lib/repo/model/api";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
+import { BACKEND_URLS } from "@/lib/urls";
+import { dataTypes } from "@/lib/content";
+import { getRawModel } from "@/lib/repo/model/api";
+import { getAxiosInstance } from "@/server";
+import { createTRPCContext } from "@/server/trpc";
+import { handleAxiosErrorForNextResponse } from "@/lib/repo/common/api";
+import axios from "axios";
+import { redirect } from "next/navigation";
 
 export async function GET(req: NextRequest, { params }: { params: any }) {
   const { id } = await params;
-  const session = await getServerSession(authOptions);
-
-  const apiKey = req.headers.get("Authorization")?.replace("Bearer ", "");
-  const isValidApiKey = (process.env.API_KEYS || "")
-    .split(",")
-    .includes(apiKey || "");
-
-  const { allowed } = await canAccessModel(id, session);
-
-  if (!allowed && !isValidApiKey) {
-    return new NextResponse("Unauthorized", { status: 401 });
-  }
+  const ctx = await createTRPCContext({ req });
+  const axiosInstance = getAxiosInstance(ctx, BACKEND_URLS.REPO);
 
   const { searchParams } = new URL(req.url);
   const format = searchParams.get("format");
@@ -27,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
   }
 
   try {
-    const res = await getRawModel(id, typeConfig.value);
+    const res = await getRawModel(id, typeConfig.value, axiosInstance);
 
     return new NextResponse(res, {
       headers: {
@@ -36,7 +31,17 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
       },
     });
   } catch (error) {
-    console.error("Error fetching raw dataset:", error);
-    return new NextResponse("Failed to fetch model", { status: 500 });
+    console.error("Error fetching raw model:", error);
+
+    if (axios.isAxiosError(error) && error.response) {
+      const status = error.response.status;
+      if (status === 401 || status === 403) {
+        redirect(
+          `/auth/signin?callbackUrl=/${params.locale}/model/${id}/raw?format=${format}`,
+        );
+      }
+    }
+
+    return handleAxiosErrorForNextResponse(error);
   }
 }

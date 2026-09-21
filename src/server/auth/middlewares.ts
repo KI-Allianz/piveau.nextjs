@@ -10,11 +10,12 @@ export const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   if (!AUTH_DISABLED && (!session || !session.user)) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Login required." });
   }
+
   return next({
     ctx: {
       ...ctx,
       // from here on, these are non-nullable in downstream resolvers
-      session, // Session (not null)
+      session, // ExtendedSession (not null)
       user: session?.user, // add a convenient shortcut
     } as AuthedTRPCContext,
   });

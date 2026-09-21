@@ -26,14 +26,17 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { CodeBlock } from "@/components/dataset/CodeBlock";
+import { Spinner } from "../ui/spinner";
 
 interface Props {
+  isLoading: boolean;
   url: string;
   isAIModel: boolean;
   customParser?: string;
 }
 
 export default function ExampleCodePopover({
+  isLoading,
   url,
   isAIModel,
   customParser,
@@ -50,7 +53,12 @@ export default function ExampleCodePopover({
     [customParser, exampleType],
   );
 
-  return (
+  return isLoading ? (
+    <Button variant="default" className="rounded-2xl" disabled>
+      <Spinner />
+      Code
+    </Button>
+  ) : (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="default" className="rounded-2xl">
