@@ -23,7 +23,7 @@ export default function ModelDetails({ id }: Props) {
   const { data, error } = trpc.model.get.useQuery({ id });
 
   useEffect(() => {
-    if (error?.data?.httpStatus === 401) {
+    if (error?.data?.httpStatus === 401 || error?.data?.httpStatus === 403) {
       router.push(`/auth/signin?callbackUrl=/${locale}/model/${id}`);
     }
   }, [error, locale]);

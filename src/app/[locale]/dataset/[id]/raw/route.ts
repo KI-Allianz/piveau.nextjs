@@ -6,6 +6,8 @@ import { getRawDataset } from "@/lib/repo/dataset/api";
 import { getAxiosInstance } from "@/server";
 import { createTRPCContext } from "@/server/trpc";
 import { handleAxiosErrorForNextResponse } from "@/lib/repo/common/api";
+import axios from "axios";
+import { redirect } from "next/navigation";
 
 export async function GET(req: NextRequest, { params }: { params: any }) {
   const { id } = await params;
@@ -30,6 +32,16 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
     });
   } catch (error) {
     console.error("Error fetching raw dataset:", error);
+
+    if (axios.isAxiosError(error) && error.response) {
+      const status = error.response.status;
+      if (status === 401 || status === 403) {
+        redirect(
+          `/auth/signin?callbackUrl=/${params.locale}/dataset/${id}/raw?format=${format}`,
+        );
+      }
+    }
+
     return handleAxiosErrorForNextResponse(error);
   }
 }

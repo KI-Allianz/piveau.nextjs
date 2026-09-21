@@ -42,6 +42,18 @@ export async function getRawDataset(
   return await response.data;
 }
 
+export async function getRawDistribution(
+  id: string,
+  type: string,
+  axiosInstance = axios.create(),
+) {
+  const response = await axiosInstance.get(
+    `${BACKEND_URLS.REPO}distributions/${id}${type}`,
+  );
+
+  return await response.data;
+}
+
 export async function searchDatasets(
   params: z.infer<typeof SearchParamsSchema>,
   axiosInstance?: AxiosInstance,
