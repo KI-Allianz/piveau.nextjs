@@ -1,9 +1,3 @@
-import {
-  Dataset,
-  Catalog,
-  searchResource,
-  SearchResult,
-} from "@piveau/sdk-core";
 import { router } from "./trpc";
 import { GetParamsSchema, SearchParamsSchema } from "./schemas/search";
 import { publicProcedure } from "./auth/procedures";
@@ -17,14 +11,16 @@ import {
 import axios from "axios";
 import { ExtendedSession } from "@/app/api/auth/[...nextauth]/route";
 import { getFeaturedModels, getModel } from "@/lib/repo/model/api";
+import { getCatalogue, searchCatalogues } from "@/lib/repo/catalogue/api";
 
-const baseUrl = BACKEND_URLS.SEARCH;
-
-function getAxiosInstance(ctx: {
-  isAuthed: boolean;
-  isAuthEnabled: boolean;
-  session: ExtendedSession | null;
-}) {
+export function getAxiosInstance(
+  ctx: {
+    isAuthed: boolean;
+    isAuthEnabled: boolean;
+    session: ExtendedSession | null;
+  },
+  baseUrl: string = BACKEND_URLS.SEARCH,
+) {
   return axios.create({
     baseURL: baseUrl,
     headers: {
@@ -77,35 +73,17 @@ export const appRouter = router({
     }),
   },
 
-  search: {
-    catalogs: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
+  catalogue: {
+    search: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
       const { input, ctx } = opts;
 
-      try {
-        const res = await searchResource<SearchResult<Catalog>>({
-          baseUrl: baseUrl,
-          axiosInstance: getAxiosInstance(ctx),
-          params: {
-            ...input,
-            filters: "catalogue",
-            includes: [
-              "id",
-              "title",
-              "description",
-              "modified",
-              "issued",
-              "country",
-              "count",
-              "keywords.label",
-            ],
-          },
-        });
+      return await searchCatalogues(input, getAxiosInstance(ctx));
+    }),
 
-        return res.data.result;
-      } catch (error) {
-        console.error("Search Resource Failed:", error);
-        throw new Error("Failed to fetch from Search Hub Upstream");
-      }
+    get: publicProcedure.input(GetParamsSchema).query(async (opts) => {
+      const { input, ctx } = opts;
+
+      return await getCatalogue(input.id, getAxiosInstance(ctx));
     }),
   },
 });

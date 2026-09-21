@@ -7,18 +7,9 @@ import { Dataset } from "@/lib/utils";
 import { parseIntoDataset, parseRawDCAT } from "@/lib/repo/dataset/parse";
 import { BACKEND_URLS } from "@/lib/urls";
 import { SearchParamsSchema } from "@/server/schemas/search";
-import { canAccessObject, handleAxiosError } from "@/lib/repo/common/api";
-import { AxiosInstance } from "axios";
+import { handleAxiosErrorForTRPC } from "@/lib/repo/common/api";
+import axios, { AxiosInstance } from "axios";
 import z from "zod";
-
-export async function canAccessDataset(id: string, session: any) {
-  const response = await getDataset(id);
-
-  const isPublic =
-    response.keywords?.some((k) => k.label.toLowerCase() === "public") || false;
-
-  return canAccessObject(isPublic, session);
-}
 
 export async function getDataset(
   id: string,
@@ -35,8 +26,20 @@ export async function getDataset(
     return response.result;
   } catch (error) {
     console.error("Failed to fetch dataset:", error);
-    handleAxiosError(error);
+    handleAxiosErrorForTRPC(error);
   }
+}
+
+export async function getRawDataset(
+  id: string,
+  type: string,
+  axiosInstance = axios.create(),
+) {
+  const response = await axiosInstance.get(
+    `${BACKEND_URLS.REPO}datasets/${id}${type}`,
+  );
+
+  return await response.data;
 }
 
 export async function searchDatasets(
@@ -74,7 +77,7 @@ export async function searchDatasets(
     return res.data.result;
   } catch (error) {
     console.error("Failed to fetch categories:", error);
-    handleAxiosError(error);
+    handleAxiosErrorForTRPC(error);
   }
 }
 
@@ -100,7 +103,7 @@ export async function getDatasetCategories(
     );
   } catch (error) {
     console.error("Failed to fetch categories:", error);
-    handleAxiosError(error);
+    handleAxiosErrorForTRPC(error);
   }
 }
 
@@ -113,18 +116,6 @@ export async function getFeaturedDatasets(axiosInstance?: AxiosInstance) {
   );
 
   return res.results;
-}
-
-export async function getRawDataset(id: string, type: string) {
-  try {
-    const res = await fetch(`${BACKEND_URLS.REPO}datasets/${id}${type}`);
-    const data = await res.text();
-
-    return data;
-  } catch (error) {
-    console.error("Failed to fetch raw dataset:", error);
-    throw new Error("Failed to fetch raw dataset from Repository Upstream");
-  }
 }
 
 export async function getDatasetDirect(id: string): Promise<any> {

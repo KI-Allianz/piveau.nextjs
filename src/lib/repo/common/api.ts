@@ -1,16 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import axios, { AxiosError } from "axios";
 
-export function canAccessObject(isPublic: boolean, session: any) {
-  const isAuthed =
-    !!session?.user || process.env.NEXT_PUBLIC_AUTH_DISABLED === "true";
-
-  return {
-    allowed: isPublic || isAuthed,
-    isPublic,
-  };
-}
-
 function translateAxiosErrorToTRPC(error: AxiosError): TRPCError {
   const status = error.response?.status;
 
@@ -30,7 +20,14 @@ function translateAxiosErrorToTRPC(error: AxiosError): TRPCError {
   });
 }
 
-export function handleAxiosError(error: unknown): never {
+function translateAxiosErrorToNextResponse(error: AxiosError): Response {
+  const status = error.response?.status || 500;
+  const message = error.response?.statusText || "Internal Server Error";
+
+  return new Response(message, { status });
+}
+
+export function handleAxiosErrorForTRPC(error: unknown): never {
   if (axios.isAxiosError(error)) {
     throw translateAxiosErrorToTRPC(error);
   }
@@ -39,4 +36,12 @@ export function handleAxiosError(error: unknown): never {
     code: "INTERNAL_SERVER_ERROR",
     message: "Failed to fetch from Search Hub Upstream",
   });
+}
+
+export function handleAxiosErrorForNextResponse(error: unknown): Response {
+  if (axios.isAxiosError(error)) {
+    return translateAxiosErrorToNextResponse(error);
+  }
+
+  return new Response("Internal Server Error", { status: 500 });
 }

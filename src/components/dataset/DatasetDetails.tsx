@@ -2,8 +2,6 @@
 
 import DatasetDetailsHeader from "./DatasetDetailsHeader";
 import DatasetDetailsDistributions from "./DatasetDetailsDistributions";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import MapComponent from "@/components/MapComponent";
 import {
   Accordion,
@@ -33,56 +31,52 @@ export default function DatasetDetails({ id }: Props) {
   }, [error, locale]);
 
   return (
-    <div className="bg-background w-full max-w-[1920px] mx-auto shadow-[0_0_12px_rgba(0,0,0,0.17)]">
-      <Header />
-      <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
-        <DatasetDetailsHeader
-          data={data}
-          baseUrl={`${process.env.DOMAIN || "http://localhost:3000"}`}
-          supportEmail={process.env.NEXT_PUBLIC_SUPPORT_EMAIL}
-          isAiModel={false}
-        />
+    <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
+      <DatasetDetailsHeader
+        data={data}
+        baseUrl={`${process.env.DOMAIN || "http://localhost:3000"}`}
+        supportEmail={process.env.NEXT_PUBLIC_SUPPORT_EMAIL}
+        isAiModel={false}
+      />
 
-        <Accordion
-          type="multiple"
-          className="w-full"
-          defaultValue={["distributions", "assistant", "map"]}
-        >
-          <AccordionItem value={"distributions"} className="py-2">
+      <Accordion
+        type="multiple"
+        className="w-full"
+        defaultValue={["distributions", "assistant", "map"]}
+      >
+        <AccordionItem value={"distributions"} className="py-2">
+          <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
+            {translations.dataset.distribution.title}
+          </AccordionTrigger>
+          <AccordionContent className="text-muted-foreground pb-2">
+            <DatasetDetailsDistributions dataset={data} />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value={"assistant"} className="py-2">
+          <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
+            {translations.dataset.assistant.title}
+          </AccordionTrigger>
+          <AccordionContent className="text-muted-foreground pb-2">
+            <DatasetDetailsChatbot
+              dataset={data}
+              backendUrl={
+                process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL ||
+                "https://piveau.hlrs.de/metadataassistant"
+              }
+            />
+          </AccordionContent>
+        </AccordionItem>
+        {data?.spatial && (
+          <AccordionItem value={"map"} className="py-2">
             <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-              {translations.dataset.distribution.title}
+              {translations.dataset.map.title}
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsDistributions dataset={data} />
+              <MapComponent geoJsonData={data.spatial} />
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value={"assistant"} className="py-2">
-            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-              {translations.dataset.assistant.title}
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground pb-2">
-              <DatasetDetailsChatbot
-                dataset={data}
-                backendUrl={
-                  process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL ||
-                  "https://piveau.hlrs.de/metadataassistant"
-                }
-              />
-            </AccordionContent>
-          </AccordionItem>
-          {data?.spatial && (
-            <AccordionItem value={"map"} className="py-2">
-              <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-                {translations.dataset.map.title}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground pb-2">
-                <MapComponent geoJsonData={data.spatial} />
-              </AccordionContent>
-            </AccordionItem>
-          )}
-        </Accordion>
-      </div>
-      <Footer />
+        )}
+      </Accordion>
     </div>
   );
 }

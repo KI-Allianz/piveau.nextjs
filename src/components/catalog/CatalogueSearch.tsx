@@ -17,7 +17,7 @@ export default function CatalogueSearch() {
   const searchParams = useSearchParams();
   const { translations } = useLocale();
 
-  const search = trpc.search.catalogs.useQuery(
+  const search = trpc.catalogue.search.useQuery(
     {
       q: searchParams.get("q") || "",
       limit: searchParams.get("limit")
