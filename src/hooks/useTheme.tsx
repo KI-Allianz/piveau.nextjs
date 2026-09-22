@@ -47,5 +47,9 @@ export function fixThemeUrl(url: string, theme: ProjectTheme): string {
 export function getCleanUrl(url: string): string {
   const params = new URLSearchParams(url.split("?")[1] || "");
   params.delete("theme");
-  return url.split("?")[0] + (params.toString() ? "?" + params.toString() : "");
+
+  let newUrl =
+    url.split("?")[0] + (params.toString() ? "?" + params.toString() : "");
+  newUrl = newUrl.replace("//", "/");
+  return newUrl;
 }

@@ -21,6 +21,10 @@ export default function ModelDetails({ id }: Props) {
   const { locale, translations } = useLocale();
   const router = useRouter();
   const { data, error } = trpc.model.get.useQuery({ id });
+  const baseUrl =
+    window.location.origin ||
+    process.env.NEXT_PUBLIC_AUTH_URL ||
+    "http://localhost:3000";
 
   useEffect(() => {
     if (error?.data?.httpStatus === 401 || error?.data?.httpStatus === 403) {
@@ -30,11 +34,7 @@ export default function ModelDetails({ id }: Props) {
 
   return (
     <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
-      <DatasetDetailsHeader
-        data={data}
-        baseUrl={process.env.DOMAIN || ""}
-        isAiModel={true}
-      />
+      <DatasetDetailsHeader data={data} baseUrl={baseUrl} isAiModel={true} />
 
       <Accordion
         type="multiple"
