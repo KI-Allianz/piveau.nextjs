@@ -7,6 +7,9 @@ import { Dataset } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 interface TraceStep {
   step: "tool_call" | "tool_result" | "final_synthesis";
   tool?: string;
@@ -30,87 +33,6 @@ type Props = {
 };
 
 const MAX_TURNS = 3;
-
-// -----------------------------------------------------------------------------
-// Markdown Link & Text Formatter (Autolinking Bare URLs + Bold Arrows)
-// -----------------------------------------------------------------------------
-function formatMarkdown(raw: string): string {
-  if (!raw) return "";
-
-  const lines = raw
-    .replace(/^(?:---|\*\*\*|___)\s*$/gm, "")
-    .trim()
-    .split("\n");
-
-  const formattedElements: string[] = [];
-  let inList = false;
-
-  for (let i = 0; i < lines.length; i++) {
-    let line = lines[i].trim();
-
-    // Subtle paragraph spacing for empty lines
-    if (!line) {
-      if (inList) {
-        formattedElements.push("</ul>");
-        inList = false;
-      }
-      formattedElements.push('<div class="h-2"></div>');
-      continue;
-    }
-
-    // 1. Format Markdown Links: [Label](URL)
-    line = line.replace(
-      /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-      '<a href="$2" target="_blank" rel="noopener noreferrer" class="font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline underline-offset-2 inline-flex items-center gap-1 break-all">$1 <span class="font-bold text-xs">↗</span></a>'
-    );
-
-    // 2. Autolink Bare URLs (e.g. http://localhost:19194/protocol/...)
-    line = line.replace(
-      /(?<!href="|">)(https?:\/\/[^\s<)]+)(?![^<]*>|[^<>]*<\/a>)/g,
-      '<a href="$1" target="_blank" rel="noopener noreferrer" class="font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline underline-offset-2 inline-flex items-center gap-1 break-all">$1 <span class="font-bold text-xs">↗</span></a>'
-    );
-
-    // 3. Bold text
-    line = line.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-neutral-900 dark:text-neutral-100">$1</strong>');
-
-    // 4. Inline code
-    line = line.replace(/`([^`]+)`/g, '<code class="bg-neutral-200/70 dark:bg-neutral-700/70 px-1 py-0.5 rounded text-xs font-mono text-pink-600 dark:text-pink-400">$1</code>');
-
-    // 5. Headers
-    line = line.replace(/^### (.*$)/gim, '<div class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mt-2.5 mb-1">$1</div>');
-
-    const isBullet = line.startsWith("- ") || line.startsWith("• ") || line.startsWith("* ");
-
-    if (isBullet) {
-      if (!inList) {
-        formattedElements.push('<ul class="my-2 space-y-1.5">');
-        inList = true;
-      }
-      const cleanLine = line.replace(/^[-*•]\s+/, "");
-      formattedElements.push(
-        `<li class="ml-5 pl-1 list-disc text-sm text-neutral-800 dark:text-neutral-200 marker:text-neutral-700 dark:marker:text-neutral-300 marker:font-bold marker:text-base leading-relaxed">${cleanLine}</li>`
-      );
-    } else {
-      if (inList) {
-        formattedElements.push("</ul>");
-        inList = false;
-      }
-
-      // Group links tightly under their parent items
-      if (line.startsWith("<a href=")) {
-        formattedElements.push(`<div class="ml-4 text-sm font-bold mt-1 mb-3">${line}</div>`);
-      } else {
-        formattedElements.push(`<div class="text-sm text-neutral-800 dark:text-neutral-200 my-1.5 leading-relaxed">${line}</div>`);
-      }
-    }
-  }
-
-  if (inList) {
-    formattedElements.push("</ul>");
-  }
-
-  return formattedElements.join("");
-}
 
 // -----------------------------------------------------------------------------
 // Subordinate Trace Accordion
@@ -345,10 +267,59 @@ export default function DatasetDetailsChatbot({
                     <TraceAccordion trace={msg.trace} />
                   )}
 
-                  {/* Formatted Content */}
-                  <div
-                    dangerouslySetInnerHTML={{ __html: formatMarkdown(msg.content) }}
-                  />
+                  {/* Standardized Markdown Content (Remark/GFM powered) */}
+                  <div className="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        a: ({ node, ...props }) => (
+                          <a
+                            {...props}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline underline-offset-2 inline-flex items-center gap-1 break-all"
+                          >
+                            {props.children}
+                            <span className="font-bold text-xs">↗</span>
+                          </a>
+                        ),
+                        p: ({ node, ...props }) => (
+                          <p {...props} className="my-1.5 leading-relaxed" />
+                        ),
+                        ul: ({ node, ...props }) => (
+                          <ul
+                            {...props}
+                            className="my-2 ml-5 space-y-1.5 list-disc marker:font-bold marker:text-neutral-700 dark:marker:text-neutral-300"
+                          />
+                        ),
+                        li: ({ node, ...props }) => (
+                          <li {...props} className="leading-relaxed pl-1" />
+                        ),
+                        strong: ({ node, ...props }) => (
+                          <strong
+                            {...props}
+                            className="font-bold text-neutral-900 dark:text-neutral-100"
+                          />
+                        ),
+                        code: ({ node, className, children, ...props }) => (
+                          <code
+                            {...props}
+                            className="rounded bg-neutral-200/70 px-1 py-0.5 font-mono text-xs text-pink-600 dark:bg-neutral-700/70 dark:text-pink-400"
+                          >
+                            {children}
+                          </code>
+                        ),
+                        h3: ({ node, ...props }) => (
+                          <h3
+                            {...props}
+                            className="mb-1 mt-2.5 text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400"
+                          />
+                        ),
+                      }}
+                    >
+                      {msg.content}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               )}
             </div>
