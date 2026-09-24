@@ -65,7 +65,7 @@ export default function DatasetDetails({ id }: Props) {
               dataset={data}
               backendUrl={
                 process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL ||
-                "https://piveau.hlrs.de/metadataassistant"
+                "/api/assistant"
               }
             />
           </AccordionContent>

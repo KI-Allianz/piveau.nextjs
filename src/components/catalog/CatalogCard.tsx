@@ -59,8 +59,10 @@ export default function CatalogCard({ catalog }: Props) {
             </CardDescription>
             {catalog.language && (
               <div className="flex flex-wrap gap-2 flex-1/3">
-                {catalog.language?.map((language) => (
-                  <Badge variant={"secondary"}>{language.label}</Badge>
+                {catalog.language?.map((language,idx) => (
+                  <Badge key={language.id ?? language.label ?? idx} variant={"secondary"}>
+                    {language.label}
+                    </Badge>
                 ))}
               </div>
             )}
