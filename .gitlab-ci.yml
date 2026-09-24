@@ -64,7 +64,7 @@ build-image:
         --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_BRANCH}" \
         ${EXTRA_TAG}
   rules:
-    - if: $CI_COMMIT_BRANCH == "production" || $CI_COMMIT_BRANCH == "staging"
+    - if: $CI_COMMIT_BRANCH == "production" || $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH =~ /^feature\/.*/
 
 trigger-deploy:
   stage: deploy
