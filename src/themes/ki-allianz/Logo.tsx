@@ -5,8 +5,8 @@ export default function Logo() {
     <Image
       src={"/themes/ki-allianz/logo.svg"}
       alt={"Logo"}
-      width={400}
-      height={80}
+      width={250}
+      height={60}
     />
   );
 }
