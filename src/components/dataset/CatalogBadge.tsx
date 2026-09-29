@@ -25,16 +25,13 @@ export default function CatalogBadge({ catalog }: Props) {
         </TooltipContent>
         <TooltipTrigger className="flex items-center gap-2 group transition-all duration-200 hover:bg-secondary cursor-pointer rounded-lg p-1">
           <div className="bg-(--main-accent) text-white p-1.5 rounded-xl w-fit group-hover:bg-(--main-accent)/80 transition-all duration-200">
-            <Archive size={24} />
+            <Archive className="size-4 sm:size-5 md:size-6" />
           </div>
           <div className="flex flex-col items-start">
-            <span
-              className="text-xs text-muted-foreground"
-              style={{ marginBottom: "-1px" }}
-            >
+            <span className="text-xs md:text-sm text-muted-foreground -mb-0.5">
               {translations.dataset.providedBy}
             </span>
-            <span className="font-bold line-clamp-1">
+            <span className="font-semibold line-clamp-1 text-sm md:text-base text-start">
               {!catalog ? (
                 <Skeleton className="h-4 w-32 bg-muted-foreground/30 mt-1" />
               ) : (

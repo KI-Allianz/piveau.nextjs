@@ -35,16 +35,13 @@ export default function PublisherPopover({ publisher, contact_point }: Props) {
       <PopoverTrigger asChild>
         <div className="flex w-fit items-center gap-2 group transition-all duration-200 hover:bg-secondary cursor-pointer rounded-lg p-1">
           <div className="bg-black text-white p-1.5 rounded-xl w-fit group-hover:bg-black/80 transition-all duration-200">
-            <Users size={24} />
+            <Users className="size-4 sm:size-5 md:size-6" />
           </div>
           <div className="flex flex-col">
-            <span
-              className="text-xs text-muted-foreground"
-              style={{ marginBottom: "-1px" }}
-            >
+            <span className="text-xs md:text-sm text-muted-foreground -mb-0.5">
               {translations.dataset.publisher}
             </span>
-            <span className="line-clamp-1 font-semibold">
+            <span className="line-clamp-1 font-semibold text-sm md:text-base">
               {clampString(
                 publisher?.name || contact_point?.at(0)?.name || "Unknown",
                 50,
