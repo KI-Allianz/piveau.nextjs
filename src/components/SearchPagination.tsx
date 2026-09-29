@@ -1,153 +1,174 @@
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
-
-import { usePagination } from "@/hooks/use-pagination"
+import { usePagination } from "@/hooks/use-pagination";
 import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
   PaginationLink,
-} from "@/components/ui/pagination"
+} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import {useSearchParams} from "next/navigation";
-import {useLocale} from "@/hooks/useLocale";
+} from "@/components/ui/select";
+import { useSearchParams } from "next/navigation";
+import { useLocale } from "@/hooks/useLocale";
 
 type PaginationProps = {
-  currentPage: number
-  totalPages: number
-  itemsPerPage: number
-  paginationItemsToDisplay?: number
-}
+  currentPage: number;
+  totalPages: number;
+  itemsPerPage: number;
+  paginationItemsToDisplay?: number;
+};
 
 export default function SearchPagination({
-                                    currentPage,
-                                    totalPages,
-                                    itemsPerPage,
-                                    paginationItemsToDisplay = 5,
-                                  }: PaginationProps) {
+  currentPage,
+  totalPages,
+  itemsPerPage,
+  paginationItemsToDisplay = 5,
+}: PaginationProps) {
   const { pages, showLeftEllipsis, showRightEllipsis } = usePagination({
     currentPage,
     totalPages,
     paginationItemsToDisplay,
-  })
-  const searchParams = useSearchParams()
+  });
+  const searchParams = useSearchParams();
   const { translations } = useLocale();
 
   const getPageHref = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", page.toString());
     return `?${params.toString()}`;
-  }
+  };
 
   return (
-    <div className="flex items-center justify-between gap-3 w-full">
-      {/* Page number information */}
-      <p
-        className="text-muted-foreground flex-1 text-sm whitespace-nowrap"
-        aria-live="polite"
+    <div className="@container w-full">
+      <div
+        className="grid gap-3 items-center w-full
+          [grid-template-areas:'info_select'_'pagination_pagination']
+          @md:[grid-template-areas:'info_pagination_select']
+          @md:grid-cols-[1fr_auto_1fr]
+          grid-cols-[1fr_1fr]"
       >
-        {translations.search.page} <span className="text-foreground">{currentPage + 1}</span> von{" "}
-        <span className="text-foreground">{totalPages}</span>
-      </p>
+        {/* Page number information */}
+        <div style={{ gridArea: "info" }} className="flex items-center">
+          <p
+            className="text-muted-foreground text-sm whitespace-nowrap"
+            aria-live="polite"
+          >
+            {translations.search.page}{" "}
+            <span className="text-foreground">{currentPage + 1}</span> von{" "}
+            <span className="text-foreground">{totalPages}</span>
+          </p>
+        </div>
 
-      {/* Pagination */}
-      <div className="grow">
-        <Pagination>
-          <PaginationContent>
-            {/* Previous page button */}
-            <PaginationItem>
-              <PaginationLink
-                className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
-                href={
-                  currentPage === 0 ? undefined : getPageHref(currentPage - 1)
-                }
-                aria-label="Go to previous page"
-                aria-disabled={currentPage === 0 ? true : undefined}
-                role={currentPage === 0 ? "link" : undefined}
-              >
-                <ChevronLeftIcon size={16} aria-hidden="true" />
-              </PaginationLink>
-            </PaginationItem>
-
-            {/* Left ellipsis (...) */}
-            {showLeftEllipsis && (
+        {/* Pagination */}
+        <div
+          style={{ gridArea: "pagination" }}
+          className="flex justify-center w-full"
+        >
+          <Pagination>
+            <PaginationContent>
+              {/* Previous page button */}
               <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Page number links */}
-            {pages.map((page) => (
-              <PaginationItem key={page}>
                 <PaginationLink
-                  href={getPageHref(page - 1)}
-                  isActive={(page - 1) === currentPage}
+                  className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
+                  href={
+                    currentPage === 0 ? undefined : getPageHref(currentPage - 1)
+                  }
+                  aria-label="Go to previous page"
+                  aria-disabled={currentPage === 0 ? true : undefined}
+                  role={currentPage === 0 ? "link" : undefined}
                 >
-                  {page}
+                  <ChevronLeftIcon size={16} aria-hidden="true" />
                 </PaginationLink>
               </PaginationItem>
-            ))}
 
-            {/* Right ellipsis (...) */}
-            {showRightEllipsis && (
+              {/* Left ellipsis (...) */}
+              {showLeftEllipsis && (
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              )}
+
+              {/* Page number links */}
+              {pages.map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    href={getPageHref(page - 1)}
+                    isActive={page - 1 === currentPage}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              {/* Right ellipsis (...) */}
+              {showRightEllipsis && (
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              )}
+
+              {/* Next page button */}
               <PaginationItem>
-                <PaginationEllipsis />
+                <PaginationLink
+                  className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
+                  href={
+                    currentPage === totalPages
+                      ? undefined
+                      : getPageHref(currentPage + 1)
+                  }
+                  aria-label="Go to next page"
+                  aria-disabled={currentPage === totalPages ? true : undefined}
+                  role={currentPage === totalPages ? "link" : undefined}
+                >
+                  <ChevronRightIcon size={16} aria-hidden="true" />
+                </PaginationLink>
               </PaginationItem>
-            )}
+            </PaginationContent>
+          </Pagination>
+        </div>
 
-            {/* Next page button */}
-            <PaginationItem>
-              <PaginationLink
-                className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
-                href={
-                  currentPage === totalPages
-                    ? undefined
-                    : getPageHref(currentPage + 1)
-                }
-                aria-label="Go to next page"
-                aria-disabled={currentPage === totalPages ? true : undefined}
-                role={currentPage === totalPages ? "link" : undefined}
-              >
-                <ChevronRightIcon size={16} aria-hidden="true" />
-              </PaginationLink>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-
-      {/* Results per page */}
-      <div className="flex flex-1 justify-end">
-        <Select
-          defaultValue={itemsPerPage.toString()}
-          aria-label="Results per page"
-          onValueChange={(value) => {
-            const params = new URLSearchParams(searchParams.toString());
-            params.set("limit", value);
-            params.set("page", "0"); // Reset to first page when changing results per page
-            window.location.href = `?${params.toString()}`;
-          }}
-        >
-          <SelectTrigger
-            id="results-per-page"
-            className="w-fit whitespace-nowrap"
+        {/* Results per page */}
+        <div style={{ gridArea: "select" }} className="flex justify-end">
+          <Select
+            defaultValue={itemsPerPage.toString()}
+            aria-label="Results per page"
+            onValueChange={(value) => {
+              const params = new URLSearchParams(searchParams.toString());
+              params.set("limit", value);
+              params.set("page", "0");
+              window.location.href = `?${params.toString()}`;
+            }}
           >
-            <SelectValue placeholder="Select number of results" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="10">10 / {translations.search.page}</SelectItem>
-            <SelectItem value="20">20 / {translations.search.page}</SelectItem>
-            <SelectItem value="50">50 / {translations.search.page}</SelectItem>
-            <SelectItem value="100">100 / {translations.search.page}</SelectItem>
-          </SelectContent>
-        </Select>
+            <SelectTrigger
+              id="results-per-page"
+              className="w-fit whitespace-nowrap"
+            >
+              <SelectValue placeholder="Select number of results" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="10">
+                10 / {translations.search.page}
+              </SelectItem>
+              <SelectItem value="20">
+                20 / {translations.search.page}
+              </SelectItem>
+              <SelectItem value="50">
+                50 / {translations.search.page}
+              </SelectItem>
+              <SelectItem value="100">
+                100 / {translations.search.page}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
-  )
+  );
 }
