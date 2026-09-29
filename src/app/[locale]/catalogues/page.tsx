@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import CatalogueSearch from "@/components/catalog/CatalogueSearch";
-import Header from "@/components/Header";
+import Header from "@/components/header/Header";
 import Footer from "@/components/Footer";
 
 export default async function Catalogues() {

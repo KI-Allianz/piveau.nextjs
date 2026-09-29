@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function SupportSection() {
   return (
-    <div className="px-10 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
+    <div className="px-5 pt-20 w-full max-w-7xl mx-auto flex flex-col gap-5">
       <div className="flex flex-col items-center bg-white dark:bg-black rounded-2xl px-10 pb-10 pt-16">
         <div className="max-w-2xl flex flex-col gap-5">
           <h2 className="text-4xl font-bold mb-2">

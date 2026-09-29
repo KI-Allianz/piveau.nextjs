@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import DatasetSearch from "@/components/dataset/DatasetSearch";
-import Header from "@/components/Header";
+import Header from "@/components/header/Header";
 import Footer from "@/components/Footer";
 import { SupportSection } from "@/components/SupportSection";
 

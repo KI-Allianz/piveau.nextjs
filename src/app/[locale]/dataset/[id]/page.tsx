@@ -5,7 +5,7 @@ import { supportedLocales } from "@/lib/lang";
 import { dataTypes, pickBestDataType } from "@/lib/content";
 
 import DatasetDetails from "@/components/dataset/DatasetDetails";
-import Header from "@/components/Header";
+import Header from "@/components/header/Header";
 import Footer from "@/components/Footer";
 
 interface Props {
