@@ -10,12 +10,15 @@ export const requiredEditorLanguages = ["en"];
 export type EditorComponentType =
   "input" | "multilingual-input" | "select" | "checkbox" | "textarea";
 
-export const editorMetadataRegistry = z.registry<{
+export type EditorMetadata = {
   label: string;
   component: EditorComponentType;
   description?: string;
   placeholder?: string;
-}>();
+  rdfProperty: string;
+};
+
+export const editorMetadataRegistry = z.registry<EditorMetadata>();
 
 const baseMultilingualSchema = z
   .object(
@@ -32,19 +35,31 @@ const baseMultilingualSchema = z
     component: "multilingual-input",
     description: "A string that can have values in multiple languages.",
     placeholder: "e.g. text here",
+    rdfProperty: "http://www.w3.org/2000/01/rdf-schema#label",
   });
 
-const requiredMultilingualSchema = baseMultilingualSchema.extend(
-  requiredEditorLanguages.reduce(
+const createMultilingualSchema = (
+  isRequired: boolean = false,
+  meta: EditorMetadata,
+) => {
+  const base = requiredEditorLanguages.reduce(
     (acc, lang) => {
       acc[lang] = z
         .string()
-        .min(1, `${editorLanguageLabels[lang]} value is required`);
+        .min(1, `${editorLanguageLabels[lang]} ${meta.label} is required`);
       return acc;
     },
     {} as Record<string, z.ZodType>,
-  ),
-);
+  );
+
+  let schema = baseMultilingualSchema;
+
+  if (isRequired) {
+    schema = baseMultilingualSchema.extend(base);
+  }
+
+  return schema.register(editorMetadataRegistry, meta);
+};
 
 export const datasetFormSchema = z.object({
   id: z
@@ -56,21 +71,24 @@ export const datasetFormSchema = z.object({
       component: "input",
       description: "A unique identifier for the dataset.",
       placeholder: "e.g. air-quality-berlin",
+      rdfProperty: "@id",
     }),
 
-  title: requiredMultilingualSchema.register(editorMetadataRegistry, {
+  title: createMultilingualSchema(true, {
     label: "Dataset Title",
     component: "multilingual-input",
     description: "A name given to the dataset.",
     placeholder: "e.g. Air Quality Measurements Berlin",
+    rdfProperty: "dct:title",
   }),
 
-  description: requiredMultilingualSchema.register(editorMetadataRegistry, {
+  description: createMultilingualSchema(true, {
     label: "Dataset Description",
     component: "multilingual-input",
     description: "A brief summary of the dataset.",
     placeholder:
       "e.g. This dataset contains air quality measurements from Berlin.",
+    rdfProperty: "dct:description",
   }),
 });
 
