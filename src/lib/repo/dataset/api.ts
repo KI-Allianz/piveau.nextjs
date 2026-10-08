@@ -147,3 +147,39 @@ export async function getDatasetDirect(id: string): Promise<any> {
 
   return dataset;
 }
+
+export async function getDatasetDrafts(
+  axiosInstance: AxiosInstance = axios.create(),
+) {
+  const url = BACKEND_URLS.REPO + `drafts/datasets`;
+  try {
+    const res = await axiosInstance.get(url, {
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.error("Failed to fetch dataset drafts:", error);
+    handleAxiosErrorForTRPC(error);
+  }
+}
+
+export async function getDatasetDraftById(
+  id: string,
+  catalogId: string,
+  axiosInstance: AxiosInstance = axios.create(),
+) {
+  const url =
+    BACKEND_URLS.REPO +
+    `catalogues/${catalogId}/datasets/origin?originalId=${id}`;
+  try {
+    const res = await axiosInstance.get(url, {
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.error("Failed to fetch dataset draft:", error);
+    handleAxiosErrorForTRPC(error);
+  }
+}

@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { ZodIssueCode } from "zod/v3";
 
 export const editorLanguages = ["en", "de"];
 export const editorLanguageLabels: Record<string, string> = {
@@ -8,7 +9,12 @@ export const editorLanguageLabels: Record<string, string> = {
 export const requiredEditorLanguages = ["en"];
 
 export type EditorComponentType =
-  "input" | "multilingual-input" | "select" | "checkbox" | "textarea";
+  | "input"
+  | "multilingual-input"
+  | "select"
+  | "checkbox"
+  | "textarea"
+  | "temporal";
 
 export type EditorMetadata = {
   label: string;
@@ -61,6 +67,32 @@ const createMultilingualSchema = (
   return schema.register(editorMetadataRegistry, meta);
 };
 
+export const temporalRegex = {
+  gYear: /^\d{4}$/,
+  gYearMonth: /^\d{4}-\d{2}$/,
+  date: /^\d{4}-\d{2}-\d{2}$/,
+  dateTime: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/,
+};
+
+const createTemporalSchema = (meta: EditorMetadata) => {
+  return z
+    .union([
+      z
+        .string()
+        .regex(
+          temporalRegex.dateTime,
+          "Invalid dateTime (e.g. 2009-10-10T12:00:00-05:00)",
+        ),
+      z.string().regex(temporalRegex.date, "Invalid date (e.g. 2009-10-10)"),
+      z
+        .string()
+        .regex(temporalRegex.gYearMonth, "Invalid year-month (e.g. 2009-10)"),
+      z.string().regex(temporalRegex.gYear, "Invalid year (e.g. 2009)"),
+    ])
+    .optional()
+    .register(editorMetadataRegistry, meta);
+};
+
 export const datasetFormSchema = z.object({
   id: z
     .string()
@@ -75,7 +107,7 @@ export const datasetFormSchema = z.object({
     }),
 
   title: createMultilingualSchema(true, {
-    label: "Dataset Title",
+    label: "Title",
     component: "multilingual-input",
     description: "A name given to the dataset.",
     placeholder: "e.g. Air Quality Measurements Berlin",
@@ -83,12 +115,28 @@ export const datasetFormSchema = z.object({
   }),
 
   description: createMultilingualSchema(true, {
-    label: "Dataset Description",
+    label: "Description",
     component: "multilingual-input",
     description: "A brief summary of the dataset.",
     placeholder:
       "e.g. This dataset contains air quality measurements from Berlin.",
     rdfProperty: "dct:description",
+  }),
+
+  issued: createTemporalSchema({
+    label: "Issued Date",
+    component: "temporal",
+    description: "Supports Year, Year-Month, Date, or full DateTime.",
+    placeholder: "2009-10-10 or 2009-10-10T12:00:00Z",
+    rdfProperty: "dct:issued",
+  }),
+
+  modified: createTemporalSchema({
+    label: "Modified Date",
+    component: "temporal",
+    description: "Supports Year, Year-Month, Date, or full DateTime.",
+    placeholder: "2009-10-10 or 2009-10-10T12:00:00Z",
+    rdfProperty: "dct:issued",
   }),
 });
 
@@ -136,6 +184,6 @@ export const formSections = {
   basicInfo: {
     title: "Basic Information",
     description: "General information about the dataset.",
-    keys: ["title", "description"],
+    keys: ["title", "description", "issued", "modified"],
   },
 } as Record<string, FormSection>;

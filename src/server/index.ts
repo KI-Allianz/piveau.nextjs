@@ -1,10 +1,16 @@
 import { router } from "./trpc";
-import { GetParamsSchema, SearchParamsSchema } from "./schemas/search";
-import { publicProcedure } from "./auth/procedures";
+import {
+  GetDraftParamsSchema,
+  GetParamsSchema,
+  SearchParamsSchema,
+} from "./schemas/search";
+import { protectedProcedure, publicProcedure } from "./auth/procedures";
 import { BACKEND_URLS } from "@/lib/urls";
 import {
   getDataset,
   getDatasetCategories,
+  getDatasetDraftById,
+  getDatasetDrafts,
   getFeaturedDatasets,
   searchDatasets,
 } from "@/lib/repo/dataset/api";
@@ -57,6 +63,25 @@ export const appRouter = router({
 
       return await getDataset(input.id, getAxiosInstance(ctx));
     }),
+
+    draft: {
+      getAll: protectedProcedure.query(async (opts) => {
+        const { ctx } = opts;
+
+        return await getDatasetDrafts(getAxiosInstance(ctx));
+      }),
+      get: protectedProcedure
+        .input(GetDraftParamsSchema)
+        .query(async (opts) => {
+          const { input, ctx } = opts;
+
+          return await getDatasetDraftById(
+            input.id,
+            input.catalogueId,
+            getAxiosInstance(ctx),
+          );
+        }),
+    },
   },
 
   model: {
