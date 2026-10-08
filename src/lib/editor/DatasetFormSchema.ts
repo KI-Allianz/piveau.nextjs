@@ -14,7 +14,8 @@ export type EditorComponentType =
   | "select"
   | "checkbox"
   | "textarea"
-  | "temporal";
+  | "temporal"
+  | "object";
 
 export type EditorMetadata = {
   label: string;
@@ -22,6 +23,7 @@ export type EditorMetadata = {
   description?: string;
   placeholder?: string;
   rdfProperty: string;
+  rdfType?: string;
 };
 
 export const editorMetadataRegistry = z.registry<EditorMetadata>();
@@ -123,6 +125,34 @@ export const datasetFormSchema = z.object({
     rdfProperty: "dct:description",
   }),
 
+  contactPoint: z
+    .object({
+      fn: z
+        .string()
+        .min(1, "Full name is required")
+        .register(editorMetadataRegistry, {
+          label: "Full Name",
+          component: "input",
+          description: "The name of the organization or person.",
+          placeholder: "e.g. Statistisches Bundesamt",
+          rdfProperty: "vcard:fn",
+        }),
+      email: z.string().optional().register(editorMetadataRegistry, {
+        label: "Email",
+        component: "input",
+        description: "A web address or email for contacting.",
+        placeholder: "e.g. https://www.destatis.de/kontakt",
+        rdfProperty: "vcard:hasEmail",
+      }),
+    })
+    .register(editorMetadataRegistry, {
+      label: "Contact Point",
+      component: "object",
+      description: "Contact information for inquiries about the dataset.",
+      rdfProperty: "dcat:contactPoint",
+      rdfType: "vcard:Organization",
+    }),
+
   issued: createTemporalSchema({
     label: "Issued Date",
     component: "temporal",
@@ -149,6 +179,9 @@ export const datasetFormDefaults = {
   description: {
     en: "",
     de: "",
+  },
+  contactPoint: {
+    fn: "",
   },
 };
 
@@ -184,6 +217,6 @@ export const formSections = {
   basicInfo: {
     title: "Basic Information",
     description: "General information about the dataset.",
-    keys: ["title", "description", "issued", "modified"],
+    keys: ["title", "description", "contactPoint", "issued", "modified"],
   },
 } as Record<string, FormSection>;

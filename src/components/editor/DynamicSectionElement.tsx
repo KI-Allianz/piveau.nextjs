@@ -4,32 +4,22 @@ import * as React from "react";
 import { useFormContext } from "react-hook-form";
 import {
   datasetFormSchema,
-  editorMetadataRegistry,
   formSections,
 } from "@/lib/editor/DatasetFormSchema";
-import { MultilingualInput } from "@/components/editor/MultilingualInput";
-import { Controller } from "react-hook-form";
-import {
-  Field,
-  FieldLabel,
-  FieldDescription,
-  FieldError,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
 import { CheckCircle2, AlertCircle } from "lucide-react"; // Icons for check/error
-import { TemporalInput } from "./TemporalInput";
+import DynamicField from "./DynamicField";
 
 export function DynamicSectionElement({
   sectionKey,
 }: {
   sectionKey: keyof typeof formSections;
 }) {
-  const { control, trigger } = useFormContext();
+  const { trigger } = useFormContext();
   const section = formSections[sectionKey];
 
   const [hasValidated, setHasValidated] = React.useState(false);
@@ -77,67 +67,13 @@ export function DynamicSectionElement({
 
       <AccordionContent>
         <div className="space-y-6 pt-2">
-          {section.keys.map((key) => {
-            const meta = editorMetadataRegistry.get(
-              datasetFormSchema.shape[key],
-            );
-
-            if (!meta) return null;
-
-            switch (meta.component) {
-              case "multilingual-input":
-                return (
-                  <MultilingualInput
-                    key={key}
-                    namePrefix={key}
-                    label={meta.label}
-                    description={meta.description}
-                    placeholder={meta.placeholder}
-                  />
-                );
-              case "temporal":
-                return (
-                  <Controller
-                    key={key}
-                    name={key as any}
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <TemporalInput
-                        label={meta.label}
-                        description={meta.description}
-                        value={field.value}
-                        onChange={field.onChange}
-                        error={fieldState.error}
-                      />
-                    )}
-                  />
-                );
-
-              case "input":
-              default:
-                return (
-                  <Controller
-                    key={key}
-                    name={key as any}
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel>{meta.label}</FieldLabel>
-                        {meta.description && (
-                          <FieldDescription>
-                            {meta.description}
-                          </FieldDescription>
-                        )}
-                        <Input {...field} aria-invalid={fieldState.invalid} />
-                        {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
-                      </Field>
-                    )}
-                  />
-                );
-            }
-          })}
+          {section.keys.map((key) => (
+            <DynamicField
+              key={key}
+              name={key}
+              schema={datasetFormSchema.shape[key]}
+            />
+          ))}
         </div>
       </AccordionContent>
     </AccordionItem>
