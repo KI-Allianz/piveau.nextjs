@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DynamicSectionElement } from "./DynamicSectionElement";
 import { Accordion } from "../ui/accordion";
-import { buildJsonLd } from "@/lib/editor/buildJsonLD";
+import { generateDatasetJsonLd } from "@/lib/editor/buildJsonLD";
 
 export function DatasetForm() {
   const form = useForm<DatasetFormValues>({
@@ -21,7 +21,7 @@ export function DatasetForm() {
   });
 
   function onSubmit(data: DatasetFormValues) {
-    const jsonLd = buildJsonLd(data);
+    const jsonLd = generateDatasetJsonLd(data);
     console.log("Draft Payload:", data);
     console.log("JSON-LD Output:", jsonLd);
   }

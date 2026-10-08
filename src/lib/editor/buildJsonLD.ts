@@ -1,3 +1,4 @@
+import { ZodObject, ZodType } from "zod";
 import {
   datasetFormSchema,
   editorMetadataRegistry,
@@ -5,73 +6,94 @@ import {
   temporalRegex,
 } from "./DatasetFormSchema";
 
-export function buildJsonLd(values: DatasetFormValues) {
+export function buildPiveauJsonLd(schema: ZodType, value: any): any {
+  if (value === undefined || value === null || value === "") return undefined;
+
+  const meta = editorMetadataRegistry.get(schema);
+  if (!meta) return value;
+
+  if (meta.component === "multilingual-input" && typeof value === "object") {
+    const localizedEntries = Object.entries(value)
+      .filter(([_, val]) => Boolean(val))
+      .map(([lang, val]) => ({
+        "@language": lang,
+        "@value": val,
+      }));
+
+    return localizedEntries.length > 0 ? localizedEntries : undefined;
+  } else if (meta.component === "temporal" && typeof value === "string") {
+    let xsdType = "http://www.w3.org/2001/XMLSchema#date"; // default fallback
+
+    if (temporalRegex.dateTime.test(value)) {
+      xsdType = "http://www.w3.org/2001/XMLSchema#dateTime";
+    } else if (temporalRegex.date.test(value)) {
+      xsdType = "http://www.w3.org/2001/XMLSchema#date";
+    } else if (temporalRegex.gYearMonth.test(value)) {
+      xsdType = "http://www.w3.org/2001/XMLSchema#gYearMonth";
+    } else if (temporalRegex.gYear.test(value)) {
+      xsdType = "http://www.w3.org/2001/XMLSchema#gYear";
+    }
+
+    return {
+      "@value": value,
+      "@type": xsdType,
+    };
+  } else if (meta.component === "object") {
+    if (!(schema instanceof ZodObject)) {
+      console.error(`Expected ZodObject but got`, schema);
+      return null;
+    }
+    const innerShape = schema.shape;
+    const graphProperties: Record<string, any> = {};
+
+    if (meta.rdfType) {
+      graphProperties["@type"] = meta.rdfType;
+    }
+
+    for (const [subKey, subSchema] of Object.entries(innerShape)) {
+      const subMeta = editorMetadataRegistry.get(subSchema as ZodType);
+      if (!subMeta || !subMeta.rdfProperty) continue;
+
+      const subValue = value[subKey];
+      const serializedSubValue = buildPiveauJsonLd(
+        subSchema as ZodType,
+        subValue,
+      );
+
+      if (serializedSubValue !== undefined) {
+        graphProperties[subMeta.rdfProperty] = serializedSubValue;
+      }
+    }
+
+    return Object.keys(graphProperties).length > 0
+      ? graphProperties
+      : undefined;
+  }
+
+  return value;
+}
+
+export function generateDatasetJsonLd(formValues: DatasetFormValues) {
   const shape = datasetFormSchema.shape;
   const graphProperties: Record<string, any> = {};
 
-  // Loop through all keys present in the form values
-  for (const key of Object.keys(values) as Array<keyof DatasetFormValues>) {
-    const fieldSchema = shape[key];
-    if (!fieldSchema) continue;
-
+  for (const [key, fieldSchema] of Object.entries(shape)) {
     const meta = editorMetadataRegistry.get(fieldSchema);
     if (!meta || !meta.rdfProperty) continue;
 
-    console.log(`Processing field: ${key}, RDF Property: ${meta.rdfProperty}`);
+    const val = formValues[key as keyof DatasetFormValues];
+    const serialized = buildPiveauJsonLd(fieldSchema, val);
 
-    const value = values[key];
-    if (
-      value === undefined ||
-      value === "" ||
-      (typeof value === "object" && Object.keys(value).length === 0)
-    ) {
-      continue; // Skip empty fields
-    }
-
-    if (meta.component === "multilingual-input" && typeof value === "object") {
-      const localizedEntries = Object.entries(value)
-        .filter(([_, val]) => Boolean(val))
-        .map(([lang, val]) => ({
-          "@language": lang,
-          "@value": val,
-        }));
-
-      if (localizedEntries.length > 0) {
-        graphProperties[meta.rdfProperty] = localizedEntries;
-      }
-    } else if (meta.component === "temporal" && typeof value === "string") {
-      let xsdType = "http://www.w3.org/2001/XMLSchema#date"; // default fallback
-
-      if (temporalRegex.dateTime.test(value)) {
-        xsdType = "http://www.w3.org/2001/XMLSchema#dateTime";
-      } else if (temporalRegex.date.test(value)) {
-        xsdType = "http://www.w3.org/2001/XMLSchema#date";
-      } else if (temporalRegex.gYearMonth.test(value)) {
-        xsdType = "http://www.w3.org/2001/XMLSchema#gYearMonth";
-      } else if (temporalRegex.gYear.test(value)) {
-        xsdType = "http://www.w3.org/2001/XMLSchema#gYear";
-      }
-
-      graphProperties[meta.rdfProperty] = {
-        "@value": value,
-        "@type": xsdType,
-      };
-    } else {
-      graphProperties[meta.rdfProperty] = value;
+    if (serialized !== undefined) {
+      graphProperties[meta.rdfProperty] = serialized;
     }
   }
 
   return {
     "@context": {
-      schema: "https://schema.org/",
-      dcatap: "http://data.europa.eu/r5r/",
       dct: "http://purl.org/dc/terms/",
-      rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-      owl: "http://www.w3.org/2002/07/owl#",
-      skos: "http://www.w3.org/2004/02/skos/core#",
-      rdfs: "http://www.w3.org/2000/01/rdf-schema#",
       dcat: "http://www.w3.org/ns/dcat#",
-      foaf: "http://xmlns.com/foaf/0.1/",
+      vcard: "http://www.w3.org/2006/vcard/ns#",
     },
     "@type": "dcat:Dataset",
     ...graphProperties,
