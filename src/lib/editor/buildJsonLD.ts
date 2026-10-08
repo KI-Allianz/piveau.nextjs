@@ -2,6 +2,7 @@ import {
   datasetFormSchema,
   editorMetadataRegistry,
   DatasetFormValues,
+  temporalRegex,
 } from "./DatasetFormSchema";
 
 export function buildJsonLd(values: DatasetFormValues) {
@@ -38,6 +39,23 @@ export function buildJsonLd(values: DatasetFormValues) {
       if (localizedEntries.length > 0) {
         graphProperties[meta.rdfProperty] = localizedEntries;
       }
+    } else if (meta.component === "temporal" && typeof value === "string") {
+      let xsdType = "http://www.w3.org/2001/XMLSchema#date"; // default fallback
+
+      if (temporalRegex.dateTime.test(value)) {
+        xsdType = "http://www.w3.org/2001/XMLSchema#dateTime";
+      } else if (temporalRegex.date.test(value)) {
+        xsdType = "http://www.w3.org/2001/XMLSchema#date";
+      } else if (temporalRegex.gYearMonth.test(value)) {
+        xsdType = "http://www.w3.org/2001/XMLSchema#gYearMonth";
+      } else if (temporalRegex.gYear.test(value)) {
+        xsdType = "http://www.w3.org/2001/XMLSchema#gYear";
+      }
+
+      graphProperties[meta.rdfProperty] = {
+        "@value": value,
+        "@type": xsdType,
+      };
     } else {
       graphProperties[meta.rdfProperty] = value;
     }

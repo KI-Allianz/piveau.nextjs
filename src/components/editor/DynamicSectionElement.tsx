@@ -22,6 +22,7 @@ import {
   AccordionTrigger,
 } from "../ui/accordion";
 import { CheckCircle2, AlertCircle } from "lucide-react"; // Icons for check/error
+import { TemporalInput } from "./TemporalInput";
 
 export function DynamicSectionElement({
   sectionKey,
@@ -87,13 +88,28 @@ export function DynamicSectionElement({
               case "multilingual-input":
                 return (
                   <MultilingualInput
-                    languages={["en", "de"]}
-                    languageLabels={{ en: "English", de: "German" }}
                     key={key}
                     namePrefix={key}
                     label={meta.label}
                     description={meta.description}
                     placeholder={meta.placeholder}
+                  />
+                );
+              case "temporal":
+                return (
+                  <Controller
+                    key={key}
+                    name={key as any}
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <TemporalInput
+                        label={meta.label}
+                        description={meta.description}
+                        value={field.value}
+                        onChange={field.onChange}
+                        error={fieldState.error}
+                      />
+                    )}
                   />
                 );
 
