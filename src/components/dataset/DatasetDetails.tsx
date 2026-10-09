@@ -44,14 +44,16 @@ export default function DatasetDetails({ id }: Props) {
     }
   }, [error, locale, id, router]);
 
-  // Dynamically extract ANY DSW Project UUID (prefixed with urn:uuid: or dmp:)
+  // Dynamically extract ANY DSW Project UUID (from raw UUID, URL, or dmp: keyword)
   const dswUuid = useMemo(() => {
     if (!data) return null;
     const raw = JSON.stringify(data);
 
-    // Matches any valid UUID that is preceded by "urn:uuid:" or "dmp:"
-    const match = raw.match(/(?:urn:uuid:|dmp:)([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
-    return match ? match[1] : null;
+    if (raw.includes("dmp:") || raw.includes("wizard/projects") || raw.includes("is_referenced_by")) {
+      const match = raw.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+      return match ? match[1] : null;
+    }
+    return null;
   }, [data]);
 
   return (
