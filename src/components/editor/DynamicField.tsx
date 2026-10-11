@@ -3,6 +3,7 @@
 import {
   DatasetFormValues,
   editorMetadataRegistry,
+  getUnwrappedObjectSchema,
 } from "@/lib/editor/DatasetFormSchema";
 import { MultilingualInput } from "@/components/editor/MultilingualInput";
 import { Controller, useFormContext } from "react-hook-form";
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { TemporalInput } from "./TemporalInput";
-import { ZodObject, ZodType } from "zod";
+import { ZodType } from "zod";
 
 interface DynamicFieldProps {
   name: string;
@@ -62,11 +63,13 @@ export default function DynamicField({
         />
       );
     case "object": {
-      if (!(schema instanceof ZodObject)) {
+      let innerSchema = getUnwrappedObjectSchema(schema);
+
+      if (!innerSchema) {
         console.error(`Expected ZodObject for field ${name}, but got`, schema);
         return null;
       }
-      const innerShape = schema.shape;
+      const innerShape = innerSchema.shape;
 
       return (
         <div key={name} className="p-4 border rounded-xl bg-muted/10">

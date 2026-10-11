@@ -1,9 +1,10 @@
-import { ZodObject, ZodType } from "zod";
+import { ZodType } from "zod";
 import {
   datasetFormSchema,
   editorMetadataRegistry,
   DatasetFormValues,
   temporalRegex,
+  getUnwrappedObjectSchema,
 } from "./DatasetFormSchema";
 
 export function buildPiveauJsonLd(schema: ZodType, value: any): any {
@@ -38,12 +39,14 @@ export function buildPiveauJsonLd(schema: ZodType, value: any): any {
       "@value": value,
       "@type": xsdType,
     };
-  } else if (meta.component === "object") {
-    if (!(schema instanceof ZodObject)) {
-      console.error(`Expected ZodObject but got`, schema);
+  } else if (meta.component === "object" && !!value) {
+    let innerSchema = getUnwrappedObjectSchema(schema);
+
+    if (!innerSchema) {
+      console.error(`Expected ZodObject, but got`, schema);
       return null;
     }
-    const innerShape = schema.shape;
+    const innerShape = innerSchema.shape;
     const graphProperties: Record<string, any> = {};
 
     if (meta.rdfType) {

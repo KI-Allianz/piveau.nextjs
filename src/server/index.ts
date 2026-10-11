@@ -65,10 +65,10 @@ export const appRouter = router({
     }),
 
     draft: {
-      getAll: protectedProcedure.query(async (opts) => {
-        const { ctx } = opts;
+      getAll: protectedProcedure.input(GetParamsSchema).query(async (opts) => {
+        const { input, ctx } = opts;
 
-        return await getDatasetDrafts(getAxiosInstance(ctx));
+        return await getDatasetDrafts(input.id, getAxiosInstance(ctx));
       }),
       get: protectedProcedure
         .input(GetDraftParamsSchema)

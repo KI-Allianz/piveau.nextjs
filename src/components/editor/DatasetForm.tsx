@@ -13,12 +13,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DynamicSectionElement } from "./DynamicSectionElement";
 import { Accordion } from "../ui/accordion";
 import { generateDatasetJsonLd } from "@/lib/editor/buildJsonLD";
+import { useEffect } from "react";
 
-export function DatasetForm() {
+interface DatasetFormProps {
+  currentDraft: Partial<DatasetFormValues> | null;
+}
+
+export function DatasetForm({ currentDraft }: DatasetFormProps) {
   const form = useForm<DatasetFormValues>({
     resolver: zodResolver(datasetFormSchema),
     defaultValues: datasetFormDefaults,
   });
+
+  useEffect(() => {
+    console.log("Current Draft Changed:", currentDraft);
+    if (currentDraft) {
+      form.reset({
+        ...datasetFormDefaults,
+        ...currentDraft,
+      });
+    }
+  }, [currentDraft, form]);
 
   function onSubmit(data: DatasetFormValues) {
     const jsonLd = generateDatasetJsonLd(data);

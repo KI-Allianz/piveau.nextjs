@@ -130,6 +130,7 @@ export const datasetFormSchema = z.object({
       fn: z
         .string()
         .min(1, "Full name is required")
+        .optional()
         .register(editorMetadataRegistry, {
           label: "Full Name",
           component: "input",
@@ -145,6 +146,7 @@ export const datasetFormSchema = z.object({
         rdfProperty: "vcard:hasEmail",
       }),
     })
+    .optional()
     .register(editorMetadataRegistry, {
       label: "Contact Point",
       component: "object",
@@ -180,9 +182,9 @@ export const datasetFormDefaults = {
     en: "",
     de: "",
   },
-  contactPoint: {
-    fn: "",
-  },
+  // contactPoint: {
+  //   fn: "",
+  // },
 };
 
 export type DatasetFormValues = z.output<typeof datasetFormSchema>;
@@ -199,6 +201,30 @@ export function formatForPiveau(data: DatasetFormValues) {
       ...(data.description.de ? { de: data.description.de } : {}),
     },
   };
+}
+
+export function getUnwrappedObjectSchema(
+  schema: z.ZodType,
+): z.ZodObject<any> | null {
+  let innerSchema: z.ZodType = schema;
+  while (innerSchema) {
+    if (innerSchema instanceof z.ZodObject) break;
+    if (
+      innerSchema instanceof z.ZodOptional ||
+      innerSchema instanceof z.ZodNullable
+    ) {
+      innerSchema = innerSchema.unwrap() as z.ZodType;
+    } else {
+      break;
+    }
+  }
+
+  if (!(innerSchema instanceof z.ZodObject)) {
+    console.error(`Expected ZodObject, but got`, schema);
+    return null;
+  }
+
+  return innerSchema;
 }
 
 export interface FormSection {

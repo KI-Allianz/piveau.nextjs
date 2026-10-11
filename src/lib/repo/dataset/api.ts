@@ -10,6 +10,7 @@ import { SearchParamsSchema } from "@/server/schemas/search";
 import { handleAxiosErrorForTRPC } from "@/lib/repo/common/api";
 import axios, { AxiosInstance } from "axios";
 import z from "zod";
+import { TRPCError } from "@trpc/server";
 
 export async function getDataset(
   id: string,
@@ -149,17 +150,32 @@ export async function getDatasetDirect(id: string): Promise<any> {
 }
 
 export async function getDatasetDrafts(
+  catalogId: string,
   axiosInstance: AxiosInstance = axios.create(),
 ) {
-  const url = BACKEND_URLS.REPO + `drafts/datasets`;
+  const url =
+    BACKEND_URLS.REPO +
+    `catalogues/${catalogId}/resources?valueType=identifiers&publicationStatus=draft`;
   try {
     const res = await axiosInstance.get(url, {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Accept: "application/ld+json",
+      },
     });
-    console.log(res);
-    return res;
+    console.log(res.data);
+    return res.data as string[];
   } catch (error) {
     console.error("Failed to fetch dataset drafts:", error);
+    console.error((error as any).response.data);
+
+    if ((error as any).response?.status === 500) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Received 500 from resources api, likely missing auth.",
+        cause: error,
+      });
+    }
+
     handleAxiosErrorForTRPC(error);
   }
 }
@@ -171,15 +187,57 @@ export async function getDatasetDraftById(
 ) {
   const url =
     BACKEND_URLS.REPO +
-    `catalogues/${catalogId}/datasets/origin?originalId=${id}`;
+    `catalogues/${catalogId}/resources/origin?originalId=${id}`;
   try {
     const res = await axiosInstance.get(url, {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Accept: "application/ld+json",
+      },
     });
-    console.log(res);
-    return res;
+    console.log(res.data);
+    return res.data;
   } catch (error) {
     console.error("Failed to fetch dataset draft:", error);
+
+    if ((error as any).response?.status === 500) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Received 500 from resources api, likely missing auth.",
+        cause: error,
+      });
+    }
+
+    handleAxiosErrorForTRPC(error);
+  }
+}
+
+export async function createDatasetDraft(
+  catalogId: string,
+  dataset: string,
+  axiosInstance: AxiosInstance = axios.create(),
+) {
+  const url =
+    BACKEND_URLS.REPO +
+    `catalogues/${catalogId}/resources/origin?publicationStatus=draft`;
+  try {
+    const res = await axiosInstance.put(url, dataset, {
+      headers: {
+        Accept: "application/ld+json",
+      },
+    });
+    console.log(res.data);
+    return res.data as string[];
+  } catch (error) {
+    console.error("Failed to create dataset draft:", error);
+
+    if ((error as any).response?.status === 500) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Received 500 from resources api, likely missing auth.",
+        cause: error,
+      });
+    }
+
     handleAxiosErrorForTRPC(error);
   }
 }
