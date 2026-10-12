@@ -14,16 +14,19 @@ import { DynamicSectionElement } from "./DynamicSectionElement";
 import { Accordion } from "../ui/accordion";
 import { generateDatasetJsonLd } from "@/lib/editor/buildJsonLD";
 import { useEffect } from "react";
+import { trpc } from "@/app/_trpc/client";
 
 interface DatasetFormProps {
   currentDraft: Partial<DatasetFormValues> | null;
+  catalogueId: string;
 }
 
-export function DatasetForm({ currentDraft }: DatasetFormProps) {
+export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
   const form = useForm<DatasetFormValues>({
     resolver: zodResolver(datasetFormSchema),
     defaultValues: datasetFormDefaults,
   });
+  const createDraft = trpc.dataset.draft.create.useMutation();
 
   useEffect(() => {
     console.log("Current Draft Changed:", currentDraft);
@@ -39,6 +42,11 @@ export function DatasetForm({ currentDraft }: DatasetFormProps) {
     const jsonLd = generateDatasetJsonLd(data);
     console.log("Draft Payload:", data);
     console.log("JSON-LD Output:", jsonLd);
+    createDraft.mutate({
+      id: data.id,
+      catalogueId: catalogueId,
+      dataset: jsonLd,
+    });
   }
 
   return (

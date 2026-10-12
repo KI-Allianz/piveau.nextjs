@@ -10,10 +10,14 @@ import { useEffect, useState } from "react";
 interface DraftListProps {
   currentDraft: Partial<DatasetFormValues> | null;
   setCurrentDraft: (draftId: Partial<DatasetFormValues> | null) => void;
+  catalogueId: string;
 }
 
-export function DraftList({ currentDraft, setCurrentDraft }: DraftListProps) {
-  const catalogueId = "catalog1";
+export function DraftList({
+  currentDraft,
+  setCurrentDraft,
+  catalogueId,
+}: DraftListProps) {
   const router = useRouter();
   const { locale } = useLocale();
 

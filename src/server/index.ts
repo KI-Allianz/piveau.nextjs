@@ -1,5 +1,6 @@
 import { router } from "./trpc";
 import {
+  CreateDraftParamsSchema,
   GetDraftParamsSchema,
   GetParamsSchema,
   SearchParamsSchema,
@@ -7,6 +8,7 @@ import {
 import { protectedProcedure, publicProcedure } from "./auth/procedures";
 import { BACKEND_URLS } from "@/lib/urls";
 import {
+  createDatasetDraft,
   getDataset,
   getDatasetCategories,
   getDatasetDraftById,
@@ -78,6 +80,18 @@ export const appRouter = router({
           return await getDatasetDraftById(
             input.id,
             input.catalogueId,
+            getAxiosInstance(ctx),
+          );
+        }),
+      create: protectedProcedure
+        .input(CreateDraftParamsSchema)
+        .mutation(async (opts) => {
+          const { input, ctx } = opts;
+
+          return await createDatasetDraft(
+            input.catalogueId,
+            input.id,
+            input.dataset,
             getAxiosInstance(ctx),
           );
         }),

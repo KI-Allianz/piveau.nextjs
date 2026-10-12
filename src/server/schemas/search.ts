@@ -63,3 +63,9 @@ export const GetParamsSchema = z.object({
 export const GetDraftParamsSchema = GetParamsSchema.extend({
   catalogueId: z.string(),
 });
+
+export const CreateDraftParamsSchema = z.object({
+  id: z.string(),
+  catalogueId: z.string(),
+  dataset: z.any(),
+});

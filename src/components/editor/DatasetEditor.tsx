@@ -8,14 +8,16 @@ import { DatasetFormValues } from "@/lib/editor/DatasetFormSchema";
 export default function DatasetEditor() {
   const [currentDraft, setCurrentDraft] =
     useState<Partial<DatasetFormValues> | null>(null);
+  const [catalogueId, setCatalogueId] = useState<string>("catalog1");
 
   return (
     <div className="">
       <DraftList
         currentDraft={currentDraft}
         setCurrentDraft={setCurrentDraft}
+        catalogueId={catalogueId}
       />
-      <DatasetForm currentDraft={currentDraft} />
+      <DatasetForm currentDraft={currentDraft} catalogueId={catalogueId} />
     </div>
   );
 }
