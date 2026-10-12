@@ -73,7 +73,7 @@ export function TemporalInput({
   };
 
   // Convert incoming ISO datetime-local to format expected by input type="datetime-local" (YYYY-MM-DDTHH:mm)
-  const formatForInput = (val: string, gran: Granularity) => {
+  const formatForInput = (val: string | undefined, gran: Granularity) => {
     if (!val) return "";
     if (gran === "datetime" && val.includes("T")) {
       return val.slice(0, 16); // datetime-local expects YYYY-MM-DDTHH:mm

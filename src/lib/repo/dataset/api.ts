@@ -155,7 +155,7 @@ export async function getDatasetDrafts(
 ) {
   const url =
     BACKEND_URLS.REPO +
-    `catalogues/${catalogId}/resources?valueType=identifiers&publicationStatus=draft`;
+    `catalogues/${catalogId}/datasets?valueType=identifiers&publicationStatus=draft`;
   try {
     const res = await axiosInstance.get(url, {
       headers: {
@@ -213,22 +213,26 @@ export async function getDatasetDraftById(
 
 export async function createDatasetDraft(
   catalogId: string,
-  dataset: string,
+  datasetId: string,
+  dataset: object,
   axiosInstance: AxiosInstance = axios.create(),
 ) {
   const url =
     BACKEND_URLS.REPO +
-    `catalogues/${catalogId}/resources/origin?publicationStatus=draft`;
+    `catalogues/${catalogId}/datasets/origin?publicationStatus=draft&accessLevel=restricted&originalId=${datasetId}`;
+
   try {
     const res = await axiosInstance.put(url, dataset, {
       headers: {
-        Accept: "application/ld+json",
+        Accept: "text/turtle",
+        "Content-Type": "application/ld+json",
       },
     });
     console.log(res.data);
     return res.data as string[];
   } catch (error) {
     console.error("Failed to create dataset draft:", error);
+    console.error((error as any).response.data);
 
     if ((error as any).response?.status === 500) {
       throw new TRPCError({
@@ -241,3 +245,30 @@ export async function createDatasetDraft(
     handleAxiosErrorForTRPC(error);
   }
 }
+
+// async function convertJsonLdToTurtle(doc: object): Promise<string> {
+//   const nquads = await jsonld.toRDF(doc, { format: "application/n-quads" });
+//
+//   const parser = new Parser();
+//   const quads = parser.parse(nquads as string);
+//
+//   const writer = new Writer({
+//     prefixes: {
+//       dct: "http://purl.org/dc/terms/",
+//       dcat: "http://www.w3.org/ns/dcat#",
+//       vcard: "http://www.w3.org/2006/vcard/ns#",
+//     },
+//   });
+//
+//   writer.addQuads(quads);
+//
+//   return new Promise((resolve, reject) => {
+//     writer.end((error, result) => {
+//       if (error) {
+//         reject(error);
+//       } else {
+//         resolve(result);
+//       }
+//     });
+//   });
+// }

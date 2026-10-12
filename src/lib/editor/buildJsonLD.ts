@@ -68,7 +68,7 @@ export function buildPiveauJsonLd(schema: ZodType, value: any): any {
       }
     }
 
-    return Object.keys(graphProperties).length > 0
+    return Object.keys(graphProperties).length > 1
       ? graphProperties
       : undefined;
   }
@@ -89,6 +89,10 @@ export function generateDatasetJsonLd(formValues: DatasetFormValues) {
 
     if (serialized !== undefined) {
       graphProperties[meta.rdfProperty] = serialized;
+      if (meta.rdfProperty == "@id") {
+        graphProperties[meta.rdfProperty] =
+          "https://piveau.io/set/data/" + serialized;
+      }
     }
   }
 
@@ -98,7 +102,7 @@ export function generateDatasetJsonLd(formValues: DatasetFormValues) {
       dcat: "http://www.w3.org/ns/dcat#",
       vcard: "http://www.w3.org/2006/vcard/ns#",
     },
-    "@type": "dcat:Dataset",
+    "@type": ["http://www.w3.org/ns/dcat#Dataset"],
     ...graphProperties,
   };
 }
