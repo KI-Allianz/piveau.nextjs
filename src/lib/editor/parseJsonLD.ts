@@ -298,3 +298,41 @@ export function parseDatasetJsonLd(
 
   return formValues;
 }
+
+export type DraftSummary = Partial<DatasetFormValues> & { id: string };
+
+/**
+ * Parses a Piveau metadata list document (one draft per top-level `@graph`
+ * entry) into a flat list of draft summaries.
+ */
+export function parseDatasetListJsonLd(jsonLdData: any): DraftSummary[] {
+  const data = jsonLdData?.json ?? jsonLdData ?? {};
+  const context = data["@context"];
+  const graph = data["@graph"];
+
+  if (!Array.isArray(graph)) return [];
+
+  const summaries: DraftSummary[] = [];
+
+  for (const entry of graph) {
+    if (!entry || typeof entry !== "object") continue;
+
+    const nodes = Array.isArray(entry["@graph"]) ? entry["@graph"] : [entry];
+    const parsed = parseDatasetJsonLd({ "@context": context, "@graph": nodes });
+
+    const rawId =
+      parsed.id ??
+      (typeof entry["@id"] === "string" ? entry["@id"] : undefined);
+
+    const id =
+      typeof rawId === "string"
+        ? rawId.replace("https://piveau.io/set/data/", "")
+        : undefined;
+
+    if (!id) continue;
+
+    summaries.push({ ...parsed, id });
+  }
+
+  return summaries;
+}
