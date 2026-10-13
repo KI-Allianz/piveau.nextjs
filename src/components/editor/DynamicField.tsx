@@ -4,6 +4,7 @@ import {
   DatasetFormValues,
   editorMetadataRegistry,
   getUnwrappedObjectSchema,
+  getArrayElementSchema,
 } from "@/lib/editor/DatasetFormSchema";
 import { MultilingualInput } from "@/components/editor/MultilingualInput";
 import { Controller, useFormContext } from "react-hook-form";
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { TemporalInput } from "./TemporalInput";
+import { DistributionsField } from "./DistributionsField";
 import { ZodType } from "zod";
 
 interface DynamicFieldProps {
@@ -62,6 +64,22 @@ export default function DynamicField({
           )}
         />
       );
+    case "array": {
+      const elementSchema = getArrayElementSchema(schema);
+
+      if (!elementSchema) {
+        console.error(`Expected ZodArray for field ${name}, but got`, schema);
+        return null;
+      }
+
+      return (
+        <DistributionsField
+          key={name}
+          name={prefix ? `${prefix}.${name}` : name}
+          elementSchema={elementSchema}
+        />
+      );
+    }
     case "object": {
       let innerSchema = getUnwrappedObjectSchema(schema);
 
