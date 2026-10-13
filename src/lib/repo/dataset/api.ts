@@ -5,6 +5,10 @@ import {
 } from "@piveau/sdk-core";
 import { Dataset } from "@/lib/utils";
 import { parseIntoDataset, parseRawDCAT } from "@/lib/repo/dataset/parse";
+import {
+  DraftSummary,
+  parseDatasetListJsonLd,
+} from "@/lib/editor/parseJsonLD";
 import { BACKEND_URLS } from "@/lib/urls";
 import { SearchParamsSchema } from "@/server/schemas/search";
 import { handleAxiosErrorForTRPC } from "@/lib/repo/common/api";
@@ -152,18 +156,17 @@ export async function getDatasetDirect(id: string): Promise<any> {
 export async function getDatasetDrafts(
   catalogId: string,
   axiosInstance: AxiosInstance = axios.create(),
-) {
+): Promise<DraftSummary[]> {
   const url =
     BACKEND_URLS.REPO +
-    `catalogues/${catalogId}/datasets?valueType=identifiers&publicationStatus=draft`;
+    `catalogues/${catalogId}/datasets?valueType=metadata&publicationStatus=draft`;
   try {
     const res = await axiosInstance.get(url, {
       headers: {
         Accept: "application/ld+json",
       },
     });
-    console.log(res.data);
-    return res.data as string[];
+    return parseDatasetListJsonLd(res.data);
   } catch (error) {
     console.error("Failed to fetch dataset drafts:", error);
     console.error((error as any).response.data);

@@ -18,11 +18,7 @@ export default function DatasetEditor() {
 
   return (
     <div className="">
-      <DraftList
-        currentDraft={currentDraft}
-        setCurrentDraft={handleDraftChange}
-        catalogueId={catalogueId}
-      />
+      <DraftList setCurrentDraft={handleDraftChange} catalogueId={catalogueId} />
       <DatasetForm
         key={draftVersion}
         currentDraft={currentDraft}
