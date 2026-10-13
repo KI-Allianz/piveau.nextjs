@@ -15,7 +15,8 @@ export type EditorComponentType =
   | "checkbox"
   | "textarea"
   | "temporal"
-  | "object";
+  | "object"
+  | "array";
 
 export type EditorMetadata = {
   label: string;
@@ -64,6 +65,11 @@ const createMultilingualSchema = (
 
   if (isRequired) {
     schema = baseMultilingualSchema.extend(base);
+  } else {
+    // Always create a fresh schema instance: the metadata registry is keyed by
+    // schema object identity, so sharing `baseMultilingualSchema` would make
+    // all non-required multilingual fields collide.
+    schema = baseMultilingualSchema.extend({});
   }
 
   return schema.register(editorMetadataRegistry, meta);
@@ -94,6 +100,93 @@ const createTemporalSchema = (meta: EditorMetadata) => {
     .optional()
     .register(editorMetadataRegistry, meta);
 };
+
+export const distributionSchema = z
+  .object({
+    title: createMultilingualSchema(false, {
+      label: "Title",
+      component: "multilingual-input",
+      description: "A name given to the distribution.",
+      placeholder: "e.g. Air Quality Measurements 2023 (CSV)",
+      rdfProperty: "dct:title",
+    }),
+    description: createMultilingualSchema(false, {
+      label: "Description",
+      component: "multilingual-input",
+      description: "A brief summary of the distribution.",
+      placeholder: "e.g. CSV file containing the measurements.",
+      rdfProperty: "dct:description",
+    }),
+    format: z.string().optional().register(editorMetadataRegistry, {
+      label: "Format",
+      component: "input",
+      description: "The file format.",
+      placeholder: "e.g. CSV",
+      rdfProperty: "dct:format",
+    }),
+    mediaType: z.string().optional().register(editorMetadataRegistry, {
+      label: "Media Type",
+      component: "input",
+      description: "The IANA media type of the file.",
+      placeholder: "e.g. text/csv",
+      rdfProperty: "dcat:mediaType",
+    }),
+    downloadURL: z.string().optional().register(editorMetadataRegistry, {
+      label: "Download URL",
+      component: "input",
+      description: "Direct link to the file. Filled in automatically on upload.",
+      placeholder: "https://...",
+      rdfProperty: "dcat:downloadURL",
+    }),
+    accessURL: z.string().optional().register(editorMetadataRegistry, {
+      label: "Access URL",
+      component: "input",
+      description: "A URL that gives access to the distribution.",
+      placeholder: "https://...",
+      rdfProperty: "dcat:accessURL",
+    }),
+    byteSize: z.string().optional().register(editorMetadataRegistry, {
+      label: "Byte Size",
+      component: "input",
+      description: "The size of the file in bytes. Filled in automatically.",
+      placeholder: "e.g. 1024",
+      rdfProperty: "dcat:byteSize",
+    }),
+    license: z.string().optional().register(editorMetadataRegistry, {
+      label: "License",
+      component: "input",
+      description: "A link to the license under which the file is available.",
+      placeholder: "https://...",
+      rdfProperty: "dct:license",
+    }),
+    issued: createTemporalSchema({
+      label: "Issued Date",
+      component: "temporal",
+      description: "Supports Year, Year-Month, Date, or full DateTime.",
+      placeholder: "2009-10-10 or 2009-10-10T12:00:00Z",
+      rdfProperty: "dct:issued",
+    }),
+    modified: createTemporalSchema({
+      label: "Modified Date",
+      component: "temporal",
+      description: "Supports Year, Year-Month, Date, or full DateTime.",
+      placeholder: "2009-10-10 or 2009-10-10T12:00:00Z",
+      rdfProperty: "dct:modified",
+    }),
+    uploadPath: z.string().optional().register(editorMetadataRegistry, {
+      label: "Upload Path",
+      component: "input",
+      description: "Internal uploader path (not published).",
+      rdfProperty: "",
+    }),
+  })
+  .register(editorMetadataRegistry, {
+    label: "Distribution",
+    component: "object",
+    description: "A file that makes the dataset available.",
+    rdfProperty: "dcat:distribution",
+    rdfType: "dcat:Distribution",
+  });
 
 export const datasetFormSchema = z.object({
   id: z
@@ -170,6 +263,17 @@ export const datasetFormSchema = z.object({
     placeholder: "2009-10-10 or 2009-10-10T12:00:00Z",
     rdfProperty: "dct:issued",
   }),
+
+  distributions: z
+    .array(distributionSchema)
+    .optional()
+    .register(editorMetadataRegistry, {
+      label: "Distributions",
+      component: "array",
+      description: "Files that make the dataset available.",
+      rdfProperty: "dcat:distribution",
+      rdfType: "dcat:Distribution",
+    }),
 });
 
 export const datasetFormDefaults = {
@@ -182,9 +286,15 @@ export const datasetFormDefaults = {
     en: "",
     de: "",
   },
+  distributions: [] as z.output<typeof distributionSchema>[],
 };
 
 export type DatasetFormValues = z.output<typeof datasetFormSchema>;
+
+export const distributionFormDefaults = {
+  title: { en: "", de: "" },
+  description: { en: "", de: "" },
+} as Partial<z.output<typeof distributionSchema>>;
 
 function isPlainObject(value: unknown): value is Record<string, any> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -251,6 +361,26 @@ export function getUnwrappedObjectSchema(
   return innerSchema;
 }
 
+export function getArrayElementSchema(schema: z.ZodType): z.ZodType | null {
+  let innerSchema: z.ZodType = schema;
+  while (innerSchema) {
+    if (innerSchema instanceof z.ZodArray) {
+      return innerSchema.element as z.ZodType;
+    }
+    if (
+      innerSchema instanceof z.ZodOptional ||
+      innerSchema instanceof z.ZodNullable
+    ) {
+      innerSchema = innerSchema.unwrap() as z.ZodType;
+    } else {
+      break;
+    }
+  }
+
+  console.error(`Expected ZodArray, but got`, schema);
+  return null;
+}
+
 export interface FormSection {
   title: string;
   description: string;
@@ -268,5 +398,10 @@ export const formSections = {
     title: "Basic Information",
     description: "General information about the dataset.",
     keys: ["title", "description", "contactPoint", "issued", "modified"],
+  },
+  distributions: {
+    title: "Distributions",
+    description: "Files that make the dataset available.",
+    keys: ["distributions"],
   },
 } as Record<string, FormSection>;

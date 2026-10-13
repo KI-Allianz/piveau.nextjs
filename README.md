@@ -46,6 +46,7 @@ Create a .env file with the following environment variables or copy from .env.ex
 DOMAIN="http://localhost:3000"
 SEARCH_HUB_URL="https://DOMAIN_OF_PIVEAU_BACKEND/hub/search/"
 REPO_HUB_URL="https://DOMAIN_OF_PIVEAU_BACKEND/hub/repo/"
+UPLOAD_API_URL="https://DOMAIN_OF_UPLOADER_BACKEND"
 
 # Auth configuration
 AUTH_SECRET=<your secret>  # Added by `npx auth secret`. Read more: https://cli.authjs.dev

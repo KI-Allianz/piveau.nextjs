@@ -4,7 +4,9 @@ import {
   editorMetadataRegistry,
   DatasetFormValues,
   getUnwrappedObjectSchema,
+  getArrayElementSchema,
 } from "./DatasetFormSchema";
+import { deriveUploadPath } from "../repo/uploader/paths";
 
 type Prefixes = Record<string, string>;
 
@@ -209,6 +211,18 @@ export function parseJsonLdFieldValue(
     return typeof jsonLdValue === "string" ? jsonLdValue : "";
   }
 
+  if (meta.component === "array") {
+    const elementSchema = getArrayElementSchema(schema);
+    if (!elementSchema) return undefined;
+
+    const entries = Array.isArray(jsonLdValue) ? jsonLdValue : [jsonLdValue];
+    const items = entries
+      .map((entry) => parseJsonLdFieldValue(elementSchema, entry, prefixes))
+      .filter((item) => item !== undefined);
+
+    return items.length > 0 ? items : undefined;
+  }
+
   if (meta.component === "object") {
     let innerSchema = getUnwrappedObjectSchema(schema);
 
@@ -294,6 +308,17 @@ export function parseDatasetJsonLd(
       }
       formValues[key] = parsedValue;
     }
+  }
+
+  if (Array.isArray(formValues.distributions) && formValues.id) {
+    formValues.distributions = formValues.distributions.map(
+      (distribution: Record<string, any>) => ({
+        ...distribution,
+        uploadPath:
+          distribution.uploadPath ??
+          deriveUploadPath(distribution.downloadURL, formValues.id),
+      }),
+    );
   }
 
   return formValues;

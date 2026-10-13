@@ -5,6 +5,7 @@ import {
   DatasetFormValues,
   temporalRegex,
   getUnwrappedObjectSchema,
+  getArrayElementSchema,
 } from "./DatasetFormSchema";
 
 export function buildPiveauJsonLd(schema: ZodType, value: any): any {
@@ -39,6 +40,15 @@ export function buildPiveauJsonLd(schema: ZodType, value: any): any {
       "@value": value,
       "@type": xsdType,
     };
+  } else if (meta.component === "array" && Array.isArray(value)) {
+    const elementSchema = getArrayElementSchema(schema);
+    if (!elementSchema) return undefined;
+
+    const items = value
+      .map((item) => buildPiveauJsonLd(elementSchema, item))
+      .filter((item) => item !== undefined);
+
+    return items.length > 0 ? items : undefined;
   } else if (meta.component === "object" && !!value) {
     let innerSchema = getUnwrappedObjectSchema(schema);
 
