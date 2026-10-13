@@ -3,7 +3,7 @@
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  datasetFormDefaults,
+  buildDatasetFormDefaults,
   datasetFormSchema,
   DatasetFormValues,
   formSections,
@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DynamicSectionElement } from "./DynamicSectionElement";
 import { Accordion } from "../ui/accordion";
 import { generateDatasetJsonLd } from "@/lib/editor/buildJsonLD";
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { trpc } from "@/app/_trpc/client";
 
 interface DatasetFormProps {
@@ -22,21 +22,16 @@ interface DatasetFormProps {
 }
 
 export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
+  const defaultValues = useMemo(
+    () => buildDatasetFormDefaults(currentDraft),
+    [currentDraft],
+  );
+
   const form = useForm<DatasetFormValues>({
     resolver: zodResolver(datasetFormSchema),
-    defaultValues: datasetFormDefaults,
+    defaultValues,
   });
   const createDraft = trpc.dataset.draft.create.useMutation();
-
-  useEffect(() => {
-    console.log("Current Draft Changed:", currentDraft);
-    if (currentDraft) {
-      form.reset({
-        ...datasetFormDefaults,
-        ...currentDraft,
-      });
-    }
-  }, [currentDraft, form]);
 
   function onSubmit(data: DatasetFormValues) {
     const jsonLd = generateDatasetJsonLd(data);
