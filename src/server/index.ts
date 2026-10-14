@@ -9,6 +9,7 @@ import { protectedProcedure, publicProcedure } from "./auth/procedures";
 import { BACKEND_URLS } from "@/lib/urls";
 import {
   createDatasetDraft,
+  deleteDataset,
   getDataset,
   getDatasetCategories,
   getDatasetDraftById,
@@ -16,6 +17,7 @@ import {
   getFeaturedDatasets,
   searchDatasets,
 } from "@/lib/repo/dataset/api";
+import { deleteAllDatasetFiles } from "@/lib/repo/uploader/server";
 import axios from "axios";
 import { ExtendedSession } from "@/app/api/auth/[...nextauth]/route";
 import { getFeaturedModels, getModel } from "@/lib/repo/model/api";
@@ -92,6 +94,31 @@ export const appRouter = router({
             input.catalogueId,
             input.id,
             input.dataset,
+            getAxiosInstance(ctx),
+          );
+        }),
+      delete: protectedProcedure
+        .input(GetDraftParamsSchema)
+        .mutation(async (opts) => {
+          const { input, ctx } = opts;
+
+          // Best-effort: the uploader currently only allows file deletion for
+          // drafts, so tolerate a 403/404 and still remove the dataset.
+          try {
+            await deleteAllDatasetFiles(
+              input.id,
+              getAxiosInstance(ctx, BACKEND_URLS.UPLOAD),
+            );
+          } catch (error) {
+            console.warn(
+              "Failed to delete dataset files before deleting the dataset:",
+              error,
+            );
+          }
+
+          await deleteDataset(
+            input.catalogueId,
+            input.id,
             getAxiosInstance(ctx),
           );
         }),

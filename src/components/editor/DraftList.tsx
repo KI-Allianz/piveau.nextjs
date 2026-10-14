@@ -3,15 +3,23 @@
 import { trpc } from "@/app/_trpc/client";
 import { useLocale } from "@/hooks/useLocale";
 import { DatasetFormValues } from "@/lib/editor/DatasetFormSchema";
-import { parseDatasetJsonLd } from "@/lib/editor/parseJsonLD";
+import { DraftSummary, parseDatasetJsonLd } from "@/lib/editor/parseJsonLD";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AlertCircle, Inbox, RefreshCw } from "lucide-react";
+import { AlertCircle, Inbox, RefreshCw, Trash2 } from "lucide-react";
 
 import { DraftCard } from "./DraftCard";
 import DraftCardSkeleton from "./DraftCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 interface DraftListProps {
@@ -64,11 +72,14 @@ function EmptyState() {
 
 export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
   const router = useRouter();
-  const { locale } = useLocale();
+  const { locale, translateDict } = useLocale();
 
   const getDrafts = trpc.dataset.draft.getAll.useQuery({ id: catalogueId });
+  const deleteDraft = trpc.dataset.draft.delete.useMutation();
 
   const [draftId, setDraftId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<DraftSummary | null>(null);
+
   const getDraft = trpc.dataset.draft.get.useQuery(
     { id: draftId || "", catalogueId: catalogueId },
     {
@@ -92,6 +103,31 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
   }, [getDraft.data]);
 
   const drafts = getDrafts.data;
+
+  const pendingDeleteTitle = pendingDelete?.title
+    ? translateDict(pendingDelete.title as Record<string, string>)
+    : pendingDelete?.id;
+
+  const handleConfirmDelete = async () => {
+    if (!pendingDelete) return;
+
+    try {
+      await deleteDraft.mutateAsync({
+        id: pendingDelete.id,
+        catalogueId,
+      });
+
+      if (draftId === pendingDelete.id) {
+        setDraftId(null);
+        setCurrentDraft(null);
+      }
+
+      setPendingDelete(null);
+      await getDrafts.refetch();
+    } catch {
+      // Error is surfaced inside the dialog; keep it open for a retry.
+    }
+  };
 
   return (
     <div className="mx-auto my-8 max-w-3xl">
@@ -127,6 +163,7 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
                 selected={draftId === draft.id}
                 isLoading={draftId === draft.id && getDraft.isFetching}
                 onSelect={() => setDraftId(draft.id)}
+                onDelete={() => setPendingDelete(draft)}
               />
             </li>
           ))}
@@ -149,6 +186,55 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
           />
         </div>
       )}
+
+      <Dialog
+        open={!!pendingDelete}
+        onOpenChange={(open) => {
+          if (!open && !deleteDraft.isPending) {
+            setPendingDelete(null);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete dataset</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{pendingDeleteTitle}"? This
+              also removes its files and cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+
+          {deleteDraft.isError && (
+            <p className="text-sm text-destructive">
+              {deleteDraft.error.message}
+            </p>
+          )}
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={deleteDraft.isPending}
+              onClick={() => setPendingDelete(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={deleteDraft.isPending}
+              onClick={handleConfirmDelete}
+            >
+              {deleteDraft.isPending ? (
+                <Spinner />
+              ) : (
+                <Trash2 className="size-4" />
+              )}
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
