@@ -44,6 +44,8 @@ Create a .env file with the following environment variables or copy from .env.ex
 
 ```env
 DOMAIN="http://localhost:3000"
+NEXT_PUBLIC_UPLOADED_FILES_DOMAIN="https://data.hammerhai.eu/"
+
 SEARCH_HUB_URL="https://DOMAIN_OF_PIVEAU_BACKEND/hub/search/"
 REPO_HUB_URL="https://DOMAIN_OF_PIVEAU_BACKEND/hub/repo/"
 UPLOAD_API_URL="https://DOMAIN_OF_UPLOADER_BACKEND"

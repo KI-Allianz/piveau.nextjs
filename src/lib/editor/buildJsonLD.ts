@@ -40,7 +40,7 @@ export function buildPiveauJsonLd(schema: ZodType, value: any): any {
       "@value": value,
       "@type": xsdType,
     };
-  } else if (meta.component === "array" && Array.isArray(value)) {
+  } else if (meta.component === "distributions" && Array.isArray(value)) {
     const elementSchema = getArrayElementSchema(schema);
     if (!elementSchema) return undefined;
 

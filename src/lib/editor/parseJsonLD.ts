@@ -211,7 +211,7 @@ export function parseJsonLdFieldValue(
     return typeof jsonLdValue === "string" ? jsonLdValue : "";
   }
 
-  if (meta.component === "array") {
+  if (meta.component === "distributions") {
     const elementSchema = getArrayElementSchema(schema);
     if (!elementSchema) return undefined;
 
@@ -290,7 +290,11 @@ export function parseDatasetJsonLd(
   const data = jsonLdData ?? {};
   const prefixes = buildPrefixes(data);
   const byId = indexGraph(data);
-  const root = resolveReferences(selectRootNode(data, prefixes), byId, new Set());
+  const root = resolveReferences(
+    selectRootNode(data, prefixes),
+    byId,
+    new Set(),
+  );
 
   const shape = datasetFormSchema.shape;
   const formValues: Record<string, any> = {};

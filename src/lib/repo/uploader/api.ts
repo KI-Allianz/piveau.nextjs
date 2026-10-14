@@ -188,9 +188,7 @@ export async function abortUpload(
 export function listFiles(
   datasetId: string,
 ): Promise<{ datasetId: string; files: RemoteFile[] }> {
-  return requestJson(
-    `${BASE}/datasets/${encodeURIComponent(datasetId)}/files`,
-  );
+  return requestJson(`${BASE}/datasets/${encodeURIComponent(datasetId)}/files`);
 }
 
 export async function deleteFile(
