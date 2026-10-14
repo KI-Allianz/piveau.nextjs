@@ -73,6 +73,26 @@ export function createUpload(
   });
 }
 
+/**
+ * Creates an upload session, replacing an existing file at the same path.
+ * The uploader refuses to overwrite (`409 file_exists`), so we delete the old
+ * object first and retry once.
+ */
+async function createUploadWithReplace(
+  datasetId: string,
+  path: string,
+): Promise<UploadSession> {
+  try {
+    return await createUpload(datasetId, path);
+  } catch (error) {
+    if (error instanceof UploaderApiError && error.code === "file_exists") {
+      await deleteFile(datasetId, path);
+      return createUpload(datasetId, path);
+    }
+    throw error;
+  }
+}
+
 export function getUpload(
   uploadId: string,
   datasetId: string,
@@ -215,7 +235,7 @@ export async function uploadFile(
     signal?: AbortSignal;
   },
 ): Promise<UploadResult> {
-  const session = await createUpload(datasetId, path);
+  const session = await createUploadWithReplace(datasetId, path);
   const partSize = session.partSize || 32 * 1024 * 1024;
   const total = file.size;
 

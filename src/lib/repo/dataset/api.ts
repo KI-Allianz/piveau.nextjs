@@ -5,10 +5,7 @@ import {
 } from "@piveau/sdk-core";
 import { Dataset } from "@/lib/utils";
 import { parseIntoDataset, parseRawDCAT } from "@/lib/repo/dataset/parse";
-import {
-  DraftSummary,
-  parseDatasetListJsonLd,
-} from "@/lib/editor/parseJsonLD";
+import { DraftSummary, parseDatasetListJsonLd } from "@/lib/editor/parseJsonLD";
 import { BACKEND_URLS } from "@/lib/urls";
 import { SearchParamsSchema } from "@/server/schemas/search";
 import { handleAxiosErrorForTRPC } from "@/lib/repo/common/api";
@@ -230,6 +227,9 @@ export async function createDatasetDraft(
         Accept: "text/turtle",
         "Content-Type": "application/ld+json",
       },
+      // Piveau returns 304 when the draft is unchanged
+      validateStatus: (status) =>
+        (status >= 200 && status < 300) || status === 304,
     });
     console.log(res.data);
     return res.data as string[];
