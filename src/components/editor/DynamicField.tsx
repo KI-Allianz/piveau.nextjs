@@ -64,7 +64,7 @@ export default function DynamicField({
           )}
         />
       );
-    case "array": {
+    case "distributions": {
       const elementSchema = getArrayElementSchema(schema);
 
       if (!elementSchema) {

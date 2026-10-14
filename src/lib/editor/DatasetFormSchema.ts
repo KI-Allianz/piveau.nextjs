@@ -16,7 +16,7 @@ export type EditorComponentType =
   | "textarea"
   | "temporal"
   | "object"
-  | "array";
+  | "distributions";
 
 export type EditorMetadata = {
   label: string;
@@ -134,7 +134,8 @@ export const distributionSchema = z
     downloadURL: z.string().optional().register(editorMetadataRegistry, {
       label: "Download URL",
       component: "input",
-      description: "Direct link to the file. Filled in automatically on upload.",
+      description:
+        "Direct link to the file. Filled in automatically on upload.",
       placeholder: "https://...",
       rdfProperty: "dcat:downloadURL",
     }),
@@ -269,7 +270,7 @@ export const datasetFormSchema = z.object({
     .optional()
     .register(editorMetadataRegistry, {
       label: "Distributions",
-      component: "array",
+      component: "distributions",
       description: "Files that make the dataset available.",
       rdfProperty: "dcat:distribution",
       rdfType: "dcat:Distribution",

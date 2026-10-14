@@ -23,7 +23,9 @@ export function buildDownloadUrl(
   path: string,
   origin: string,
 ): string {
-  const base = origin.replace(/\/$/, "");
+  const base = (
+    process.env.NEXT_PUBLIC_UPLOADED_FILES_DOMAIN || origin
+  ).replace(/\/$/, "");
   return `${base}${DOWNLOAD_ROUTE_PREFIX}/${encodeURIComponent(datasetId)}/${encodePath(path)}`;
 }
 
