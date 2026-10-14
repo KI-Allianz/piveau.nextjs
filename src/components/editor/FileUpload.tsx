@@ -39,7 +39,7 @@ export function FileUpload({ namePrefix }: FileUploadProps) {
     | string
     | undefined;
 
-  const ensureDraft = async (datasetId: string) => {
+  const saveDraft = async (datasetId: string) => {
     const values = getValues();
     const jsonLd = generateDatasetJsonLd(values);
 
@@ -48,6 +48,10 @@ export function FileUpload({ namePrefix }: FileUploadProps) {
       catalogueId,
       dataset: jsonLd,
     });
+  };
+
+  const ensureDraft = async (datasetId: string) => {
+    await saveDraft(datasetId);
 
     // The uploader asks hub-search about the dataset, so wait until it is
     // indexed before the first upload.
@@ -103,6 +107,18 @@ export function FileUpload({ namePrefix }: FileUploadProps) {
         setValue(`${namePrefix}.mediaType` as any, file.type, {
           shouldDirty: true,
         });
+      }
+
+      // Persist the updated distribution so a reload or a later re-upload
+      // sees the new download URL.
+      try {
+        await saveDraft(datasetId);
+      } catch (saveError) {
+        setError(
+          saveError instanceof Error
+            ? `File uploaded, but saving the draft failed: ${saveError.message}`
+            : "File uploaded, but saving the draft failed.",
+        );
       }
     } catch (err) {
       if (err instanceof UploaderApiError) {
