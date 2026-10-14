@@ -249,6 +249,37 @@ export async function createDatasetDraft(
   }
 }
 
+export async function deleteDataset(
+  catalogueId: string,
+  datasetId: string,
+  axiosInstance: AxiosInstance = axios.create(),
+): Promise<void> {
+  const url =
+    BACKEND_URLS.REPO +
+    `catalogues/${catalogueId}/datasets/origin?originalId=${datasetId}`;
+
+  try {
+    await axiosInstance.delete(url, {
+      headers: {
+        Accept: "application/ld+json",
+      },
+    });
+  } catch (error) {
+    console.error("Failed to delete dataset:", error);
+    console.error((error as any).response?.data);
+
+    if ((error as any).response?.status === 500) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Received 500 from resources api, likely missing auth.",
+        cause: error,
+      });
+    }
+
+    handleAxiosErrorForTRPC(error);
+  }
+}
+
 // async function convertJsonLdToTurtle(doc: object): Promise<string> {
 //   const nquads = await jsonld.toRDF(doc, { format: "application/n-quads" });
 //
