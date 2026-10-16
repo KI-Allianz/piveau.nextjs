@@ -9,7 +9,10 @@ import { getProperty } from "../prefixes";
 import { CodecContext, FieldCodec } from "./types";
 import { literalCodec } from "./literal";
 import { multiLangCodec } from "./multiLang";
+import { multiLangListCodec } from "./multiLangList";
 import { temporalCodec } from "./temporal";
+import { typedLiteralCodec } from "./typedLiteral";
+import { resourceCodec } from "./resource";
 
 /**
  * Leaf codecs keyed by `EditorMetadata.valueType`. Container types (`object`
@@ -18,7 +21,10 @@ import { temporalCodec } from "./temporal";
 export const CODECS: Record<string, FieldCodec> = {
   literal: literalCodec,
   multiLang: multiLangCodec,
+  multiLangList: multiLangListCodec,
   temporal: temporalCodec,
+  typedLiteral: typedLiteralCodec,
+  resource: resourceCodec,
 };
 
 function unwrapSchema(schema: ZodType): ZodType {
@@ -134,6 +140,11 @@ export function serializeField(
   const meta = editorMetadataRegistry.get(schema);
   if (!meta) return value;
 
+  // Leaf codecs take precedence so that composite leaf types (e.g. a
+  // `multiLangList` such as keywords) can consume the whole value.
+  const codec = CODECS[meta.valueType];
+  if (codec) return codec.toRdf(value, meta, ctx);
+
   if (isArraySchema(schema)) {
     const elementSchema = getArrayElementSchema(schema);
     if (!elementSchema) return undefined;
@@ -149,10 +160,7 @@ export function serializeField(
     return serializeObject(schema, value, meta, ctx);
   }
 
-  const codec = CODECS[meta.valueType];
-  if (!codec) return value;
-
-  return codec.toRdf(value, meta, ctx);
+  return value;
 }
 
 /**
@@ -167,6 +175,9 @@ export function deserializeField(
 
   const meta = editorMetadataRegistry.get(schema);
   if (!meta) return jsonLdValue;
+
+  const codec = CODECS[meta.valueType];
+  if (codec) return codec.fromRdf(jsonLdValue, meta, ctx);
 
   if (isArraySchema(schema)) {
     const elementSchema = getArrayElementSchema(schema);
@@ -184,8 +195,5 @@ export function deserializeField(
     return deserializeObject(schema, jsonLdValue, ctx);
   }
 
-  const codec = CODECS[meta.valueType];
-  if (!codec) return jsonLdValue;
-
-  return codec.fromRdf(jsonLdValue, meta, ctx);
+  return jsonLdValue;
 }

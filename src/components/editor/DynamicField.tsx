@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { TemporalInput } from "./TemporalInput";
 import { DistributionsField } from "./DistributionsField";
+import { ListInput } from "./ListInput";
 import { ZodType } from "zod";
 
 interface DynamicFieldProps {
@@ -57,6 +58,24 @@ export default function DynamicField({
             <TemporalInput
               label={meta.label}
               description={meta.description}
+              value={field.value}
+              onChange={field.onChange}
+              error={fieldState.error}
+            />
+          )}
+        />
+      );
+    case "list":
+      return (
+        <Controller
+          key={name}
+          name={`${prefix}.${name}`}
+          control={control}
+          render={({ field, fieldState }) => (
+            <ListInput
+              label={meta.label}
+              description={meta.description}
+              placeholder={meta.placeholder}
               value={field.value}
               onChange={field.onChange}
               error={fieldState.error}
