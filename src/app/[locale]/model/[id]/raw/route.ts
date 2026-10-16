@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
   try {
     const res = await getRawModel(id, typeConfig.value, axiosInstance);
 
-    return new NextResponse(res, {
+    return new NextResponse(JSON.stringify(res), {
       headers: {
         "Content-Type": typeConfig?.mimes[0] || "application/octet-stream",
         "Content-Disposition": `inline; filename="${id}"`,
