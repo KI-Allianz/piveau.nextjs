@@ -23,8 +23,9 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
 
   try {
     const res = await getRawDataset(id, typeConfig.value, axiosInstance);
+    console.log(res);
 
-    return new NextResponse(res, {
+    return new NextResponse(JSON.stringify(res), {
       headers: {
         "Content-Type": typeConfig?.mimes[0] || "application/octet-stream",
         "Content-Disposition": `inline; filename="${id}"`,

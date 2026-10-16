@@ -14,7 +14,7 @@ export default function Footer() {
   const functions = getClientTheme(theme.id);
 
   const commitHash = process.env.NEXT_PUBLIC_GIT_COMMIT_HASH || "development";
-  const shortHash = commitHash.slice(0, 8);
+  const shortHash = commitHash.slice(0, 7);
 
   return (
     <footer className="">
@@ -44,16 +44,38 @@ export default function Footer() {
         </nav>
       </div>
 
-      <div className="text-muted-foreground text-sm p-1">
-        deployment{": "}
-        <a
-          href={`https://gitlab.gwdg.de/hammerhai/data/catalog/catalog-frontend/-/commit/${commitHash}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline hover:no-underline"
-        >
-          {shortHash}
-        </a>
+      <div className="flex justify-between text-muted-foreground text-sm p-1">
+        <span>
+          deployment{": "}
+          <a
+            href={`https://gitlab.gwdg.de/hammerhai/data/catalog/catalog-frontend/-/commit/${commitHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:no-underline"
+          >
+            {shortHash}
+          </a>
+        </span>
+        <span>
+          powered by{" "}
+          <a
+            href="https://github.com/KI-Allianz/piveau.nextjs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:no-underline"
+          >
+            piveau-next
+          </a>
+          /
+          <a
+            href="https://gitlab.com/piveau/hub"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:no-underline"
+          >
+            piveau-hub
+          </a>
+        </span>
       </div>
     </footer>
   );

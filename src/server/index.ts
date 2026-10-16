@@ -1,13 +1,23 @@
 import { router } from "./trpc";
-import { GetParamsSchema, SearchParamsSchema } from "./schemas/search";
-import { publicProcedure } from "./auth/procedures";
+import {
+  CreateDraftParamsSchema,
+  GetDraftParamsSchema,
+  GetParamsSchema,
+  SearchParamsSchema,
+} from "./schemas/search";
+import { protectedProcedure, publicProcedure } from "./auth/procedures";
 import { BACKEND_URLS } from "@/lib/urls";
 import {
+  createDatasetDraft,
+  deleteDataset,
   getDataset,
   getDatasetCategories,
+  getDatasetDraftById,
+  getDatasetDrafts,
   getFeaturedDatasets,
   searchDatasets,
 } from "@/lib/repo/dataset/api";
+import { deleteAllDatasetFiles } from "@/lib/repo/uploader/server";
 import axios from "axios";
 import { ExtendedSession } from "@/app/api/auth/[...nextauth]/route";
 import { getFeaturedModels, getModel } from "@/lib/repo/model/api";
@@ -57,6 +67,62 @@ export const appRouter = router({
 
       return await getDataset(input.id, getAxiosInstance(ctx));
     }),
+
+    draft: {
+      getAll: protectedProcedure.input(GetParamsSchema).query(async (opts) => {
+        const { input, ctx } = opts;
+
+        return await getDatasetDrafts(input.id, getAxiosInstance(ctx));
+      }),
+      get: protectedProcedure
+        .input(GetDraftParamsSchema)
+        .query(async (opts) => {
+          const { input, ctx } = opts;
+
+          return await getDatasetDraftById(
+            input.id,
+            input.catalogueId,
+            getAxiosInstance(ctx),
+          );
+        }),
+      create: protectedProcedure
+        .input(CreateDraftParamsSchema)
+        .mutation(async (opts) => {
+          const { input, ctx } = opts;
+
+          return await createDatasetDraft(
+            input.catalogueId,
+            input.id,
+            input.dataset,
+            getAxiosInstance(ctx),
+          );
+        }),
+      delete: protectedProcedure
+        .input(GetDraftParamsSchema)
+        .mutation(async (opts) => {
+          const { input, ctx } = opts;
+
+          // Best-effort: the uploader currently only allows file deletion for
+          // drafts, so tolerate a 403/404 and still remove the dataset.
+          try {
+            await deleteAllDatasetFiles(
+              input.id,
+              getAxiosInstance(ctx, BACKEND_URLS.UPLOAD),
+            );
+          } catch (error) {
+            console.warn(
+              "Failed to delete dataset files before deleting the dataset:",
+              error,
+            );
+          }
+
+          await deleteDataset(
+            input.catalogueId,
+            input.id,
+            getAxiosInstance(ctx),
+          );
+        }),
+    },
   },
 
   model: {
