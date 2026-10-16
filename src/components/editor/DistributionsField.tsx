@@ -6,7 +6,7 @@ import { ZodType } from "zod";
 import {
   DatasetFormValues,
   distributionFormDefaults,
-} from "@/lib/editor/DatasetFormSchema";
+} from "@/lib/editor/schema";
 import { deleteFile } from "@/lib/repo/uploader/api";
 
 import { FileUpload } from "./FileUpload";

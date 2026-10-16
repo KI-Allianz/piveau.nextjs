@@ -4,7 +4,7 @@ import {
   editorMetadataRegistry,
   getArrayElementSchema,
   getUnwrappedObjectSchema,
-} from "../DatasetFormSchema";
+} from "../schema";
 import { getProperty } from "../prefixes";
 import { CodecContext, FieldCodec } from "./types";
 import { literalCodec } from "./literal";

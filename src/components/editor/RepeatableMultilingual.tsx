@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   editorLanguageLabels,
   editorLanguages,
-} from "@/lib/editor/DatasetFormSchema";
+} from "@/lib/editor/schema";
 
 interface RepeatableMultilingualProps {
   value?: Record<string, string>[];

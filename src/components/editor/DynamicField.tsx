@@ -5,7 +5,7 @@ import {
   editorMetadataRegistry,
   getUnwrappedObjectSchema,
   getArrayElementSchema,
-} from "@/lib/editor/DatasetFormSchema";
+} from "@/lib/editor/schema";
 import { MultilingualInput } from "@/components/editor/MultilingualInput";
 import { Controller, useFormContext } from "react-hook-form";
 import {

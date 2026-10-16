@@ -13,7 +13,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
-import { DatasetFormValues } from "@/lib/editor/DatasetFormSchema";
+import { DatasetFormValues } from "@/lib/editor/schema";
 import { generateDatasetJsonLd } from "@/lib/editor/buildJsonLD";
 import { uploadFile, UploaderApiError } from "@/lib/repo/uploader/api";
 import { buildDownloadUrl } from "@/lib/repo/uploader/paths";

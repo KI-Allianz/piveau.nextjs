@@ -5,7 +5,7 @@ import { useFormContext } from "react-hook-form";
 import {
   datasetFormSchema,
   formSections,
-} from "@/lib/editor/DatasetFormSchema";
+} from "@/lib/editor/schema";
 import {
   AccordionContent,
   AccordionItem,

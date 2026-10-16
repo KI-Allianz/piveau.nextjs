@@ -1,4 +1,4 @@
-import { temporalRegex } from "../DatasetFormSchema";
+import { temporalRegex } from "../schema";
 import { FieldCodec } from "./types";
 
 const XSD = "http://www.w3.org/2001/XMLSchema#";
