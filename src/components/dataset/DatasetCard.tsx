@@ -16,6 +16,7 @@ import CatalogBadge from "./CatalogBadge";
 import PublisherPopover from "./PublisherPopover";
 import DateBadge from "./DateBadge";
 import { fixThemeUrl } from "@/hooks/useTheme";
+import DatasetCartButton from "./DatasetCartButton";
 
 interface Props {
   dataset: Dataset;
@@ -61,6 +62,7 @@ export default function DatasetCard({ dataset }: Props) {
             <div className="relative z-10">
               <CatalogBadge catalog={dataset.catalog} />
             </div>
+            <DatasetCartButton dataset={dataset} size="sm" />
           </div>
         </div>
       </CardHeader>

@@ -12,6 +12,7 @@ import Provider from "../_trpc/Provider";
 import { getTheme } from "@/themes";
 import { headers } from "next/headers";
 import { ThemeProvider } from "@/hooks/useTheme";
+import { CartProvider } from "@/hooks/useCart";
 
 export default async function RootLayout({
   children,
@@ -43,7 +44,9 @@ export default async function RootLayout({
               <div className="w-full bg-white dark:bg-black">
                 <LanguageProvider language={locale as supportedLocales}>
                   <LicenseProvider licenses={licenses}>
-                    <Provider>{children}</Provider>
+                    <CartProvider>
+                      <Provider>{children}</Provider>
+                    </CartProvider>  
                   </LicenseProvider>
                 </LanguageProvider>
               </div>

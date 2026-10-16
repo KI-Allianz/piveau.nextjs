@@ -44,15 +44,23 @@ export default function DatasetDetails({ id }: Props) {
     }
   }, [error, locale, id, router]);
 
-  // Dynamically extract ANY DSW Project UUID (from raw UUID, URL, or dmp: keyword)
+  // Dynamically extract the DSW Project UUID directly from wizard/projects/ or dmp: keyword
   const dswUuid = useMemo(() => {
     if (!data) return null;
     const raw = JSON.stringify(data);
 
-    if (raw.includes("dmp:") || raw.includes("wizard/projects") || raw.includes("is_referenced_by")) {
-      const match = raw.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
-      return match ? match[1] : null;
-    }
+    // 1. High priority: match explicitly after wizard/projects/
+    const urlMatch = raw.match(/wizard\/projects\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+    if (urlMatch) return urlMatch[1];
+
+    // 2. Second priority: match explicitly after dmp:
+    const dmpMatch = raw.match(/dmp:[^\"]*?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+    if (dmpMatch) return dmpMatch[1];
+
+    // 3. Fallback: match after is_referenced_by
+    const refMatch = raw.match(/is_referenced_by[^\"]*?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+    if (refMatch) return refMatch[1];
+
     return null;
   }, [data]);
 

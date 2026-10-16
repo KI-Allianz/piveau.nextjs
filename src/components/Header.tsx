@@ -11,6 +11,9 @@ import { AUTH_DISABLED } from "@/lib/auth-config";
 import { NavItemId } from "@/lib/lang/base";
 import { fixThemeUrl, useTheme } from "@/hooks/useTheme";
 import { getClientTheme } from "@/themes/client";
+import { ShoppingCart } from "lucide-react";
+import { useCart } from "@/hooks/useCart";
+import CartDrawer from "@/components/cart/CartDrawer";
 
 const navItems = [
   {
@@ -41,6 +44,7 @@ export default function Header() {
   const session = useSession();
   const theme = useTheme();
   const clientTheme = getClientTheme(theme.id);
+  const { cartCount, setIsDrawerOpen } = useCart();
 
   const mappedNavItems = theme.header.navItems
     .map((i) => ({ ...i, isTheme: true }))
@@ -85,6 +89,19 @@ export default function Header() {
                   );
                 })}
               </ul>
+              <button
+                type="button"
+                onClick={() => setIsDrawerOpen(true)}
+                className="ml-4 relative flex items-center justify-center p-2 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                title="View DMP Cart"
+              >
+                <ShoppingCart className="w-5 h-5 text-foreground" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold shadow-xs">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
           {!AUTH_DISABLED && (
@@ -141,6 +158,7 @@ export default function Header() {
           )}
         </nav>
       </div>
+      <CartDrawer />
     </header>
   );
 }
