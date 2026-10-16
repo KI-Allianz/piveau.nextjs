@@ -13,6 +13,12 @@ import { multiLangListCodec } from "./multiLangList";
 import { temporalCodec } from "./temporal";
 import { typedLiteralCodec } from "./typedLiteral";
 import { resourceCodec } from "./resource";
+import { agentCodec } from "./agent";
+import { contactPointCodec } from "./contactPoint";
+import { dateRangeCodec } from "./dateRange";
+import { pageCodec } from "./page";
+import { admsIdentifierCodec } from "./admsIdentifier";
+import { labeledResourceCodec } from "./labeledResource";
 
 /**
  * Leaf codecs keyed by `EditorMetadata.valueType`. Container types (`object`
@@ -25,6 +31,12 @@ export const CODECS: Record<string, FieldCodec> = {
   temporal: temporalCodec,
   typedLiteral: typedLiteralCodec,
   resource: resourceCodec,
+  agent: agentCodec,
+  contactPoint: contactPointCodec,
+  dateRange: dateRangeCodec,
+  page: pageCodec,
+  admsIdentifier: admsIdentifierCodec,
+  labeledResource: labeledResourceCodec,
 };
 
 function unwrapSchema(schema: ZodType): ZodType {
