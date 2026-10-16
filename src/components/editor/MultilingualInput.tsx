@@ -8,7 +8,7 @@ import {
   editorLanguages,
   editorMetadataRegistry,
   formSections,
-} from "@/lib/editor/DatasetFormSchema";
+} from "@/lib/editor/schema";
 import {
   Field,
   FieldLabel,

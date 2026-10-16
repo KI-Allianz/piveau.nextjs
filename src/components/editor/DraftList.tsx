@@ -2,7 +2,7 @@
 
 import { trpc } from "@/app/_trpc/client";
 import { useLocale } from "@/hooks/useLocale";
-import { DatasetFormValues } from "@/lib/editor/DatasetFormSchema";
+import { DatasetFormValues } from "@/lib/editor/schema";
 import { DraftSummary, parseDatasetJsonLd } from "@/lib/editor/parseJsonLD";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

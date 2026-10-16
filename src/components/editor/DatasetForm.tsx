@@ -8,7 +8,7 @@ import {
   DatasetFormValues,
   defaultOpenSectionKeys,
   formSections,
-} from "@/lib/editor/DatasetFormSchema";
+} from "@/lib/editor/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DynamicSectionElement } from "./DynamicSectionElement";

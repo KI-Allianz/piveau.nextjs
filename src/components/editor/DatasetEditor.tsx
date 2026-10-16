@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { DatasetForm } from "./DatasetForm";
 import { DraftList } from "./DraftList";
-import { DatasetFormValues } from "@/lib/editor/DatasetFormSchema";
+import { DatasetFormValues } from "@/lib/editor/schema";
 
 export default function DatasetEditor() {
   const [currentDraft, setCurrentDraft] =

@@ -1,4 +1,4 @@
-import { EditorMetadata } from "../DatasetFormSchema";
+import { EditorMetadata } from "../schema";
 import { Prefixes } from "../prefixes";
 
 export interface CodecContext {

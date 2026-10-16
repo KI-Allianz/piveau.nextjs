@@ -3,7 +3,7 @@ import {
   datasetFormSchema,
   editorMetadataRegistry,
   DatasetFormValues,
-} from "./DatasetFormSchema";
+} from "./schema";
 import { serializeField } from "./codecs";
 import { PREFIXES } from "./prefixes";
 

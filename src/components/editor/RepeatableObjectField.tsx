@@ -17,7 +17,7 @@ import {
   DatasetFormValues,
   editorMetadataRegistry,
   getUnwrappedObjectSchema,
-} from "@/lib/editor/DatasetFormSchema";
+} from "@/lib/editor/schema";
 
 import DynamicField from "./DynamicField";
 
