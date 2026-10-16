@@ -28,10 +28,10 @@ export default function CatalogCard({ catalog }: Props) {
       className="w-full"
     >
       <Card className="w-full hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer gap-3">
-        <CardHeader className="flex justify-between">
-          <div className="flex items-center gap-3">
+        <CardHeader className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <CardTitle className="flex-1">
-              <h2 className="text-2xl text-wrap">
+              <h2 className="text-lg sm:text-xl md:text-2xl text-wrap">
                 {translateDict(catalog.title)}
               </h2>
             </CardTitle>
@@ -59,10 +59,13 @@ export default function CatalogCard({ catalog }: Props) {
             </CardDescription>
             {catalog.language && (
               <div className="flex flex-wrap gap-2 flex-1/3">
-                {catalog.language?.map((language,idx) => (
-                  <Badge key={language.id ?? language.label ?? idx} variant={"secondary"}>
+                {catalog.language?.map((language, idx) => (
+                  <Badge
+                    key={language.id ?? language.label ?? idx}
+                    variant={"secondary"}
+                  >
                     {language.label}
-                    </Badge>
+                  </Badge>
                 ))}
               </div>
             )}

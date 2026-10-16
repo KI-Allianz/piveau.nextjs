@@ -37,7 +37,7 @@ export default function DatasetCard({ dataset }: Props) {
     <Card className="relative group w-full hover:border-primary hover:bg-card/60 transition-all duration-200 cursor-pointer gap-3">
       <CardHeader className="gap-3">
         <CardTitle>
-          <h2 className="text-2xl text-wrap">
+          <h2 className="text-lg sm:text-xl md:text-2xl text-wrap">
             <Link
               href={fixThemeUrl(
                 `/${locale}/${isModel ? "model" : "dataset"}/${dataset.id}`,
@@ -49,14 +49,14 @@ export default function DatasetCard({ dataset }: Props) {
             </Link>
           </h2>
         </CardTitle>
-        <div className="flex gap-2 items-center justify-between">
+        <div className="flex gap-2 items-start sm:items-center justify-between">
           <div className="relative z-10">
             <PublisherPopover
               publisher={dataset.publisher}
               contact_point={dataset.contact_point}
             />
           </div>
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-2 flex-col sm:flex-row items-start sm:items-center">
             <DateBadge modified={dataset.modified} issued={dataset.issued} />
             <div className="relative z-10">
               <CatalogBadge catalog={dataset.catalog} />

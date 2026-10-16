@@ -60,9 +60,13 @@ export default function DateBadge({ modified, issued }: Props) {
       onClick={(e) => toggle(e)}
     >
       <div className="bg-black text-white p-1.5 rounded-xl w-fit group-hover:bg-black/80 transition-all duration-200">
-        {showAge ? <CalendarClock size={24} /> : <Calendar size={24} />}
+        {showAge ? (
+          <CalendarClock className="size-4 sm:size-5 md:size-6" />
+        ) : (
+          <Calendar className="size-4 sm:size-5 md:size-6" />
+        )}
       </div>
-      <span className="line-clamp-1">
+      <span className="line-clamp-1 text-sm md:text-base">
         {showAge && age !== null
           ? `${age} days ago`
           : date?.toLocaleDateString()}

@@ -27,14 +27,14 @@ export default function ReportPopover({ supportEmail }: Props) {
       <PopoverTrigger asChild>
         <div className="flex w-fit items-center gap-2 group transition-all duration-200 hover:bg-secondary cursor-pointer rounded-lg p-1">
           <div className="bg-red-500 text-white p-1.5 rounded-xl w-fit group-hover:bg-red-500/80 transition-all duration-200">
-            <FlagIcon size={24} />
+            <FlagIcon className="size-4 sm:size-5 md:size-6" />
           </div>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-[450px] rounded-2xl flex flex-col gap-4">
+      <PopoverContent className="w-112.5 rounded-2xl flex flex-col gap-4">
         <div className="text-xl font-semibold flex gap-3 items-center">
           <div className="bg-red-500 text-white p-1.5 rounded-xl w-fit group-hover:bg-black/80 transition-all duration-200">
-            <FlagIcon size={20} />
+            <FlagIcon className="size-4 sm:size-5 md:size-6" />
           </div>
           <h2>{translations.dataset.report.title}</h2>
         </div>
