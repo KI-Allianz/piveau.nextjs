@@ -6,6 +6,7 @@ import {
   buildDatasetFormDefaults,
   datasetFormSchema,
   DatasetFormValues,
+  defaultOpenSectionKeys,
   formSections,
 } from "@/lib/editor/DatasetFormSchema";
 import { Button } from "@/components/ui/button";
@@ -60,7 +61,7 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
             >
               <Accordion
                 type="multiple"
-                defaultValue={Object.keys(formSections)}
+                defaultValue={defaultOpenSectionKeys}
               >
                 {Object.keys(formSections).map((sectionKey) => (
                   <DynamicSectionElement
