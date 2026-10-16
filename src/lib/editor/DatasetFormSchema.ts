@@ -16,6 +16,8 @@ export type EditorComponentType =
   | "textarea"
   | "temporal"
   | "list"
+  | "repeatable-object"
+  | "repeatable-multilingual"
   | "object"
   | "distributions";
 
@@ -54,6 +56,8 @@ export type EditorMetadata = {
   dataType?: string;
   /** Vocabulary id (see `@/lib/vocabularies`) for `skosConcept` values. */
   vocabulary?: string;
+  /** Options for `select` components. */
+  options?: { label: string; value: string }[];
 };
 
 export const editorMetadataRegistry = z.registry<EditorMetadata>();
@@ -183,6 +187,238 @@ const createTypedLiteralSchema = (dataType: string, meta: LeafMeta) => {
       rdfProperty: meta.rdfProperty,
     } satisfies EditorMetadata);
 };
+
+/**
+ * Repeatable list of structured objects. The element schema carries the leaf
+ * `valueType` (codec); the array itself uses the generic `list` strategy.
+ */
+const createObjectListSchema = (
+  elementSchema: z.ZodType,
+  meta: Omit<EditorMetadata, "component" | "valueType">,
+) => {
+  return z
+    .array(elementSchema)
+    .optional()
+    .register(editorMetadataRegistry, {
+      ...meta,
+      component: "repeatable-object",
+      valueType: "list",
+    } satisfies EditorMetadata);
+};
+
+const createAgentObjectSchema = () =>
+  z.object({
+    type: z
+      .enum(["Agent", "Organization", "Person"])
+      .optional()
+      .register(editorMetadataRegistry, {
+        label: "Type",
+        component: "select",
+        valueType: "literal",
+        description: "The kind of agent.",
+        rdfProperty: "@type",
+        options: [
+          { label: "Agent", value: "Agent" },
+          { label: "Organization", value: "Organization" },
+          { label: "Person", value: "Person" },
+        ],
+      } satisfies EditorMetadata),
+    name: z.string().optional().register(editorMetadataRegistry, {
+      label: "Name",
+      component: "input",
+      valueType: "literal",
+      description: "The name of the agent.",
+      placeholder: "e.g. Fraunhofer FOKUS",
+      rdfProperty: "foaf:name",
+    }),
+    email: z.string().optional().register(editorMetadataRegistry, {
+      label: "Email",
+      component: "input",
+      valueType: "literal",
+      description: "An email address.",
+      placeholder: "e.g. info@example.org",
+      rdfProperty: "foaf:mbox",
+    }),
+    homepage: z.string().optional().register(editorMetadataRegistry, {
+      label: "Homepage",
+      component: "input",
+      valueType: "literal",
+      description: "Homepage of the agent.",
+      placeholder: "https://...",
+      rdfProperty: "foaf:homepage",
+    }),
+    resource: z.string().optional().register(editorMetadataRegistry, {
+      label: "Resource",
+      component: "input",
+      valueType: "literal",
+      description: "A URI identifying the agent.",
+      placeholder: "https://...",
+      rdfProperty: "@id",
+    }),
+  });
+
+const createContactPointObjectSchema = () =>
+  z.object({
+    type: z
+      .enum(["Kind", "Individual", "Organization"])
+      .optional()
+      .register(editorMetadataRegistry, {
+        label: "Type",
+        component: "select",
+        valueType: "literal",
+        description: "The kind of contact.",
+        rdfProperty: "@type",
+        options: [
+          { label: "Kind", value: "Kind" },
+          { label: "Individual", value: "Individual" },
+          { label: "Organization", value: "Organization" },
+        ],
+      } satisfies EditorMetadata),
+    name: z.string().optional().register(editorMetadataRegistry, {
+      label: "Full Name",
+      component: "input",
+      valueType: "literal",
+      description: "The name of the organization or person.",
+      placeholder: "e.g. Statistisches Bundesamt",
+      rdfProperty: "vcard:fn",
+    }),
+    address: z.string().optional().register(editorMetadataRegistry, {
+      label: "Address",
+      component: "input",
+      valueType: "literal",
+      description: "A postal address.",
+      placeholder: "e.g. 111 Lake Drive, Australia",
+      rdfProperty: "vcard:hasAddress",
+    }),
+    email: z.string().optional().register(editorMetadataRegistry, {
+      label: "Email",
+      component: "input",
+      valueType: "literal",
+      description: "A contact email address.",
+      placeholder: "e.g. info@example.org",
+      rdfProperty: "vcard:hasEmail",
+    }),
+    telephone: z.string().optional().register(editorMetadataRegistry, {
+      label: "Telephone",
+      component: "input",
+      valueType: "literal",
+      description: "A contact telephone.",
+      placeholder: "e.g. +61755555555",
+      rdfProperty: "vcard:hasTelephone",
+    }),
+    resource: z.string().optional().register(editorMetadataRegistry, {
+      label: "Resource",
+      component: "input",
+      valueType: "literal",
+      description: "A URI identifying the contact point.",
+      placeholder: "https://...",
+      rdfProperty: "@id",
+    }),
+  });
+
+const createDateRangeObjectSchema = () =>
+  z.object({
+    gte: createTemporalSchema({
+      label: "Start",
+      component: "temporal",
+      valueType: "temporal",
+      description: "Start of the period.",
+      placeholder: "2009-10-10 or 2009-10-10T12:00:00Z",
+      rdfProperty: "dcat:startDate",
+    }),
+    lte: createTemporalSchema({
+      label: "End",
+      component: "temporal",
+      valueType: "temporal",
+      description: "End of the period.",
+      placeholder: "2010-10-10 or 2010-10-10T12:00:00Z",
+      rdfProperty: "dcat:endDate",
+    }),
+  });
+
+const createPageObjectSchema = () =>
+  z.object({
+    resource: z.string().optional().register(editorMetadataRegistry, {
+      label: "Resource",
+      component: "input",
+      valueType: "literal",
+      description: "The URI of the document.",
+      placeholder: "https://...",
+      rdfProperty: "@id",
+    }),
+    title: createMultilingualSchema(false, {
+      label: "Title",
+      component: "multilingual-input",
+      valueType: "multiLang",
+      description: "The title of the document.",
+      placeholder: "e.g. Documentation",
+      rdfProperty: "dct:title",
+    }),
+    description: createMultilingualSchema(false, {
+      label: "Description",
+      component: "multilingual-input",
+      valueType: "multiLang",
+      description: "A description of the document.",
+      placeholder: "e.g. API documentation",
+      rdfProperty: "dct:description",
+    }),
+    format: z.string().optional().register(editorMetadataRegistry, {
+      label: "Format",
+      component: "input",
+      valueType: "literal",
+      description: "The file format URI of the document.",
+      placeholder: "https://...",
+      rdfProperty: "dct:format",
+    }),
+  });
+
+const createAdmsIdentifierObjectSchema = () =>
+  z.object({
+    identifier: z.string().optional().register(editorMetadataRegistry, {
+      label: "Identifier",
+      component: "input",
+      valueType: "literal",
+      description: "The identifier value.",
+      placeholder: "e.g. 10.1234/5678",
+      rdfProperty: "skos:notation",
+    }),
+    scheme: z.string().optional().register(editorMetadataRegistry, {
+      label: "Scheme",
+      component: "input",
+      valueType: "literal",
+      description: "The URI of the identifier scheme.",
+      placeholder: "e.g. http://purl.org/spar/datacite/doi",
+      rdfProperty: "@type",
+    }),
+    resource: z.string().optional().register(editorMetadataRegistry, {
+      label: "Resource",
+      component: "input",
+      valueType: "literal",
+      description: "A URI identifying the identifier.",
+      placeholder: "https://...",
+      rdfProperty: "@id",
+    }),
+  });
+
+const createLabeledResourceObjectSchema = () =>
+  z.object({
+    resource: z.string().optional().register(editorMetadataRegistry, {
+      label: "Resource",
+      component: "input",
+      valueType: "literal",
+      description: "A URI for the referenced resource.",
+      placeholder: "https://...",
+      rdfProperty: "@id",
+    }),
+    label: z.string().optional().register(editorMetadataRegistry, {
+      label: "Label",
+      component: "input",
+      valueType: "literal",
+      description: "A label, used when no resource URI is given.",
+      placeholder: "e.g. Conforms To",
+      rdfProperty: "rdfs:label",
+    }),
+  });
 
 export const distributionSchema = z
   .object({
@@ -317,38 +553,41 @@ export const datasetFormSchema = z.object({
     rdfProperty: "dct:description",
   }),
 
-  contactPoint: z
-    .object({
-      fn: z
-        .string()
-        .min(1, "Full name is required")
-        .optional()
-        .register(editorMetadataRegistry, {
-          label: "Full Name",
-          component: "input",
-          valueType: "literal",
-          description: "The name of the organization or person.",
-          placeholder: "e.g. Statistisches Bundesamt",
-          rdfProperty: "vcard:fn",
-        }),
-      email: z.string().optional().register(editorMetadataRegistry, {
-        label: "Email",
-        component: "input",
-        valueType: "literal",
-        description: "A web address or email for contacting.",
-        placeholder: "e.g. https://www.destatis.de/kontakt",
-        rdfProperty: "vcard:hasEmail",
-      }),
-    })
+  keywords: z
+    .array(baseMultilingualSchema.extend({}))
     .optional()
     .register(editorMetadataRegistry, {
+      label: "Keywords",
+      component: "repeatable-multilingual",
+      valueType: "multiLangList",
+      description: "Keywords describing the dataset.",
+      placeholder: "e.g. air quality",
+      rdfProperty: "dcat:keyword",
+    }),
+
+  publisher: createAgentObjectSchema()
+    .optional()
+    .register(editorMetadataRegistry, {
+      label: "Publisher",
+      component: "object",
+      valueType: "agent",
+      description: "The entity responsible for making the dataset available.",
+      rdfProperty: "dct:publisher",
+    }),
+
+  contactPoint: createObjectListSchema(
+    createContactPointObjectSchema().register(editorMetadataRegistry, {
       label: "Contact Point",
       component: "object",
-      valueType: "object",
+      valueType: "contactPoint",
+      rdfProperty: "dcat:contactPoint",
+    } satisfies EditorMetadata),
+    {
+      label: "Contact Points",
       description: "Contact information for inquiries about the dataset.",
       rdfProperty: "dcat:contactPoint",
-      rdfType: "vcard:Organization",
-    }),
+    },
+  ),
 
   issued: createTemporalSchema({
     label: "Issued Date",
@@ -470,6 +709,92 @@ export const datasetFormSchema = z.object({
     rdfProperty: "dcat:spatialResolutionInMeters",
   }),
 
+  temporal: createObjectListSchema(
+    createDateRangeObjectSchema().register(editorMetadataRegistry, {
+      label: "Temporal Coverage",
+      component: "object",
+      valueType: "dateRange",
+      rdfProperty: "dct:temporal",
+    } satisfies EditorMetadata),
+    {
+      label: "Temporal Coverage",
+      description: "The time period covered by the dataset.",
+      rdfProperty: "dct:temporal",
+    },
+  ),
+
+  provenance: createObjectListSchema(
+    createLabeledResourceObjectSchema().register(editorMetadataRegistry, {
+      label: "Provenance",
+      component: "object",
+      valueType: "labeledResource",
+      rdfType: "dct:ProvenanceStatement",
+      rdfProperty: "dct:provenance",
+    } satisfies EditorMetadata),
+    {
+      label: "Provenance",
+      description: "Statements about the origin of the dataset.",
+      rdfProperty: "dct:provenance",
+    },
+  ),
+
+  conformsTo: createObjectListSchema(
+    createLabeledResourceObjectSchema().register(editorMetadataRegistry, {
+      label: "Conforms To",
+      component: "object",
+      valueType: "labeledResource",
+      rdfType: "dct:Standard",
+      rdfProperty: "dct:conformsTo",
+    } satisfies EditorMetadata),
+    {
+      label: "Conforms To",
+      description: "Standards the dataset conforms to.",
+      rdfProperty: "dct:conformsTo",
+    },
+  ),
+
+  landingPage: createObjectListSchema(
+    createPageObjectSchema().register(editorMetadataRegistry, {
+      label: "Landing Page",
+      component: "object",
+      valueType: "page",
+      rdfProperty: "dcat:landingPage",
+    } satisfies EditorMetadata),
+    {
+      label: "Landing Pages",
+      description: "Web pages that give access to the dataset.",
+      rdfProperty: "dcat:landingPage",
+    },
+  ),
+
+  page: createObjectListSchema(
+    createPageObjectSchema().register(editorMetadataRegistry, {
+      label: "Page",
+      component: "object",
+      valueType: "page",
+      rdfProperty: "foaf:page",
+    } satisfies EditorMetadata),
+    {
+      label: "Pages",
+      description: "Documentation pages for the dataset.",
+      rdfProperty: "foaf:page",
+    },
+  ),
+
+  admsIdentifier: createObjectListSchema(
+    createAdmsIdentifierObjectSchema().register(editorMetadataRegistry, {
+      label: "ADMS Identifier",
+      component: "object",
+      valueType: "admsIdentifier",
+      rdfProperty: "adms:identifier",
+    } satisfies EditorMetadata),
+    {
+      label: "ADMS Identifiers",
+      description: "Structured identifiers for the dataset.",
+      rdfProperty: "adms:identifier",
+    },
+  ),
+
   distributions: z
     .array(distributionSchema)
     .optional()
@@ -494,6 +819,8 @@ export const datasetFormDefaults = {
     de: "",
   },
   identifier: [] as string[],
+  keywords: [] as Record<string, string>[],
+  contactPoint: [] as Record<string, any>[],
   hasVersion: [] as string[],
   isVersionOf: [] as string[],
   source: [] as string[],
@@ -503,6 +830,12 @@ export const datasetFormDefaults = {
   relation: [] as string[],
   sample: [] as string[],
   wasGeneratedBy: [] as string[],
+  temporal: [] as Record<string, any>[],
+  provenance: [] as Record<string, any>[],
+  conformsTo: [] as Record<string, any>[],
+  landingPage: [] as Record<string, any>[],
+  page: [] as Record<string, any>[],
+  admsIdentifier: [] as Record<string, any>[],
   distributions: [] as z.output<typeof distributionSchema>[],
 };
 
@@ -615,7 +948,15 @@ export const formSections = {
   basicInfo: {
     title: "Basic Information",
     description: "General information about the dataset.",
-    keys: ["title", "description", "contactPoint", "issued", "modified"],
+    keys: [
+      "title",
+      "description",
+      "keywords",
+      "publisher",
+      "contactPoint",
+      "issued",
+      "modified",
+    ],
   },
   versioning: {
     title: "Versioning",
@@ -627,6 +968,7 @@ export const formSections = {
       "hasVersion",
       "isVersionOf",
       "isReferencedBy",
+      "admsIdentifier",
     ],
   },
   relations: {
@@ -640,13 +982,17 @@ export const formSections = {
       "applicableLegislation",
       "sample",
       "wasGeneratedBy",
+      "provenance",
+      "conformsTo",
+      "landingPage",
+      "page",
     ],
   },
   coverage: {
     title: "Coverage Resolution",
-    description: "Temporal and spatial resolution of the dataset.",
+    description: "Temporal and spatial coverage and resolution.",
     hidden: true,
-    keys: ["temporalResolution", "spatialResolutionInMeters"],
+    keys: ["temporal", "temporalResolution", "spatialResolutionInMeters"],
   },
   distributions: {
     title: "Distributions",

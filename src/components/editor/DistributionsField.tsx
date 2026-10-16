@@ -1,16 +1,16 @@
 "use client";
 
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { Plus } from "lucide-react";
+import { useFormContext } from "react-hook-form";
 import { ZodType } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   DatasetFormValues,
   distributionFormDefaults,
 } from "@/lib/editor/DatasetFormSchema";
+import { deleteFile } from "@/lib/repo/uploader/api";
 
-import { DistributionFormCard } from "./DistributionFormCard";
+import { FileUpload } from "./FileUpload";
+import { RepeatableObjectField } from "./RepeatableObjectField";
 
 interface DistributionsFieldProps {
   name: string;
@@ -21,37 +21,31 @@ export function DistributionsField({
   name,
   elementSchema,
 }: DistributionsFieldProps) {
-  const { control } = useFormContext<DatasetFormValues>();
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: name as any,
-  });
+  const { getValues } = useFormContext<DatasetFormValues>();
+
+  const handleRemove = async (index: number) => {
+    const datasetId = getValues("id");
+    const uploadPath = getValues(`${name}.${index}.uploadPath` as any) as
+      | string
+      | undefined;
+
+    if (datasetId && uploadPath) {
+      try {
+        await deleteFile(datasetId, uploadPath);
+      } catch (error) {
+        console.error("Failed to delete uploaded distribution file:", error);
+      }
+    }
+  };
 
   return (
-    <div className="space-y-4">
-      {fields.length === 0 && (
-        <p className="text-sm text-muted-foreground">No distributions yet.</p>
-      )}
-
-      {fields.map((field, index) => (
-        <DistributionFormCard
-          key={field.id}
-          name={`${name}.${index}`}
-          elementSchema={elementSchema}
-          index={index}
-          onRemove={() => remove(index)}
-        />
-      ))}
-
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => append({ ...distributionFormDefaults } as any)}
-      >
-        <Plus className="size-4" />
-        Add distribution
-      </Button>
-    </div>
+    <RepeatableObjectField
+      name={name}
+      elementSchema={elementSchema}
+      addLabel="Add distribution"
+      defaultItem={distributionFormDefaults}
+      renderLeading={(itemName) => <FileUpload namePrefix={itemName} />}
+      onRemoveItem={handleRemove}
+    />
   );
 }

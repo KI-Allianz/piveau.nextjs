@@ -15,9 +15,18 @@ import {
   FieldError,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { TemporalInput } from "./TemporalInput";
 import { DistributionsField } from "./DistributionsField";
 import { ListInput } from "./ListInput";
+import { RepeatableObjectField } from "./RepeatableObjectField";
+import { RepeatableMultilingual } from "./RepeatableMultilingual";
 import { ZodType } from "zod";
 
 interface DynamicFieldProps {
@@ -37,12 +46,14 @@ export default function DynamicField({
 
   if (!meta) return null;
 
+  const fieldPath = prefix ? `${prefix}.${name}` : name;
+
   switch (meta.component) {
     case "multilingual-input":
       return (
         <MultilingualInput
           key={name}
-          namePrefix={`${prefix}.${name}`}
+          namePrefix={fieldPath}
           label={meta.label}
           description={meta.description}
           placeholder={meta.placeholder}
@@ -52,7 +63,7 @@ export default function DynamicField({
       return (
         <Controller
           key={name}
-          name={`${prefix}.${name}`}
+          name={fieldPath}
           control={control}
           render={({ field, fieldState }) => (
             <TemporalInput
@@ -65,11 +76,43 @@ export default function DynamicField({
           )}
         />
       );
+    case "select":
+      return (
+        <Controller
+          key={name}
+          name={fieldPath}
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>{meta.label}</FieldLabel>
+              {meta.description && (
+                <FieldDescription>{meta.description}</FieldDescription>
+              )}
+              <Select
+                value={field.value ?? ""}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger aria-invalid={fieldState.invalid}>
+                  <SelectValue placeholder={meta.placeholder ?? "Select…"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {meta.options?.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      );
     case "list":
       return (
         <Controller
           key={name}
-          name={`${prefix}.${name}`}
+          name={fieldPath}
           control={control}
           render={({ field, fieldState }) => (
             <ListInput
@@ -83,6 +126,41 @@ export default function DynamicField({
           )}
         />
       );
+    case "repeatable-multilingual":
+      return (
+        <Controller
+          key={name}
+          name={fieldPath}
+          control={control}
+          render={({ field, fieldState }) => (
+            <RepeatableMultilingual
+              label={meta.label}
+              description={meta.description}
+              placeholder={meta.placeholder}
+              value={field.value}
+              onChange={field.onChange}
+              error={fieldState.error}
+            />
+          )}
+        />
+      );
+    case "repeatable-object": {
+      const elementSchema = getArrayElementSchema(schema);
+
+      if (!elementSchema) {
+        console.error(`Expected ZodArray for field ${name}, but got`, schema);
+        return null;
+      }
+
+      return (
+        <RepeatableObjectField
+          key={name}
+          name={fieldPath}
+          elementSchema={elementSchema}
+          addLabel={`Add ${meta.label}`}
+        />
+      );
+    }
     case "distributions": {
       const elementSchema = getArrayElementSchema(schema);
 
@@ -94,19 +172,25 @@ export default function DynamicField({
       return (
         <DistributionsField
           key={name}
-          name={prefix ? `${prefix}.${name}` : name}
+          name={fieldPath}
           elementSchema={elementSchema}
         />
       );
     }
     case "object": {
-      let innerSchema = getUnwrappedObjectSchema(schema);
+      const innerSchema = getUnwrappedObjectSchema(schema);
 
       if (!innerSchema) {
         console.error(`Expected ZodObject for field ${name}, but got`, schema);
         return null;
       }
-      const innerShape = innerSchema.shape;
+
+      const visibleKeys = Object.keys(innerSchema.shape).filter((innerKey) => {
+        const innerMeta = editorMetadataRegistry.get(
+          innerSchema.shape[innerKey],
+        );
+        return Boolean(innerMeta?.rdfProperty);
+      });
 
       return (
         <div key={name} className="p-4 border rounded-xl bg-muted/10">
@@ -119,12 +203,12 @@ export default function DynamicField({
             )}
           </div>
           <div className="space-y-6 pl-4 border-l-2 border-primary/20 mt-2">
-            {Object.keys(innerShape).map((innerKey) => (
+            {visibleKeys.map((innerKey) => (
               <DynamicField
                 key={innerKey}
                 name={`${innerKey}` as keyof DatasetFormValues}
-                schema={innerShape[innerKey]}
-                prefix={`${prefix}.${name}`}
+                schema={innerSchema.shape[innerKey]}
+                prefix={fieldPath}
               />
             ))}
           </div>
@@ -137,7 +221,7 @@ export default function DynamicField({
       return (
         <Controller
           key={name}
-          name={`${prefix}.${name}`}
+          name={fieldPath}
           control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
