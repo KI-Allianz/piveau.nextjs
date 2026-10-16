@@ -18,13 +18,40 @@ export type EditorComponentType =
   | "object"
   | "distributions";
 
+/**
+ * Serialization strategy for a field. Leaf types are implemented as codecs in
+ * `./codecs`; `object` (and any array schema) is handled generically by the
+ * dispatcher.
+ */
+export type FieldValueType =
+  | "literal"
+  | "multiLang"
+  | "multiLangList"
+  | "temporal"
+  | "typedLiteral"
+  | "resource"
+  | "labeledResource"
+  | "skosConcept"
+  | "agent"
+  | "contactPoint"
+  | "dateRange"
+  | "page"
+  | "admsIdentifier"
+  | "object";
+
 export type EditorMetadata = {
   label: string;
   component: EditorComponentType;
+  /** Serialization strategy (see `./codecs`). */
+  valueType: FieldValueType;
   description?: string;
   placeholder?: string;
   rdfProperty: string;
   rdfType?: string;
+  /** xsd datatype IRI for `typedLiteral` values. */
+  dataType?: string;
+  /** Vocabulary id (see `@/lib/vocabularies`) for `skosConcept` values. */
+  vocabulary?: string;
 };
 
 export const editorMetadataRegistry = z.registry<EditorMetadata>();
@@ -42,6 +69,7 @@ const baseMultilingualSchema = z
   .register(editorMetadataRegistry, {
     label: "Multilingual String",
     component: "multilingual-input",
+    valueType: "multiLang",
     description: "A string that can have values in multiple languages.",
     placeholder: "e.g. text here",
     rdfProperty: "http://www.w3.org/2000/01/rdf-schema#label",
@@ -106,6 +134,7 @@ export const distributionSchema = z
     title: createMultilingualSchema(false, {
       label: "Title",
       component: "multilingual-input",
+      valueType: "multiLang",
       description: "A name given to the distribution.",
       placeholder: "e.g. Air Quality Measurements 2023 (CSV)",
       rdfProperty: "dct:title",
@@ -113,6 +142,7 @@ export const distributionSchema = z
     description: createMultilingualSchema(false, {
       label: "Description",
       component: "multilingual-input",
+      valueType: "multiLang",
       description: "A brief summary of the distribution.",
       placeholder: "e.g. CSV file containing the measurements.",
       rdfProperty: "dct:description",
@@ -120,6 +150,7 @@ export const distributionSchema = z
     format: z.string().optional().register(editorMetadataRegistry, {
       label: "Format",
       component: "input",
+      valueType: "literal",
       description: "The file format.",
       placeholder: "e.g. CSV",
       rdfProperty: "dct:format",
@@ -127,6 +158,7 @@ export const distributionSchema = z
     mediaType: z.string().optional().register(editorMetadataRegistry, {
       label: "Media Type",
       component: "input",
+      valueType: "literal",
       description: "The IANA media type of the file.",
       placeholder: "e.g. text/csv",
       rdfProperty: "dcat:mediaType",
@@ -134,6 +166,7 @@ export const distributionSchema = z
     downloadURL: z.string().optional().register(editorMetadataRegistry, {
       label: "Download URL",
       component: "input",
+      valueType: "literal",
       description:
         "Direct link to the file. Filled in automatically on upload.",
       placeholder: "https://...",
@@ -142,6 +175,7 @@ export const distributionSchema = z
     accessURL: z.string().optional().register(editorMetadataRegistry, {
       label: "Access URL",
       component: "input",
+      valueType: "literal",
       description: "A URL that gives access to the distribution.",
       placeholder: "https://...",
       rdfProperty: "dcat:accessURL",
@@ -149,6 +183,7 @@ export const distributionSchema = z
     byteSize: z.string().optional().register(editorMetadataRegistry, {
       label: "Byte Size",
       component: "input",
+      valueType: "literal",
       description: "The size of the file in bytes. Filled in automatically.",
       placeholder: "e.g. 1024",
       rdfProperty: "dcat:byteSize",
@@ -156,6 +191,7 @@ export const distributionSchema = z
     license: z.string().optional().register(editorMetadataRegistry, {
       label: "License",
       component: "input",
+      valueType: "literal",
       description: "A link to the license under which the file is available.",
       placeholder: "https://...",
       rdfProperty: "dct:license",
@@ -163,6 +199,7 @@ export const distributionSchema = z
     issued: createTemporalSchema({
       label: "Issued Date",
       component: "temporal",
+      valueType: "temporal",
       description: "Supports Year, Year-Month, Date, or full DateTime.",
       placeholder: "2009-10-10 or 2009-10-10T12:00:00Z",
       rdfProperty: "dct:issued",
@@ -170,6 +207,7 @@ export const distributionSchema = z
     modified: createTemporalSchema({
       label: "Modified Date",
       component: "temporal",
+      valueType: "temporal",
       description: "Supports Year, Year-Month, Date, or full DateTime.",
       placeholder: "2009-10-10 or 2009-10-10T12:00:00Z",
       rdfProperty: "dct:modified",
@@ -177,6 +215,7 @@ export const distributionSchema = z
     uploadPath: z.string().optional().register(editorMetadataRegistry, {
       label: "Upload Path",
       component: "input",
+      valueType: "literal",
       description: "Internal uploader path (not published).",
       rdfProperty: "",
     }),
@@ -184,6 +223,7 @@ export const distributionSchema = z
   .register(editorMetadataRegistry, {
     label: "Distribution",
     component: "object",
+    valueType: "object",
     description: "A file that makes the dataset available.",
     rdfProperty: "dcat:distribution",
     rdfType: "dcat:Distribution",
@@ -197,6 +237,7 @@ export const datasetFormSchema = z.object({
     .register(editorMetadataRegistry, {
       label: "Dataset Identifier",
       component: "input",
+      valueType: "literal",
       description: "A unique identifier for the dataset.",
       placeholder: "e.g. air-quality-berlin",
       rdfProperty: "@id",
@@ -205,6 +246,7 @@ export const datasetFormSchema = z.object({
   title: createMultilingualSchema(true, {
     label: "Title",
     component: "multilingual-input",
+    valueType: "multiLang",
     description: "A name given to the dataset.",
     placeholder: "e.g. Air Quality Measurements Berlin",
     rdfProperty: "dct:title",
@@ -213,6 +255,7 @@ export const datasetFormSchema = z.object({
   description: createMultilingualSchema(true, {
     label: "Description",
     component: "multilingual-input",
+    valueType: "multiLang",
     description: "A brief summary of the dataset.",
     placeholder:
       "e.g. This dataset contains air quality measurements from Berlin.",
@@ -228,6 +271,7 @@ export const datasetFormSchema = z.object({
         .register(editorMetadataRegistry, {
           label: "Full Name",
           component: "input",
+          valueType: "literal",
           description: "The name of the organization or person.",
           placeholder: "e.g. Statistisches Bundesamt",
           rdfProperty: "vcard:fn",
@@ -235,6 +279,7 @@ export const datasetFormSchema = z.object({
       email: z.string().optional().register(editorMetadataRegistry, {
         label: "Email",
         component: "input",
+        valueType: "literal",
         description: "A web address or email for contacting.",
         placeholder: "e.g. https://www.destatis.de/kontakt",
         rdfProperty: "vcard:hasEmail",
@@ -244,6 +289,7 @@ export const datasetFormSchema = z.object({
     .register(editorMetadataRegistry, {
       label: "Contact Point",
       component: "object",
+      valueType: "object",
       description: "Contact information for inquiries about the dataset.",
       rdfProperty: "dcat:contactPoint",
       rdfType: "vcard:Organization",
@@ -252,6 +298,7 @@ export const datasetFormSchema = z.object({
   issued: createTemporalSchema({
     label: "Issued Date",
     component: "temporal",
+    valueType: "temporal",
     description: "Supports Year, Year-Month, Date, or full DateTime.",
     placeholder: "2009-10-10 or 2009-10-10T12:00:00Z",
     rdfProperty: "dct:issued",
@@ -260,9 +307,10 @@ export const datasetFormSchema = z.object({
   modified: createTemporalSchema({
     label: "Modified Date",
     component: "temporal",
+    valueType: "temporal",
     description: "Supports Year, Year-Month, Date, or full DateTime.",
     placeholder: "2009-10-10 or 2009-10-10T12:00:00Z",
-    rdfProperty: "dct:issued",
+    rdfProperty: "dct:modified",
   }),
 
   distributions: z
@@ -271,6 +319,7 @@ export const datasetFormSchema = z.object({
     .register(editorMetadataRegistry, {
       label: "Distributions",
       component: "distributions",
+      valueType: "object",
       description: "Files that make the dataset available.",
       rdfProperty: "dcat:distribution",
       rdfType: "dcat:Distribution",

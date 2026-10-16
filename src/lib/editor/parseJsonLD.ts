@@ -3,79 +3,20 @@ import {
   datasetFormSchema,
   editorMetadataRegistry,
   DatasetFormValues,
-  getUnwrappedObjectSchema,
-  getArrayElementSchema,
 } from "./DatasetFormSchema";
+import { deserializeField } from "./codecs";
+import {
+  buildPrefixes,
+  DEFAULT_PREFIXES,
+  expandIri,
+  getProperty,
+  Prefixes,
+} from "./prefixes";
 import { deriveUploadPath } from "../repo/uploader/paths";
 
-type Prefixes = Record<string, string>;
+export { buildPrefixes, expandIri };
 
-const DEFAULT_PREFIXES: Prefixes = {
-  dct: "http://purl.org/dc/terms/",
-  dcat: "http://www.w3.org/ns/dcat#",
-  vcard: "http://www.w3.org/2006/vcard/ns#",
-  rdfs: "http://www.w3.org/2000/01/rdf-schema#",
-};
-
-function addContext(context: any, prefixes: Prefixes) {
-  if (!context) return;
-
-  const contexts = Array.isArray(context) ? context : [context];
-
-  for (const ctx of contexts) {
-    if (!ctx || typeof ctx !== "object") continue;
-
-    for (const [key, value] of Object.entries(ctx)) {
-      if (key.startsWith("@")) continue;
-
-      if (typeof value === "string") {
-        prefixes[key] = value;
-      } else if (
-        value &&
-        typeof value === "object" &&
-        typeof (value as Record<string, any>)["@id"] === "string"
-      ) {
-        prefixes[key] = (value as Record<string, any>)["@id"];
-      }
-    }
-  }
-}
-
-export function buildPrefixes(jsonLdData: Record<string, any>): Prefixes {
-  const prefixes: Prefixes = { ...DEFAULT_PREFIXES };
-  addContext(jsonLdData?.["@context"], prefixes);
-  return prefixes;
-}
-
-export function expandIri(term: string, prefixes: Prefixes): string {
-  if (typeof term !== "string") return term;
-  if (
-    term.startsWith("http://") ||
-    term.startsWith("https://") ||
-    term.startsWith("_:")
-  ) {
-    return term;
-  }
-
-  const idx = term.indexOf(":");
-  if (idx === -1) return term;
-
-  const prefix = term.slice(0, idx);
-  const suffix = term.slice(idx + 1);
-  const iri = prefixes[prefix];
-
-  return iri ? iri + suffix : term;
-}
-
-function getProperty(node: any, rdfProperty: string, prefixes: Prefixes): any {
-  if (!node || typeof node !== "object") return undefined;
-  if (rdfProperty in node) return node[rdfProperty];
-
-  const expanded = expandIri(rdfProperty, prefixes);
-  if (expanded !== rdfProperty && expanded in node) return node[expanded];
-
-  return undefined;
-}
+const PIVEAU_DATASET_URI_PREFIX = "https://piveau.io/set/data/";
 
 function selectRootNode(
   jsonLdData: Record<string, any>,
@@ -181,104 +122,7 @@ export function parseJsonLdFieldValue(
   jsonLdValue: any,
   prefixes: Prefixes = DEFAULT_PREFIXES,
 ): any {
-  if (jsonLdValue === undefined || jsonLdValue === null) return undefined;
-
-  const meta = editorMetadataRegistry.get(schema);
-  if (!meta) return jsonLdValue;
-
-  if (meta.component === "multilingual-input") {
-    const entries = Array.isArray(jsonLdValue) ? jsonLdValue : [jsonLdValue];
-    const result: Record<string, string> = {};
-
-    for (const entry of entries) {
-      if (entry && typeof entry === "object") {
-        const lang = entry["@language"];
-        const val = entry["@value"];
-        if (lang && typeof val === "string") {
-          result[lang] = val;
-        }
-      } else if (typeof entry === "string") {
-        result["en"] = entry;
-      }
-    }
-    return Object.keys(result).length > 0 ? result : undefined;
-  }
-
-  if (meta.component === "temporal") {
-    if (typeof jsonLdValue === "object" && jsonLdValue !== null) {
-      return jsonLdValue["@value"] || "";
-    }
-    return typeof jsonLdValue === "string" ? jsonLdValue : "";
-  }
-
-  if (meta.component === "distributions") {
-    const elementSchema = getArrayElementSchema(schema);
-    if (!elementSchema) return undefined;
-
-    const entries = Array.isArray(jsonLdValue) ? jsonLdValue : [jsonLdValue];
-    const items = entries
-      .map((entry) => parseJsonLdFieldValue(elementSchema, entry, prefixes))
-      .filter((item) => item !== undefined);
-
-    return items.length > 0 ? items : undefined;
-  }
-
-  if (meta.component === "object") {
-    let innerSchema = getUnwrappedObjectSchema(schema);
-
-    if (!innerSchema) {
-      console.error(`Expected ZodObject, but got`, schema);
-      return null;
-    }
-
-    const innerShape = innerSchema.shape;
-    const parsedObjectData: Record<string, any> = {};
-
-    for (const [subKey, subSchema] of Object.entries(innerShape)) {
-      const subMeta = editorMetadataRegistry.get(subSchema as ZodType);
-      if (!subMeta || !subMeta.rdfProperty) continue;
-
-      const rawSubValue = getProperty(
-        jsonLdValue,
-        subMeta.rdfProperty,
-        prefixes,
-      );
-
-      let targetSubVal = rawSubValue;
-      if (
-        rawSubValue &&
-        typeof rawSubValue === "object" &&
-        "@id" in rawSubValue &&
-        Object.keys(rawSubValue).length === 1
-      ) {
-        targetSubVal = rawSubValue["@id"];
-      }
-
-      const parsedSubVal = parseJsonLdFieldValue(
-        subSchema as ZodType,
-        targetSubVal,
-        prefixes,
-      );
-
-      if (parsedSubVal !== undefined) {
-        parsedObjectData[subKey] = parsedSubVal;
-      }
-    }
-
-    return Object.keys(parsedObjectData).length > 0
-      ? parsedObjectData
-      : undefined;
-  }
-
-  if (
-    typeof jsonLdValue === "object" &&
-    jsonLdValue !== null &&
-    "@id" in jsonLdValue
-  ) {
-    return jsonLdValue["@id"];
-  }
-
-  return jsonLdValue;
+  return deserializeField(schema, jsonLdValue, { prefixes });
 }
 
 /**
@@ -307,8 +151,8 @@ export function parseDatasetJsonLd(
     let parsedValue = parseJsonLdFieldValue(fieldSchema, rawValue, prefixes);
 
     if (parsedValue !== undefined) {
-      if (meta.rdfProperty == "@id") {
-        parsedValue = parsedValue.replace("https://piveau.io/set/data/", "");
+      if (meta.rdfProperty === "@id") {
+        parsedValue = parsedValue.replace(PIVEAU_DATASET_URI_PREFIX, "");
       }
       formValues[key] = parsedValue;
     }
@@ -355,7 +199,7 @@ export function parseDatasetListJsonLd(jsonLdData: any): DraftSummary[] {
 
     const id =
       typeof rawId === "string"
-        ? rawId.replace("https://piveau.io/set/data/", "")
+        ? rawId.replace(PIVEAU_DATASET_URI_PREFIX, "")
         : undefined;
 
     if (!id) continue;
