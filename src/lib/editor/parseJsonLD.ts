@@ -189,6 +189,7 @@ export function parseDatasetListJsonLd(jsonLdData: any): DraftSummary[] {
 
   for (const entry of graph) {
     if (!entry || typeof entry !== "object") continue;
+    if (entry["@type"] !== "dcat:Dataset") continue;
 
     const nodes = Array.isArray(entry["@graph"]) ? entry["@graph"] : [entry];
     const parsed = parseDatasetJsonLd({ "@context": context, "@graph": nodes });

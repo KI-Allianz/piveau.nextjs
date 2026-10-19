@@ -187,7 +187,7 @@ export async function getDatasetDraftById(
 ) {
   const url =
     BACKEND_URLS.REPO +
-    `catalogues/${catalogId}/resources/origin?originalId=${id}`;
+    `catalogues/${catalogId}/resources/origin?originalId=${encodeURIComponent(id)}`;
   try {
     const res = await axiosInstance.get(url, {
       headers: {
