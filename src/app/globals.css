@@ -95,3 +95,44 @@
 .snippet li > p > strong {
     @apply hidden;
 }
+
+.rich-text-editor .ProseMirror {
+    @apply min-h-32 px-3 py-2 text-sm outline-none;
+}
+
+.rich-text-editor .ProseMirror p {
+    @apply my-1;
+}
+
+.rich-text-editor .ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    @apply pointer-events-none float-left h-0 text-muted-foreground;
+}
+
+.rich-text-editor .ProseMirror ul {
+    @apply my-1 list-disc pl-5;
+}
+
+.rich-text-editor .ProseMirror ol {
+    @apply my-1 list-decimal pl-5;
+}
+
+.rich-text-editor .ProseMirror a {
+    @apply text-primary underline underline-offset-2;
+}
+
+.rich-text-editor .ProseMirror h2 {
+    @apply mt-3 mb-1 text-lg font-semibold;
+}
+
+.rich-text-editor .ProseMirror h3 {
+    @apply mt-2 mb-1 text-base font-semibold;
+}
+
+.rich-text-editor .ProseMirror blockquote {
+    @apply my-2 border-l-2 border-border pl-3 text-muted-foreground;
+}
+
+.rich-text-editor .ProseMirror code {
+    @apply rounded bg-muted px-1 py-0.5 font-mono text-xs;
+}

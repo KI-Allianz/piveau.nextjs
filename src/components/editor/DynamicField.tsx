@@ -7,6 +7,7 @@ import {
   getArrayElementSchema,
 } from "@/lib/editor/schema";
 import { MultilingualInput } from "@/components/editor/MultilingualInput";
+import { MultilingualRichText } from "@/components/editor/MultilingualRichText";
 import { Controller, useFormContext } from "react-hook-form";
 import {
   Field,
@@ -52,6 +53,16 @@ export default function DynamicField({
     case "multilingual-input":
       return (
         <MultilingualInput
+          key={name}
+          namePrefix={fieldPath}
+          label={meta.label}
+          description={meta.description}
+          placeholder={meta.placeholder}
+        />
+      );
+    case "multilingual-rich-text":
+      return (
+        <MultilingualRichText
           key={name}
           namePrefix={fieldPath}
           label={meta.label}

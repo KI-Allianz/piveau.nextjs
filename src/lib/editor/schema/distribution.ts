@@ -15,9 +15,10 @@ export const distributionSchema = z
     }),
     description: createMultilingualSchema(false, {
       label: "Description",
-      component: "multilingual-input",
+      component: "multilingual-rich-text",
       valueType: "multiLang",
-      description: "A brief summary of the distribution.",
+      description:
+        "A brief summary of the distribution. Supports rich text and HTML.",
       placeholder: "e.g. CSV file containing the measurements.",
       rdfProperty: "dct:description",
     }),

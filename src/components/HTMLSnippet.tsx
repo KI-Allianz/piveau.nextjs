@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 
 type Props = {
   html: string;
+  className?: string;
 };
 
-export default function HtmlSnippet({ html }: Props) {
+export default function HtmlSnippet({ html, className }: Props) {
   const [safeHtml, setSafeHtml] = useState("");
 
   useEffect(() => {
@@ -17,5 +18,10 @@ export default function HtmlSnippet({ html }: Props) {
   }, [html]);
 
   // Return a placeholder or the raw text during SSR to avoid mismatch
-  return <div dangerouslySetInnerHTML={{ __html: safeHtml }} />;
+  return (
+    <div
+      className={className}
+      dangerouslySetInnerHTML={{ __html: safeHtml }}
+    />
+  );
 }

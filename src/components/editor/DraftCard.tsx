@@ -2,6 +2,7 @@
 
 import { CheckCircle2, FileText, Trash2 } from "lucide-react";
 
+import HtmlSnippet from "@/components/HTMLSnippet";
 import { useLocale } from "@/hooks/useLocale";
 import { DraftSummary } from "@/lib/editor/parseJsonLD";
 // import { Badge } from "@/components/ui/badge";
@@ -65,9 +66,10 @@ export function DraftCard({
             */}
           </div>
           {description && (
-            <span className="line-clamp-2 text-sm text-muted-foreground">
-              {description}
-            </span>
+            <HtmlSnippet
+              html={description}
+              className="line-clamp-2 text-sm text-muted-foreground [&_*]:m-0 [&_*]:inline"
+            />
           )}
           <span className="truncate text-xs text-muted-foreground/70">
             {draft.id}

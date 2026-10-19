@@ -47,9 +47,9 @@ export const datasetFormSchema = z.object({
 
   description: createMultilingualSchema(true, {
     label: "Description",
-    component: "multilingual-input",
+    component: "multilingual-rich-text",
     valueType: "multiLang",
-    description: "A brief summary of the dataset.",
+    description: "A brief summary of the dataset. Supports rich text and HTML.",
     placeholder:
       "e.g. This dataset contains air quality measurements from Berlin.",
     rdfProperty: "dct:description",

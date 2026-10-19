@@ -1,6 +1,7 @@
 export type EditorComponentType =
   | "input"
   | "multilingual-input"
+  | "multilingual-rich-text"
   | "select"
   | "checkbox"
   | "textarea"
