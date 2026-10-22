@@ -6,7 +6,7 @@ import { DatasetFormValues } from "@/lib/editor/schema";
 import { DraftSummary, parseDatasetJsonLd } from "@/lib/editor/parseJsonLD";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AlertCircle, Inbox, RefreshCw, Trash2 } from "lucide-react";
+import { AlertCircle, Inbox, Plus, RefreshCw, Trash2 } from "lucide-react";
 
 import { DraftCard } from "./DraftCard";
 import DraftCardSkeleton from "./DraftCardSkeleton";
@@ -108,6 +108,11 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
     ? translateDict(pendingDelete.title as Record<string, string>)
     : pendingDelete?.id;
 
+  const handleNewDraft = () => {
+    setDraftId(null);
+    setCurrentDraft(null);
+  };
+
   const handleConfirmDelete = async () => {
     if (!pendingDelete) return;
 
@@ -131,8 +136,19 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
 
   return (
     <div className="mx-auto my-8 max-w-3xl">
-      <div className="mb-4 flex items-baseline justify-between">
-        <h1 className="text-2xl font-bold">Drafts</h1>
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold">Drafts</h1>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleNewDraft}
+          >
+            <Plus className="size-4" />
+            New dataset
+          </Button>
+        </div>
         {drafts && drafts.length > 0 && (
           <span className="text-sm text-muted-foreground">
             {drafts.length} {drafts.length === 1 ? "draft" : "drafts"}
