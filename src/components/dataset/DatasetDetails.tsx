@@ -14,6 +14,8 @@ import { trpc } from "@/app/_trpc/client";
 import { useEffect } from "react";
 import { useLocale } from "@/hooks/useLocale";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { AUTH_DISABLED } from "@/lib/auth-config";
 
 interface Props {
   id: string;
@@ -22,7 +24,9 @@ interface Props {
 export default function DatasetDetails({ id }: Props) {
   const { locale, translations } = useLocale();
   const router = useRouter();
+  const { status } = useSession();
   const { data, error } = trpc.dataset.get.useQuery({ id });
+  const isAuhtenticated = !AUTH_DISABLED && status === "authenticated";
   const baseUrl =
     window.location.origin ||
     process.env.NEXT_PUBLIC_AUTH_URL ||
@@ -44,9 +48,14 @@ export default function DatasetDetails({ id }: Props) {
       />
 
       <Accordion
+        key={isAuhtenticated ? "authenticated" : "anonymous"}
         type="multiple"
         className="w-full"
-        defaultValue={["distributions", "assistant", "map"]}
+        defaultValue={
+          isAuhtenticated
+            ? ["distributions", "assistant", "map"]
+            : ["distributions", "map"]
+        }
       >
         <AccordionItem value={"distributions"} className="py-2">
           <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
@@ -56,20 +65,16 @@ export default function DatasetDetails({ id }: Props) {
             <DatasetDetailsDistributions dataset={data} />
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value={"assistant"} className="py-2">
-          <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
-            {translations.dataset.assistant.title}
-          </AccordionTrigger>
-          <AccordionContent className="text-muted-foreground pb-2">
-            <DatasetDetailsChatbot
-              dataset={data}
-              backendUrl={
-                process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL ||
-                "/api/assistant"
-              }
-            />
-          </AccordionContent>
-        </AccordionItem>
+        {isAuhtenticated && (
+          <AccordionItem value={"assistant"} className="py-2">
+            <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">
+              {translations.dataset.assistant.title}
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground pb-2">
+              <DatasetDetailsChatbot dataset={data} />
+            </AccordionContent>
+          </AccordionItem>
+        )}
         {data?.spatial && (
           <AccordionItem value={"map"} className="py-2">
             <AccordionTrigger className="py-4 text-2xl leading-6 hover:no-underline">

@@ -3,21 +3,14 @@
 import { useCallback, useState, useRef, useEffect, useMemo } from "react";
 import { useLocale } from "@/hooks/useLocale";
 import { Dataset } from "@/lib/utils";
+import type { TraceStep } from "@/lib/assistant";
+import { trpc } from "@/app/_trpc/client";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
-interface TraceStep {
-  step: "tool_call" | "tool_result" | "final_synthesis";
-  tool?: string;
-  arguments?: Record<string, any>;
-  output_preview?: string;
-  content?: string;
-  iteration?: number;
-}
 
 interface ChatMessage {
   id: string;
@@ -29,7 +22,6 @@ interface ChatMessage {
 type Props = {
   dataset?: Dataset;
   className?: string;
-  backendUrl: string;
 };
 
 const MAX_TURNS = 3;
@@ -119,13 +111,13 @@ function TypingIndicator() {
 export default function DatasetDetailsChatbot({
   dataset,
   className,
-  backendUrl,
 }: Props) {
   const [userInput, setUserInput] = useState("");
   const { translations } = useLocale();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const chatMutation = trpc.assistant.chat.useMutation();
 
   // Client Session ID
   const [sessionId, setSessionId] = useState("");
@@ -180,41 +172,31 @@ export default function DatasetDetailsChatbot({
       setError(null);
 
       try {
-        const res = await fetch(backendUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_input: query,
-            json_data: JSON.stringify(ds),
-            session_id: sessionId,
-          }),
+        const data = await chatMutation.mutateAsync({
+          user_input: query,
+          json_data: JSON.stringify(ds),
+          session_id: sessionId,
         });
 
-        if (!res.ok) {
-          const maybeJson = await res.json().catch(() => null);
-          const detail =
-            (maybeJson as any)?.detail ||
-            res.statusText ||
-            `HTTP ${res.status}`;
-          throw new Error(detail);
-        }
-
-        const data = await res.json();
         const assistantMsg: ChatMessage = {
           id: Math.random().toString(36).substring(7),
           role: "assistant",
-          content: typeof data === "object" && data?.response ? data.response : String(data),
-          trace: data?.trace || [],
+          content: data.response,
+          trace: data.trace,
         };
 
         setMessages((prev) => [...prev, assistantMsg]);
       } catch (e: any) {
-        setError("Error: " + (e?.message ?? "Unknown error"));
+        if (e?.data?.code === "UNAUTHORIZED") {
+          setError("Please sign in to use the assistant.");
+        } else {
+          setError("Error: " + (e?.message ?? "Unknown error"));
+        }
       } finally {
         setIsLoading(false);
       }
     },
-    [backendUrl, isLoading, isSessionLimitReached, sessionId, userInput]
+    [chatMutation, isLoading, isSessionLimitReached, sessionId, userInput]
   );
 
   const handleClear = () => {
