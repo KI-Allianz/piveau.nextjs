@@ -28,9 +28,7 @@ export default async function MainPage({ params }: Props) {
           {theme.lang.translations[locale]?.title || ""}
         </h1>
         <div className="w-full flex justify-center pb-4">
-          <span className="sm:max-w-2/3">
-            {theme.lang.translations[locale]?.description || ""}
-          </span>
+          <span className="sm:max-w-2/3">{theme.homepage.description}</span>
         </div>
 
         <div className="flex flex-col gap-4">

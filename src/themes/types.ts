@@ -25,6 +25,7 @@ export interface ProjectTheme {
     showCategorySlider: boolean;
     showFeaturedDatasets: boolean;
     showFeaturedModels: boolean;
+    description?: React.ReactElement;
   };
   footer: {
     enableLanguageSelector: boolean;
