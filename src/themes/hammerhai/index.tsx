@@ -47,7 +47,14 @@ export const HammerTheme: ProjectTheme = {
         sources and connects directly to the AI Factory through DCAT-based
         interoperability. For registered HammerHAI users, upcoming capabilities
         include AI-driven pipelines for AI-ready data and provides fine-grained
-        management and sharing of datasets and models.
+        management and{" "}
+        <a
+          href="/en/editor"
+          className="underline underline-offset-2 hover:text-(--main-accent)"
+        >
+          sharing of datasets and models
+        </a>
+        .
       </>
     ),
   },
