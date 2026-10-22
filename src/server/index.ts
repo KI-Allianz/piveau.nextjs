@@ -5,8 +5,11 @@ import {
   GetParamsSchema,
   SearchParamsSchema,
 } from "./schemas/search";
+import { AssistantParamsSchema } from "./schemas/assistant";
 import { protectedProcedure, publicProcedure } from "./auth/procedures";
 import { BACKEND_URLS } from "@/lib/urls";
+import type { AssistantResponse, TraceStep } from "@/lib/assistant";
+import { TRPCError } from "@trpc/server";
 import {
   createDatasetDraft,
   deleteDataset,
@@ -48,6 +51,81 @@ export const appRouter = router({
 
     return await getDatasetCategories(getAxiosInstance(ctx));
   }),
+
+  assistant: {
+    chat: protectedProcedure
+      .input(AssistantParamsSchema)
+      .mutation(async ({ input }): Promise<AssistantResponse> => {
+        const backendUrl = BACKEND_URLS.ASSISTANT;
+
+        if (!backendUrl) {
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message: "The assistant backend is not configured.",
+          });
+        }
+
+        let upstream: Response;
+        try {
+          upstream = await fetch(backendUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user_input: input.user_input,
+              json_data: input.json_data,
+              session_id: input.session_id,
+            }),
+            cache: "no-store",
+            signal: AbortSignal.timeout(60_000),
+          });
+        } catch (error) {
+          const timedOut =
+            error instanceof Error &&
+            (error.name === "TimeoutError" || error.name === "AbortError");
+
+          throw new TRPCError({
+            code: "BAD_GATEWAY",
+            message: timedOut
+              ? "The assistant timed out. Please try again."
+              : "The assistant is currently unreachable.",
+          });
+        }
+
+        if (!upstream.ok) {
+          const payload = await upstream.json().catch(() => null);
+          const detail =
+            (payload as any)?.detail ||
+            upstream.statusText ||
+            `HTTP ${upstream.status}`;
+
+          throw new TRPCError({
+            code: "BAD_GATEWAY",
+            message: String(detail),
+          });
+        }
+
+        const payload = await upstream.json().catch(() => null);
+
+        if (!payload) {
+          throw new TRPCError({
+            code: "BAD_GATEWAY",
+            message: "The assistant returned an empty response.",
+          });
+        }
+
+        const trace = Array.isArray((payload as any)?.trace)
+          ? ((payload as any).trace as TraceStep[])
+          : [];
+
+        return {
+          response:
+            typeof payload === "object" && (payload as any)?.response
+              ? String((payload as any).response)
+              : String(payload),
+          trace,
+        };
+      }),
+  },
 
   dataset: {
     featured: publicProcedure.query(async (opts) => {

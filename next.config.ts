@@ -16,19 +16,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Proxy /api/assistant to the internal Agent API on the backend VM
-  async rewrites() {
-    return [
-      {
-        source: "/api/assistant",
-        destination: process.env.INTERNAL_AGENT_URL || "http://10.254.1.15:8000/",
-      },
-      {
-        source: "/api/assistant/:path*",
-        destination: `${process.env.INTERNAL_AGENT_URL || "http://10.254.1.15:8000/"}:path*`,
-      },
-    ];
-  },
 };
 
 export default nextConfig;
