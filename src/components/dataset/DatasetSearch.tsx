@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { schemaCatalog } from "@piveau/sdk-core/model";
+import { Dataset, schemaCatalog } from "@piveau/sdk-core/model";
 
 import { useLocale } from "@/hooks/useLocale";
 import { trpc } from "@/app/_trpc/client";
@@ -16,6 +16,8 @@ import SearchFacet from "@/components/facets/SearchFacet";
 import DatasetCard from "@/components/dataset/DatasetCard";
 import DatasetCardSkeleton from "@/components/dataset/DatasetCardSkeleton";
 import { buildDatasetFacets, extendReturnedFacets } from "@/lib/search";
+import { SearchResult } from "@piveau/sdk-core";
+import { isAIModel } from "@/lib/utils";
 
 interface Props {
   catalog?: StandardSchemaV1.InferOutput<typeof schemaCatalog>;
@@ -46,10 +48,29 @@ export default function DatasetSearch({ catalog }: Props) {
     },
   );
 
+  function filterResults(
+    result?: SearchResult<Dataset>["result"],
+  ): SearchResult<Dataset>["result"] | undefined {
+    if (!result) {
+      return undefined;
+    }
+    if (
+      !searchParams.get("tab") ||
+      searchParams.get("tab") === SearchTab.DATASETS
+    ) {
+      return {
+        ...result,
+        results: result.results.filter((dataset) => !isAIModel(dataset)),
+      };
+    }
+
+    return result;
+  }
+
   return (
     <BaseSearch
       isPending={search.isPending}
-      data={search.data}
+      data={filterResults(search.data)}
       facets={extendReturnedFacets(
         search.data?.facets || [],
         searchParams,

@@ -90,7 +90,7 @@ export async function searchDatasets(
 
     return res.data.result;
   } catch (error) {
-    console.error("Failed to fetch categories:", error);
+    console.error("Failed to fetch datasets:", error);
     handleAxiosErrorForTRPC(error);
   }
 }
