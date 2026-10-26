@@ -58,7 +58,7 @@ export default function DatasetDetailsHeader({
                 ? extractParserRepository(translateDict, data)
                 : undefined
             }
-            isAIModel={!data || isAIModel(data)}
+            isAIModel={data ? isAIModel(data) : isAiModel}
           />
 
           <ObjectDetailsExportButton id={data?.id} type={type} />

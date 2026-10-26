@@ -1,5 +1,5 @@
 import { Code } from "lucide-react";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import {
   CodeExampleType,
@@ -41,9 +41,17 @@ export default function ExampleCodePopover({
   isAIModel,
   customParser,
 }: Props) {
+  const defaultExampleType = isAIModel
+    ? ModelExampleType.LOAD_HF_MODEL
+    : CodeExampleType.LOAD_DATASET;
   const [exampleType, setExampleType] = React.useState<
     CodeExampleType | ModelExampleType
-  >(isAIModel ? ModelExampleType.LOAD_HF_MODEL : CodeExampleType.LOAD_DATASET);
+  >(defaultExampleType);
+
+  useEffect(() => {
+    setExampleType(defaultExampleType);
+  }, [defaultExampleType]);
+
   const exampleCode = useMemo(
     () => getCodeExample(exampleType, url),
     [url, exampleType],
@@ -70,7 +78,7 @@ export default function ExampleCodePopover({
         <div>
           <Label className="text-muted-foreground mb-1 ml-1">Parsers</Label>
           <Select
-            defaultValue={exampleType}
+            value={exampleType}
             onValueChange={(value) =>
               setExampleType(value as CodeExampleType | ModelExampleType)
             }
