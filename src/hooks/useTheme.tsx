@@ -50,6 +50,5 @@ export function getCleanUrl(url: string): string {
 
   let newUrl =
     url.split("?")[0] + (params.toString() ? "?" + params.toString() : "");
-  newUrl = newUrl.replace("//", "/");
   return newUrl;
 }
