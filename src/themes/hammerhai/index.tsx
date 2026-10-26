@@ -28,13 +28,7 @@ export const HammerTheme: ProjectTheme = {
     headElements: headElements,
   },
   header: {
-    navItems: [
-      {
-        id: "hammerhai",
-        href: "https://www.hammerhai.eu/",
-        external: true,
-      },
-    ],
+    navItems: [],
   },
   homepage: {
     showCategorySlider: false,
