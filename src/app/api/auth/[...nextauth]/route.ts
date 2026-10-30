@@ -1,22 +1,8 @@
-import NextAuth, { AuthOptions, Session } from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import Keycloak from "next-auth/providers/keycloak";
 
-export interface ExtendedSession extends Session {
-  accessToken: string;
-  error?: "RefreshAccessTokenError";
-}
-
-interface ExtendedToken extends JWT {
-  accessToken?: string;
-  refreshToken?: string;
-  expiresAt?: number;
-  error?: "RefreshAccessTokenError";
-}
-
-async function refreshAccessToken(
-  token: ExtendedToken,
-): Promise<ExtendedToken> {
+async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     const issuer = (process.env.AUTH_KEYCLOAK_ISSUER || "").replace(/\/$/, "");
 
@@ -59,30 +45,26 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async jwt({ token, account }) {
-      const extended = token as ExtendedToken;
-
       // Initial sign in captures the tokens from Keycloak
       if (account) {
-        extended.accessToken = account.access_token;
-        extended.refreshToken = account.refresh_token;
-        extended.expiresAt = account.expires_at;
-        extended.error = undefined;
-        return extended;
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        token.expiresAt = account.expires_at;
+        token.error = undefined;
+        return token;
       }
 
       // Access token is still valid (5s leeway)
-      if (extended.expiresAt && Date.now() < extended.expiresAt * 1000 - 5000) {
-        return extended;
+      if (token.expiresAt && Date.now() < token.expiresAt * 1000 - 5000) {
+        return token;
       }
 
-      return refreshAccessToken(extended);
+      return refreshAccessToken(token);
     },
     async session({ session, token }) {
-      const extendedSession = session as ExtendedSession;
-      const extendedToken = token as ExtendedToken;
-      extendedSession.accessToken = extendedToken.accessToken as string;
-      extendedSession.error = extendedToken.error;
-      return extendedSession;
+      session.accessToken = token.accessToken ?? "";
+      session.error = token.error;
+      return session;
     },
   },
 };

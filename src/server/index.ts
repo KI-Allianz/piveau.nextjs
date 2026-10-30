@@ -22,7 +22,7 @@ import {
 } from "@/lib/repo/dataset/api";
 import { deleteAllDatasetFiles } from "@/lib/repo/uploader/server";
 import axios from "axios";
-import { ExtendedSession } from "@/app/api/auth/[...nextauth]/route";
+import type { Session } from "next-auth";
 import { getFeaturedModels, getModel } from "@/lib/repo/model/api";
 import { getCatalogue, searchCatalogues } from "@/lib/repo/catalogue/api";
 
@@ -30,7 +30,7 @@ export function getAxiosInstance(
   ctx: {
     isAuthed: boolean;
     isAuthEnabled: boolean;
-    session: ExtendedSession | null;
+    session: Session | null;
   },
   baseUrl: string = BACKEND_URLS.SEARCH,
 ) {

@@ -88,6 +88,18 @@ pnpm dev
 
 Visit http://localhost:3000 to view the application.
 
+### Using your access token against the piveau API
+
+The frontend wraps the Keycloak access token in the NextAuth session and forwards it to the
+piveau backend as a `Bearer` token. To call the backend API directly, open the account menu in
+the header and select **Copy access token**, then use it in a request:
+
+```bash
+curl -H "Authorization: Bearer $TOKEN" "${SEARCH_HUB_URL}search?q=test"
+```
+
+The copy action refreshes the session first, so the token is renewed automatically if it expired.
+
 ## 🐳 Docker Deployment
 
 For frontend-only deployment (existing behavior), use:

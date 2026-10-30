@@ -1,11 +1,9 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { getServerSession } from "next-auth/next";
+import type { Session } from "next-auth";
 
-import {
-  authOptions,
-  ExtendedSession,
-} from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { TRPCContext } from "./auth/types";
 
 export async function createTRPCContext(opts: { req: Request }) {
@@ -28,7 +26,7 @@ export async function createTRPCContext(opts: { req: Request }) {
 
   const session = (await getServerSession(
     authOptions,
-  )) as ExtendedSession | null;
+  )) as Session | null;
 
   return {
     session, // might be null if not logged in

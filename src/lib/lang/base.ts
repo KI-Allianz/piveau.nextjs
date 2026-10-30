@@ -39,6 +39,9 @@ export type translations = {
     back: string;
     signIn: string;
     signOut: string;
+    copyToken: string;
+    tokenCopied: string;
+    tokenCopyError: string;
   };
   model: {
     featured: string;

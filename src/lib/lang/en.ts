@@ -44,6 +44,9 @@ export const en: translations = {
     back: "Back",
     signIn: "Sign In",
     signOut: "Sign Out",
+    copyToken: "Copy access token",
+    tokenCopied: "Token copied",
+    tokenCopyError: "Could not copy token",
   },
   model: {
     featured: "Featured Models",

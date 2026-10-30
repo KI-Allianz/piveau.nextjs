@@ -45,6 +45,9 @@ export const de: translations = {
     back: "Zurück",
     signIn: "Anmelden",
     signOut: "Abmelden",
+    copyToken: "Access-Token kopieren",
+    tokenCopied: "Token kopiert",
+    tokenCopyError: "Token konnte nicht kopiert werden",
   },
   model: {
     featured: "Empfohlene Modelle",

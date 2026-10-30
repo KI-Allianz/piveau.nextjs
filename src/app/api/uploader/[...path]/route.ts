@@ -1,10 +1,8 @@
 import { NextRequest } from "next/server";
 import { getServerSession } from "next-auth/next";
+import type { Session } from "next-auth";
 
-import {
-  authOptions,
-  ExtendedSession,
-} from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { BACKEND_URLS } from "@/lib/urls";
 
 export const runtime = "nodejs";
@@ -21,7 +19,7 @@ function errorResponse(code: string, message: string, status: number) {
 async function proxy(request: NextRequest, context: RouteContext) {
   const session = (await getServerSession(
     authOptions,
-  )) as ExtendedSession | null;
+  )) as Session | null;
 
   if (!session?.accessToken) {
     return errorResponse(
