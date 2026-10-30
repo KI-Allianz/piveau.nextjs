@@ -30,7 +30,13 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     };
   } catch (error) {
     console.error("Failed to refresh Keycloak access token:", error);
-    return { ...token, error: "RefreshAccessTokenError" };
+    // Drop the dead token so no caller forwards it to the backend. Requests
+    // then fail with 401 and the existing sign-in redirects take over.
+    return {
+      ...token,
+      accessToken: undefined,
+      error: "RefreshAccessTokenError",
+    };
   }
 }
 
@@ -51,6 +57,12 @@ export const authOptions: AuthOptions = {
         token.refreshToken = account.refresh_token;
         token.expiresAt = account.expires_at;
         token.error = undefined;
+        return token;
+      }
+
+      // Never retry a session whose refresh already failed. Without this every
+      // session read would hit Keycloak again with an unusable refresh token.
+      if (token.error) {
         return token;
       }
 

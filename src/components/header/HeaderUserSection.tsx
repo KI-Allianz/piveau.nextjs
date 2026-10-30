@@ -51,7 +51,15 @@ export default function HeaderUserSection() {
     try {
       const freshSession = await getSession();
 
-      if (!freshSession?.accessToken || freshSession.error) {
+      // A failed refresh means the Keycloak session is gone. Sign out silently
+      // instead of reporting a copy failure; auth-only pages will redirect to
+      // the login through their own 401 handling.
+      if (freshSession?.error === "RefreshAccessTokenError") {
+        await signOut({ redirect: false });
+        return;
+      }
+
+      if (!freshSession?.accessToken) {
         showCopyState("error");
         return;
       }

@@ -98,7 +98,8 @@ the header and select **Copy access token**, then use it in a request:
 curl -H "Authorization: Bearer $TOKEN" "${SEARCH_HUB_URL}search?q=test"
 ```
 
-The copy action refreshes the session first, so the token is renewed automatically if it expired.
+The copy action refreshes the session first, so the token is renewed automatically if it expired. If
+the Keycloak session is no longer valid, you are signed out and the menu switches back to **Sign In**.
 
 ## 🐳 Docker Deployment
 

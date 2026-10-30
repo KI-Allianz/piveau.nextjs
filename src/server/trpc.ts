@@ -24,14 +24,18 @@ export async function createTRPCContext(opts: { req: Request }) {
     };
   }
 
-  const session = (await getServerSession(
-    authOptions,
-  )) as Session | null;
+  const session = (await getServerSession(authOptions)) as Session | null;
+
+  // A session whose Keycloak refresh already failed must behave like a
+  // logged-out user: no dead token is forwarded and protected procedures
+  // answer 401 so the client can redirect to the login.
+  const isExpired = session?.error === "RefreshAccessTokenError";
+  const activeSession = isExpired ? null : session;
 
   return {
-    session, // might be null if not logged in
+    session: activeSession, // might be null if not logged in
     isAuthed:
-      !!session?.user || process.env.NEXT_PUBLIC_AUTH_DISABLED === "true",
+      !!activeSession?.user || process.env.NEXT_PUBLIC_AUTH_DISABLED === "true",
     isAuthEnabled: process.env.NEXT_PUBLIC_AUTH_DISABLED !== "true",
   };
 }
