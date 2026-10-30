@@ -55,6 +55,8 @@ AUTH_SECRET=<your secret>  # Added by `npx auth secret`. Read more: https://cli.
 AUTH_KEYCLOAK_ID=<keycloak client id>
 AUTH_KEYCLOAK_SECRET=<keycloak secret>
 AUTH_KEYCLOAK_ISSUER=<keycloak issuer url>
+# Keycloak client that owns the catalogue resources (e.g. piveau-hub-repo)
+AUTH_KEYCLOAK_RPT_AUDIENCE=<keycloak resource server client id>
 AUTH_DISABLED="false" # Set to true to disable authentication, AUTH_SECRET needs to still have a value.
 
 NEXTAUTH_URL=${DOMAIN}

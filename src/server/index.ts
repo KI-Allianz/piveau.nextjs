@@ -24,7 +24,12 @@ import { deleteAllDatasetFiles } from "@/lib/repo/uploader/server";
 import axios from "axios";
 import type { Session } from "next-auth";
 import { getFeaturedModels, getModel } from "@/lib/repo/model/api";
-import { getCatalogue, searchCatalogues } from "@/lib/repo/catalogue/api";
+import {
+  getCatalogue,
+  getCatalogueIdentifiers,
+  searchCatalogues,
+} from "@/lib/repo/catalogue/api";
+import { getKeycloakPermissions } from "@/lib/auth/permissions";
 
 export function getAxiosInstance(
   ctx: {
@@ -218,6 +223,32 @@ export const appRouter = router({
   },
 
   catalogue: {
+    mine: protectedProcedure.query(async ({ ctx }) => {
+      const accessToken = ctx.session?.accessToken;
+      if (!accessToken) {
+        return [];
+      }
+
+      const permissions = await getKeycloakPermissions(accessToken);
+      const catalogueIds = new Set(
+        await getCatalogueIdentifiers(getAxiosInstance(ctx, BACKEND_URLS.REPO)),
+      );
+
+      /**
+       * Permissions returned by Keycloak are keyed by resource name, which can also
+       * be a dataset id when datasets are synced to Keycloak. Intersecting them with
+       * the catalogue identifiers keeps only actual catalogues.
+       */
+      return permissions.flatMap((permission) => {
+        const id = permission.rsname;
+        if (!id || !catalogueIds.has(id)) {
+          return [];
+        }
+
+        return [{ id, scopes: permission.scopes ?? [] }];
+      });
+    }),
+
     search: publicProcedure.input(SearchParamsSchema).query(async (opts) => {
       const { input, ctx } = opts;
 

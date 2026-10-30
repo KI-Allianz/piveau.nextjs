@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import axios, { AxiosInstance } from "axios";
 import z from "zod";
 import { Catalog, schemaCatalog } from "@piveau/sdk-core/model";
 import { StandardSchemaV1 } from "@standard-schema/spec";
@@ -61,6 +61,27 @@ export async function searchCatalogues(
     return res.data.result;
   } catch (error) {
     console.error("Failed to search categories:", error);
+    handleAxiosErrorForTRPC(error);
+  }
+}
+
+/**
+ * Returns the identifiers of all catalogues known to the repo.
+ */
+export async function getCatalogueIdentifiers(
+  axiosInstance: AxiosInstance = axios.create(),
+): Promise<string[]> {
+  try {
+    const res = await axiosInstance.get<string[]>(
+      `${BACKEND_URLS.REPO}catalogues`,
+      {
+        params: { valueType: "identifiers", limit: 5000 },
+      },
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch catalogue identifiers:", error);
     handleAxiosErrorForTRPC(error);
   }
 }
