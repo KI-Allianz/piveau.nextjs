@@ -41,7 +41,7 @@ export function DraftCard({
         onClick={onSelect}
         aria-pressed={selected}
         className={cn(
-          "group flex flex-1 cursor-pointer items-start gap-4 rounded-xl border bg-card p-4 text-left transition-all duration-200",
+          "group flex min-w-0 flex-1 cursor-pointer items-start gap-4 rounded-xl border bg-card p-4 text-left transition-all duration-200",
           "hover:border-primary hover:bg-muted/40",
           "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
           selected && "border-primary bg-muted/40 ring-2 ring-primary/40",
@@ -57,8 +57,10 @@ export function DraftCard({
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <span className="truncate font-medium">{title}</span>
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="min-w-0 flex-1 truncate font-medium" title={title}>
+              {title}
+            </span>
             {/* Draft badge hidden for now
             <Badge variant="secondary" className="shrink-0">
               Draft
@@ -68,10 +70,13 @@ export function DraftCard({
           {description && (
             <HtmlSnippet
               html={description}
-              className="line-clamp-2 text-sm text-muted-foreground [&_*]:m-0 [&_*]:inline"
+              className="line-clamp-2 break-words text-sm text-muted-foreground [&_*]:m-0 [&_*]:inline"
             />
           )}
-          <span className="truncate text-xs text-muted-foreground/70">
+          <span
+            className="w-full min-w-0 truncate text-xs text-muted-foreground/70"
+            title={draft.id}
+          >
             {draft.id}
           </span>
         </div>
@@ -90,7 +95,7 @@ export function DraftCard({
         aria-label="Delete dataset"
         title="Delete dataset"
         onClick={onDelete}
-        className="self-center text-muted-foreground hover:text-destructive"
+        className="self-center shrink-0 text-muted-foreground hover:text-destructive"
       >
         <Trash2 className="size-4" />
       </Button>

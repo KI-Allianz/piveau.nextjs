@@ -214,7 +214,7 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete dataset</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="break-words">
               Are you sure you want to delete "{pendingDeleteTitle}"? This
               also removes its files and cannot be undone.
             </DialogDescription>
