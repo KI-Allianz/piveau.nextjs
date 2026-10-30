@@ -7,7 +7,7 @@ export function buildDatasetFacets(
   params: URLSearchParams,
   catalog: Catalog | undefined,
 ) {
-  const currentTab = params.get("tab") as SearchTab;
+  const currentTab = (params.get("tab") as SearchTab) || SearchTab.DATASETS;
   const facetMap = rebuildFromSearchParams(params);
 
   if (currentTab === SearchTab.MODELS) {
@@ -24,11 +24,24 @@ export function buildDatasetFacets(
       ];
     }
   }
+
   if (catalog) {
     facetMap["catalog"] = [catalog.id];
   }
 
   return facetMap;
+}
+
+export function buildDatasetExcludeFacets(params: URLSearchParams) {
+  const currentTab = (params.get("tab") as SearchTab) || SearchTab.DATASETS;
+
+  if (currentTab === SearchTab.DATASETS) {
+    return {
+      keywords: aiModelKeywords,
+    };
+  }
+
+  return undefined;
 }
 
 export function extendReturnedFacets(

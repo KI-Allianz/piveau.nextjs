@@ -15,7 +15,11 @@ import SortButton from "@/components/facets/SortButton";
 import SearchFacet from "@/components/facets/SearchFacet";
 import DatasetCard from "@/components/dataset/DatasetCard";
 import DatasetCardSkeleton from "@/components/dataset/DatasetCardSkeleton";
-import { buildDatasetFacets, extendReturnedFacets } from "@/lib/search";
+import {
+  buildDatasetExcludeFacets,
+  buildDatasetFacets,
+  extendReturnedFacets,
+} from "@/lib/search";
 
 interface Props {
   catalog?: StandardSchemaV1.InferOutput<typeof schemaCatalog>;
@@ -39,6 +43,7 @@ export default function DatasetSearch({ catalog }: Props) {
         searchParams.get("sort") ||
         "relevance+desc, modified+desc, title.en+asc",
       facets: buildDatasetFacets(searchParams, catalog),
+      excludeFacets: buildDatasetExcludeFacets(searchParams),
     },
     {
       staleTime: 1000 * 60 * 5, // 5 min fresh cache

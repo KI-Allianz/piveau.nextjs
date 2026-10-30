@@ -2,7 +2,7 @@ import { useSearchParams } from "next/navigation";
 import { ReactNode } from "react";
 import { BadgeQuestionMark, LogIn } from "lucide-react";
 import { Catalog } from "@piveau/sdk-core/model";
-import { SearchResult } from "@piveau/sdk-core";
+import { SearchResult } from "@piveau/sdk-core/hubSearch";
 
 import Facets, { Facet } from "@/components/facets/Facets";
 import SearchPagination from "@/components/SearchPagination";

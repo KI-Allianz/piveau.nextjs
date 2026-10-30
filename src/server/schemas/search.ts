@@ -46,6 +46,9 @@ export const SearchParamsWithFacetsSchema = SearchParamsBaseSchema.extend({
   facets: z
     .record(z.string(), z.union([z.string(), z.array(z.string())]))
     .optional(),
+  excludeFacets: z
+    .record(z.string(), z.union([z.string(), z.array(z.string())]))
+    .optional(),
 });
 
 export const SearchParamsSchema = SearchParamsWithFacetsSchema.extend({

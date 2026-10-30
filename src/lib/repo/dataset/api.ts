@@ -2,7 +2,7 @@ import {
   getResourceById,
   searchResource,
   SearchResult,
-} from "@piveau/sdk-core";
+} from "@piveau/sdk-core/hubSearch";
 import { Dataset } from "@/lib/utils";
 import { parseIntoDataset, parseRawDCAT } from "@/lib/repo/dataset/parse";
 import { DraftSummary, parseDatasetListJsonLd } from "@/lib/editor/parseJsonLD";

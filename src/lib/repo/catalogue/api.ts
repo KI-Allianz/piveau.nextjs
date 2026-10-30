@@ -6,7 +6,7 @@ import {
   getResourceById,
   searchResource,
   SearchResult,
-} from "@piveau/sdk-core";
+} from "@piveau/sdk-core/hubSearch";
 
 import { BACKEND_URLS } from "@/lib/urls";
 import { Catalogue } from "@/lib/utils";
