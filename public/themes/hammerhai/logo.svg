@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<svg
+    width="1200"
+    height="1200"
+    xml:space="preserve"
+    overflow="hidden"
+    version="1.1"
+    id="HammerHAI-logo"
+    sodipodi:docname="DataLLab_textI.svg"
+    inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:svg="http://www.w3.org/2000/svg"
+><defs id="defs1" /><sodipodi:namedview
+        id="namedview1"
+        pagecolor="#000000"
+        bordercolor="#666666"
+        borderopacity="1.0"
+        inkscape:showpageshadow="2"
+        inkscape:pageopacity="0.0"
+        inkscape:pagecheckerboard="0"
+        inkscape:deskcolor="#d1d1d1"
+        inkscape:zoom="0.70710678"
+        inkscape:cx="759.43268"
+        inkscape:cy="583.36309"
+        inkscape:window-width="1920"
+        inkscape:window-height="1166"
+        inkscape:window-x="-11"
+        inkscape:window-y="-11"
+        inkscape:window-maximized="1"
+        inkscape:current-layer="HammerHAI-logo"
+        showgrid="false"
+    />
+   <circle
+        id="cropcircle"
+        cx="600"
+        cy="600"
+        r="600"
+        style="fill:#ffffff;stroke-width:61.8914;stroke-dasharray:none"
+    />
+   <text
+        font-family="Exo 2,Exo 2_MSFontService,sans-serif"
+        font-weight="700"
+        font-size="202px"
+        id="HammerHAI-9"
+        style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:200px;font-family:'Exo 2';-inkscape-font-specification:'Exo 2 Semi-Bold';letter-spacing:-10px;fill:#4196b1"
+        x="213.00067"
+        y="933.8761"
+    >Data Lab   </text>
+   <path
+        d="M 115.5835,681.68808 C 285.3916,456.11812 589.6738,317.30217 919.0306,315.15193"
+        stroke="#3884b0"
+        stroke-width="40"
+        fill="none"
+        id="shark-back"
+        style="fill:none"
+    />
+   <path
+        d="M 289.7384,622.54809 C 531.09035,757.76612 879.32372,679.31847 978.3913,506.03853"
+        stroke="#3d96ab"
+        stroke-width="30"
+        fill="none"
+        id="shark-belly"
+    />
+   <path
+        d="m 862.5133,121.97772 c 177.1159,170.44958 236.3001,399.59865 158.0016,611.69878"
+        stroke="#184d72"
+        stroke-width="45"
+        fill="none"
+        id="shark-hammer"
+    />
+<text
+        xml:space="preserve"
+        style="font-size:40px;line-height:1.25;font-family:Random;-inkscape-font-specification:Random;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#1a4c70"
+        id="text1"
+        transform="translate(4,14)"
+    ><textPath xlink:href="#shark-back" startOffset="50%" id="textPath1"><tspan
+                id="tspan1"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Exo 2';-inkscape-font-specification:'Exo 2, ';fill:#1a4c70"
+            >01010101010100101001010101010110101010101</tspan></textPath></text></svg>
