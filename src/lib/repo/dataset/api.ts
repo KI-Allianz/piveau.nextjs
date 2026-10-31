@@ -3,7 +3,7 @@ import {
   searchResource,
   SearchResult,
 } from "@piveau/sdk-core/hubSearch";
-import { Dataset } from "@/lib/utils";
+import { aiModelKeywords, Dataset } from "@/lib/utils";
 import { parseIntoDataset, parseRawDCAT } from "@/lib/repo/dataset/parse";
 import { DraftSummary, parseDatasetListJsonLd } from "@/lib/editor/parseJsonLD";
 import { normalizeJsonLdDocument } from "@/lib/editor/normalizeJsonLD";
@@ -126,6 +126,9 @@ export async function getFeaturedDatasets(axiosInstance?: AxiosInstance) {
   const res = await searchDatasets(
     {
       limit: 10,
+      excludeFacets: {
+        keywords: aiModelKeywords,
+      },
     },
     axiosInstance,
   );
