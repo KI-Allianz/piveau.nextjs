@@ -43,18 +43,19 @@ export const createMultilingualSchema = (
     {} as Record<string, z.ZodType>,
   );
 
-  let schema = baseMultilingualSchema;
-
   if (isRequired) {
-    schema = baseMultilingualSchema.extend(base);
-  } else {
-    // Always create a fresh schema instance: the metadata registry is keyed by
-    // schema object identity, so sharing `baseMultilingualSchema` would make
-    // all non-required multilingual fields collide.
-    schema = baseMultilingualSchema.extend({});
+    return baseMultilingualSchema
+      .extend(base)
+      .register(editorMetadataRegistry, meta);
   }
 
-  return schema.register(editorMetadataRegistry, meta);
+  // Always create a fresh schema instance: the metadata registry is keyed by
+  // schema object identity, so sharing `baseMultilingualSchema` would make
+  // all non-required multilingual fields collide.
+  return baseMultilingualSchema
+    .extend({})
+    .optional()
+    .register(editorMetadataRegistry, meta);
 };
 
 /**
