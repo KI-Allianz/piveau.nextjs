@@ -2,7 +2,8 @@
 
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo } from "react";
+import { AlertCircle } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import {
   buildDatasetFormDefaults,
@@ -11,6 +12,7 @@ import {
   defaultOpenSectionKeys,
   formSections,
 } from "@/lib/editor/schema";
+import { collectFormErrors } from "@/lib/editor/formErrors";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
@@ -37,6 +39,12 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
     resolver: zodResolver(datasetFormSchema),
     defaultValues,
   });
+  const errorItems = collectFormErrors(form.formState.errors);
+
+  const [openSections, setOpenSections] = useState<string[]>([
+    ...defaultOpenSectionKeys,
+  ]);
+
   const saveDraft = trpc.dataset.draft.create.useMutation();
   const utils = trpc.useUtils();
 
@@ -58,6 +66,20 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
     );
   }
 
+  function revealSection(sectionKey: string | null) {
+    if (!sectionKey) return;
+
+    setOpenSections((sections) =>
+      sections.includes(sectionKey) ? sections : [...sections, sectionKey],
+    );
+
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`editor-section-${sectionKey}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
   return (
     <EditorContext.Provider value={{ catalogueId }}>
       <FormProvider {...form}>
@@ -75,7 +97,8 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
             >
               <Accordion
                 type="multiple"
-                defaultValue={defaultOpenSectionKeys}
+                value={openSections}
+                onValueChange={setOpenSections}
               >
                 {Object.keys(formSections).map((sectionKey) => (
                   <DynamicSectionElement
@@ -84,6 +107,57 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
                   />
                 ))}
               </Accordion>
+
+              {errorItems.length > 0 && (
+                <div
+                  role="alert"
+                  className="rounded-xl border border-destructive/40 bg-destructive/5 p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
+                    <div className="flex-1 space-y-2">
+                      <p className="text-sm font-medium text-destructive">
+                        {errorItems.length === 1
+                          ? "1 validation issue must be fixed before saving"
+                          : `${errorItems.length} validation issues must be fixed before saving`}
+                      </p>
+                      <ul className="space-y-1 text-sm">
+                        {errorItems.map((item) => {
+                          const content = (
+                            <>
+                              <span className="font-medium text-foreground">
+                                {item.sectionTitle} · {item.label}
+                              </span>
+                              <span className="text-muted-foreground">
+                                {" "}
+                                — {item.message}
+                              </span>
+                            </>
+                          );
+
+                          return (
+                            <li key={`${item.path}:${item.message}`}>
+                              {item.sectionKey ? (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    revealSection(item.sectionKey)
+                                  }
+                                  className="w-full rounded-sm text-left hover:underline focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+                                >
+                                  {content}
+                                </button>
+                              ) : (
+                                <span>{content}</span>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="flex justify-end gap-4">
                 <Button
