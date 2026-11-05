@@ -33,7 +33,11 @@ export function DynamicSectionElement({
   };
 
   return (
-    <AccordionItem value={sectionKey}>
+    <AccordionItem
+      value={sectionKey}
+      id={`editor-section-${sectionKey}`}
+      className="scroll-mt-24"
+    >
       <AccordionTrigger
         onClick={() => {
           validateSection();
