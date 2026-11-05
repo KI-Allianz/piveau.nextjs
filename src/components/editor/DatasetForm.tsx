@@ -2,6 +2,8 @@
 
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo } from "react";
+
 import {
   buildDatasetFormDefaults,
   datasetFormSchema,
@@ -11,11 +13,11 @@ import {
 } from "@/lib/editor/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import { DynamicSectionElement } from "./DynamicSectionElement";
 import { EditorContext } from "./EditorContext";
 import { Accordion } from "../ui/accordion";
 import { generateDatasetJsonLd } from "@/lib/editor/buildJsonLD";
-import { useMemo } from "react";
 import { trpc } from "@/app/_trpc/client";
 
 interface DatasetFormProps {
@@ -24,6 +26,8 @@ interface DatasetFormProps {
 }
 
 export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
+  const isEditing = currentDraft !== null;
+
   const defaultValues = useMemo(
     () => buildDatasetFormDefaults(currentDraft),
     [currentDraft],
@@ -33,17 +37,25 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
     resolver: zodResolver(datasetFormSchema),
     defaultValues,
   });
-  const createDraft = trpc.dataset.draft.create.useMutation();
+  const saveDraft = trpc.dataset.draft.create.useMutation();
+  const utils = trpc.useUtils();
 
   function onSubmit(data: DatasetFormValues) {
     const jsonLd = generateDatasetJsonLd(data);
     console.log("Draft Payload:", data);
     console.log("JSON-LD Output:", jsonLd);
-    createDraft.mutate({
-      id: data.id,
-      catalogueId: catalogueId,
-      dataset: jsonLd,
-    });
+    saveDraft.mutate(
+      {
+        id: data.id,
+        catalogueId: catalogueId,
+        dataset: jsonLd,
+      },
+      {
+        onSuccess: () => {
+          void utils.dataset.draft.getAll.invalidate({ id: catalogueId });
+        },
+      },
+    );
   }
 
   return (
@@ -51,7 +63,9 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
       <FormProvider {...form}>
         <Card className="max-w-3xl mx-auto my-8">
           <CardHeader>
-            <CardTitle>Create Dataset Draft</CardTitle>
+            <CardTitle>
+              {isEditing ? "Edit Dataset Draft" : "Create Dataset Draft"}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form
@@ -75,11 +89,15 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
                 <Button
                   type="button"
                   variant="outline"
+                  disabled={saveDraft.isPending}
                   onClick={() => form.reset()}
                 >
                   Reset
                 </Button>
-                <Button type="submit">Create Draft</Button>
+                <Button type="submit" disabled={saveDraft.isPending}>
+                  {saveDraft.isPending && <Spinner />}
+                  {isEditing ? "Save Draft" : "Create Draft"}
+                </Button>
               </div>
             </form>
           </CardContent>
