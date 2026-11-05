@@ -12,6 +12,7 @@ import Provider from "../_trpc/Provider";
 import { getTheme } from "@/themes";
 import { headers } from "next/headers";
 import { ThemeProvider } from "@/hooks/useTheme";
+import { Toaster } from "@/components/ui/sonner";
 
 export default async function RootLayout({
   children,
@@ -47,6 +48,7 @@ export default async function RootLayout({
                   </LicenseProvider>
                 </LanguageProvider>
               </div>
+              <Toaster position="top-right" richColors closeButton />
             </NextThemesProvider>
           </ThemeProvider>
         </AuthProviders>

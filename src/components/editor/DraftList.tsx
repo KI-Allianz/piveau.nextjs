@@ -7,6 +7,7 @@ import { DraftSummary, parseDatasetJsonLd } from "@/lib/editor/parseJsonLD";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AlertCircle, Inbox, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { DraftCard } from "./DraftCard";
 import DraftCardSkeleton from "./DraftCardSkeleton";
@@ -122,6 +123,10 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
         catalogueId,
       });
 
+      toast.success("Draft deleted", {
+        description: pendingDeleteTitle,
+      });
+
       if (draftId === pendingDelete.id) {
         setDraftId(null);
         setCurrentDraft(null);
@@ -129,7 +134,11 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
 
       setPendingDelete(null);
       await getDrafts.refetch();
-    } catch {
+    } catch (error) {
+      toast.error("Could not delete draft", {
+        description:
+          error instanceof Error ? error.message : "Please try again.",
+      });
       // Error is surfaced inside the dialog; keep it open for a retry.
     }
   };

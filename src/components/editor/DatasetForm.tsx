@@ -4,6 +4,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import {
   buildDatasetFormDefaults,
@@ -60,7 +61,15 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
       },
       {
         onSuccess: () => {
+          toast.success(isEditing ? "Draft saved" : "Draft created", {
+            description: "Your changes are stored as a draft.",
+          });
           void utils.dataset.draft.getAll.invalidate({ id: catalogueId });
+        },
+        onError: (error) => {
+          toast.error("Could not save draft", {
+            description: error.message,
+          });
         },
       },
     );

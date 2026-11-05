@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { UploadCloud } from "lucide-react";
+import { toast } from "sonner";
 
 import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
@@ -113,21 +114,32 @@ export function FileUpload({ namePrefix }: FileUploadProps) {
       // sees the new download URL.
       try {
         await saveDraft(datasetId);
+        toast.success("File uploaded", {
+          description: file.name,
+        });
       } catch (saveError) {
-        setError(
+        const message =
           saveError instanceof Error
             ? `File uploaded, but saving the draft failed: ${saveError.message}`
-            : "File uploaded, but saving the draft failed.",
-        );
+            : "File uploaded, but saving the draft failed.";
+        setError(message);
+        toast.error("File uploaded, but the draft could not be saved", {
+          description:
+            saveError instanceof Error ? saveError.message : undefined,
+        });
       }
     } catch (err) {
-      if (err instanceof UploaderApiError) {
-        setError(`${err.message} (${err.code})`);
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Upload failed");
-      }
+      const message =
+        err instanceof UploaderApiError
+          ? `${err.message} (${err.code})`
+          : err instanceof Error
+            ? err.message
+            : "Upload failed";
+
+      setError(message);
+      toast.error("Upload failed", {
+        description: message,
+      });
     } finally {
       setIsUploading(false);
       if (inputRef.current) inputRef.current.value = "";
