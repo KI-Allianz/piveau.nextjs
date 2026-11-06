@@ -2,7 +2,7 @@
 
 import { format } from "date-fns";
 
-import { Dataset, UrlCollection } from "@/lib/utils";
+import { Dataset, formatByteSize, UrlCollection } from "@/lib/utils";
 import { useLocale } from "@/hooks/useLocale";
 
 import {
@@ -23,7 +23,8 @@ interface Props {
 }
 
 export default function DistributionCard({ distribution }: Props) {
-  const { translateDict, dateLocale } = useLocale();
+  const { translateDict, dateLocale, locale } = useLocale();
+  const formattedByteSize = formatByteSize(distribution.byte_size, locale);
 
   // console.log(distribution)
 
@@ -59,9 +60,21 @@ export default function DistributionCard({ distribution }: Props) {
                 locale: dateLocale,
               })}
           </span>
-          <span className="text-end text-muted-foreground text-nowrap">
-            {distribution.format?.label}
-          </span>
+          <div className="flex items-center justify-end gap-2 text-end text-muted-foreground text-nowrap">
+            {distribution.format?.label && (
+              <span>{distribution.format.label}</span>
+            )}
+            {distribution.format?.label && formattedByteSize && (
+              <span aria-hidden="true">·</span>
+            )}
+            {formattedByteSize && (
+              <span
+                title={`${distribution.byte_size?.toLocaleString(locale)} bytes`}
+              >
+                {formattedByteSize}
+              </span>
+            )}
+          </div>
           <DistributionDownloadButton
             access_urls={distribution.access_url}
             download_urls={distribution.download_url}
