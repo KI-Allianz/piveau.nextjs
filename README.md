@@ -46,6 +46,10 @@ Create a .env file with the following environment variables or copy from .env.ex
 DOMAIN="http://localhost:3000"
 NEXT_PUBLIC_UPLOADED_FILES_DOMAIN="https://data.hammerhai.eu/"
 
+# Deployment identifier shown in the footer (e.g. blue, green). Read at runtime,
+# so the same image can be deployed to either slot without rebuilding.
+DEPLOYMENT=blue
+
 SEARCH_HUB_URL="https://DOMAIN_OF_PIVEAU_BACKEND/hub/search/"
 REPO_HUB_URL="https://DOMAIN_OF_PIVEAU_BACKEND/hub/repo/"
 UPLOAD_API_URL="https://DOMAIN_OF_UPLOADER_BACKEND"
