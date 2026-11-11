@@ -2,7 +2,7 @@
 
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, EyeOff, Globe } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -47,7 +47,9 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
   ]);
 
   const saveDraft = trpc.dataset.draft.create.useMutation();
+  const setPublicationStatus = trpc.dataset.setPublicationStatus.useMutation();
   const utils = trpc.useUtils();
+  const datasetId = form.watch("id");
 
   function onSubmit(data: DatasetFormValues) {
     const jsonLd = generateDatasetJsonLd(data);
@@ -68,6 +70,62 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
         },
         onError: (error) => {
           toast.error("Could not save draft", {
+            description: error.message,
+          });
+        },
+      },
+    );
+  }
+
+  function onPublish(data: DatasetFormValues) {
+    const jsonLd = generateDatasetJsonLd(data);
+
+    setPublicationStatus.mutate(
+      {
+        id: data.id,
+        catalogueId,
+        publicationStatus: "published",
+        dataset: jsonLd,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Dataset published", {
+            description: "The dataset is now public.",
+          });
+          void utils.dataset.draft.getAll.invalidate({ id: catalogueId });
+        },
+        onError: (error) => {
+          toast.error("Could not publish dataset", {
+            description: error.message,
+          });
+        },
+      },
+    );
+  }
+
+  function handleUnpublish() {
+    if (!datasetId) {
+      toast.error("Could not unpublish dataset", {
+        description: "The dataset needs an ID.",
+      });
+      return;
+    }
+
+    setPublicationStatus.mutate(
+      {
+        id: datasetId,
+        catalogueId,
+        publicationStatus: "draft",
+      },
+      {
+        onSuccess: () => {
+          toast.success("Dataset unpublished", {
+            description: "The dataset is now a restricted draft.",
+          });
+          void utils.dataset.draft.getAll.invalidate({ id: catalogueId });
+        },
+        onError: (error) => {
+          toast.error("Could not unpublish dataset", {
             description: error.message,
           });
         },
@@ -168,16 +226,53 @@ export function DatasetForm({ currentDraft, catalogueId }: DatasetFormProps) {
                 </div>
               )}
 
-              <div className="flex justify-end gap-4">
+              <div className="flex flex-wrap justify-end gap-4">
                 <Button
                   type="button"
                   variant="outline"
-                  disabled={saveDraft.isPending}
+                  disabled={
+                    saveDraft.isPending || setPublicationStatus.isPending
+                  }
                   onClick={() => form.reset()}
                 >
                   Reset
                 </Button>
-                <Button type="submit" disabled={saveDraft.isPending}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={
+                    !datasetId ||
+                    saveDraft.isPending ||
+                    setPublicationStatus.isPending
+                  }
+                  onClick={handleUnpublish}
+                >
+                  {setPublicationStatus.isPending &&
+                    setPublicationStatus.variables?.publicationStatus ===
+                      "draft" && <Spinner />}
+                  <EyeOff className="size-4" />
+                  Unpublish
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={
+                    saveDraft.isPending || setPublicationStatus.isPending
+                  }
+                  onClick={form.handleSubmit(onPublish)}
+                >
+                  {setPublicationStatus.isPending &&
+                    setPublicationStatus.variables?.publicationStatus ===
+                      "published" && <Spinner />}
+                  <Globe className="size-4" />
+                  Publish
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={
+                    saveDraft.isPending || setPublicationStatus.isPending
+                  }
+                >
                   {saveDraft.isPending && <Spinner />}
                   {isEditing ? "Save Draft" : "Create Draft"}
                 </Button>

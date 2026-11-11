@@ -72,3 +72,14 @@ export const CreateDraftParamsSchema = z.object({
   catalogueId: z.string(),
   dataset: z.any(),
 });
+
+export const SetPublicationStatusParamsSchema = z.object({
+  id: z.string(),
+  catalogueId: z.string(),
+  publicationStatus: z.enum(["draft", "published"]),
+  /**
+   * Optional form payload. When present, the dataset is saved with the new
+   * publication status in a single update request.
+   */
+  dataset: z.any().optional(),
+});

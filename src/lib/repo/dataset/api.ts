@@ -215,15 +215,26 @@ export async function getDatasetDraftById(
   }
 }
 
-export async function createDatasetDraft(
+type PublicationStatus = "draft" | "published";
+type AccessLevel = "public" | "restricted";
+
+function accessLevelForPublicationStatus(
+  publicationStatus: PublicationStatus,
+): AccessLevel {
+  return publicationStatus === "published" ? "public" : "restricted";
+}
+
+async function putDatasetWithPublicationStatus(
   catalogId: string,
   datasetId: string,
   dataset: object,
-  axiosInstance: AxiosInstance = axios.create(),
+  publicationStatus: PublicationStatus,
+  axiosInstance: AxiosInstance,
 ) {
+  const accessLevel = accessLevelForPublicationStatus(publicationStatus);
   const url =
     BACKEND_URLS.REPO +
-    `catalogues/${catalogId}/datasets/origin?publicationStatus=draft&accessLevel=restricted&originalId=${datasetId}`;
+    `catalogues/${catalogId}/datasets/origin?publicationStatus=${publicationStatus}&accessLevel=${accessLevel}&originalId=${encodeURIComponent(datasetId)}`;
 
   try {
     const res = await axiosInstance.put(url, dataset, {
@@ -231,15 +242,15 @@ export async function createDatasetDraft(
         Accept: "text/turtle",
         "Content-Type": "application/ld+json",
       },
-      // Piveau returns 304 when the draft is unchanged
+      // Piveau returns 304 when the dataset is unchanged
       validateStatus: (status) =>
         (status >= 200 && status < 300) || status === 304,
     });
     console.log(res.data);
     return res.data as string[];
   } catch (error) {
-    console.error("Failed to create dataset draft:", error);
-    console.error((error as any).response.data);
+    console.error("Failed to save dataset:", error);
+    console.error((error as any).response?.data);
 
     if ((error as any).response?.status === 500) {
       throw new TRPCError({
@@ -251,6 +262,135 @@ export async function createDatasetDraft(
 
     handleAxiosErrorForTRPC(error);
   }
+}
+
+export async function createDatasetDraft(
+  catalogId: string,
+  datasetId: string,
+  dataset: object,
+  axiosInstance: AxiosInstance = axios.create(),
+) {
+  return putDatasetWithPublicationStatus(
+    catalogId,
+    datasetId,
+    dataset,
+    "draft",
+    axiosInstance,
+  );
+}
+
+/**
+ * Saves the dataset payload and changes its publication status (and the
+ * matching access level) in a single update request.
+ */
+export async function updateDatasetPublication(
+  catalogId: string,
+  datasetId: string,
+  dataset: object,
+  publicationStatus: PublicationStatus,
+  axiosInstance: AxiosInstance = axios.create(),
+) {
+  return putDatasetWithPublicationStatus(
+    catalogId,
+    datasetId,
+    dataset,
+    publicationStatus,
+    axiosInstance,
+  );
+}
+
+async function callDatasetAction(
+  method: string,
+  params: Record<string, unknown>,
+  axiosInstance: AxiosInstance,
+) {
+  try {
+    const response = await axiosInstance.post(
+      `${BACKEND_URLS.REPO}action`,
+      {
+        jsonrpc: "2.0",
+        method,
+        params,
+        id: method,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (response.data?.error) {
+      throw new TRPCError({
+        code: "BAD_GATEWAY",
+        message:
+          response.data.error.message ?? `Piveau action ${method} failed.`,
+      });
+    }
+
+    return response.data?.result;
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    console.error(`Failed to call piveau action ${method}:`, error);
+    console.error((error as any).response?.data);
+
+    if ((error as any).response?.status === 500) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Received 500 from resources api, likely missing auth.",
+        cause: error,
+      });
+    }
+
+    handleAxiosErrorForTRPC(error);
+  }
+}
+
+/**
+ * Changes only the publication status and access level of a dataset.
+ *
+ * Publish results in `published` + `public`, unpublish in `draft` +
+ * `restricted`. Both operations are idempotent.
+ */
+export async function setDatasetPublicationStatus(
+  catalogId: string,
+  datasetId: string,
+  publicationStatus: PublicationStatus,
+  axiosInstance: AxiosInstance = axios.create(),
+): Promise<void> {
+  const accessLevel = accessLevelForPublicationStatus(publicationStatus);
+  const params = { id: datasetId, catalogueId: catalogId };
+
+  // Keep drafts hidden while changing the access level, and only make the
+  // dataset public right before it is published.
+  if (publicationStatus === "published") {
+    await callDatasetAction(
+      "setDatasetAccessLevel",
+      { ...params, accessLevel },
+      axiosInstance,
+    );
+    await callDatasetAction(
+      "setDatasetPublicationStatus",
+      { ...params, publicationStatus },
+      axiosInstance,
+    );
+    return;
+  }
+
+  await callDatasetAction(
+    "setDatasetPublicationStatus",
+    { ...params, publicationStatus },
+    axiosInstance,
+  );
+  await callDatasetAction(
+    "setDatasetAccessLevel",
+    { ...params, accessLevel },
+    axiosInstance,
+  );
 }
 
 export async function deleteDataset(

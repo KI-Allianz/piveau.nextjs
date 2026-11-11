@@ -28,6 +28,11 @@ interface DraftListProps {
   catalogueId: string;
 }
 
+type PendingPublication = {
+  id: string;
+  publicationStatus: "draft" | "published";
+};
+
 interface ErrorStateProps {
   title: string;
   message?: string;
@@ -64,8 +69,8 @@ function EmptyState() {
     <Card>
       <CardContent className="flex flex-col items-center justify-center gap-2 py-10 text-center text-muted-foreground">
         <Inbox className="size-6" />
-        <p className="font-medium text-foreground">No drafts yet</p>
-        <p className="text-sm">Create a dataset draft to see it here.</p>
+        <p className="font-medium text-foreground">No datasets yet</p>
+        <p className="text-sm">Create a dataset to see it here.</p>
       </CardContent>
     </Card>
   );
@@ -77,9 +82,12 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
 
   const getDrafts = trpc.dataset.draft.getAll.useQuery({ id: catalogueId });
   const deleteDraft = trpc.dataset.draft.delete.useMutation();
+  const setPublicationStatus = trpc.dataset.setPublicationStatus.useMutation();
 
   const [draftId, setDraftId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<DraftSummary | null>(null);
+  const [pendingPublication, setPendingPublication] =
+    useState<PendingPublication | null>(null);
 
   const getDraft = trpc.dataset.draft.get.useQuery(
     { id: draftId || "", catalogueId: catalogueId },
@@ -114,6 +122,47 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
     setCurrentDraft(null);
   };
 
+  const handleSetPublication = async (
+    draft: DraftSummary,
+    publicationStatus: "draft" | "published",
+  ) => {
+    setPendingPublication({ id: draft.id, publicationStatus });
+
+    try {
+      await setPublicationStatus.mutateAsync({
+        id: draft.id,
+        catalogueId,
+        publicationStatus,
+      });
+
+      toast.success(
+        publicationStatus === "published"
+          ? "Dataset published"
+          : "Dataset unpublished",
+        {
+          description:
+            publicationStatus === "published"
+              ? "The dataset is now public."
+              : "The dataset is now a restricted draft.",
+        },
+      );
+
+      await getDrafts.refetch();
+    } catch (error) {
+      toast.error(
+        publicationStatus === "published"
+          ? "Could not publish dataset"
+          : "Could not unpublish dataset",
+        {
+          description:
+            error instanceof Error ? error.message : "Please try again.",
+        },
+      );
+    } finally {
+      setPendingPublication(null);
+    }
+  };
+
   const handleConfirmDelete = async () => {
     if (!pendingDelete) return;
 
@@ -123,7 +172,7 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
         catalogueId,
       });
 
-      toast.success("Draft deleted", {
+      toast.success("Dataset deleted", {
         description: pendingDeleteTitle,
       });
 
@@ -147,7 +196,7 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
     <div className="mx-auto my-8 max-w-3xl">
       <div className="mb-4 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold">Drafts</h1>
+          <h1 className="text-2xl font-bold">Datasets</h1>
           <Button
             type="button"
             variant="outline"
@@ -160,7 +209,7 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
         </div>
         {drafts && drafts.length > 0 && (
           <span className="text-sm text-muted-foreground">
-            {drafts.length} {drafts.length === 1 ? "draft" : "drafts"}
+            {drafts.length} {drafts.length === 1 ? "dataset" : "datasets"}
           </span>
         )}
       </div>
@@ -173,7 +222,7 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
         </div>
       ) : getDrafts.isError ? (
         <ErrorState
-          title="Couldn't load drafts"
+          title="Couldn't load datasets"
           message={getDrafts.error.message}
           onRetry={() => getDrafts.refetch()}
         />
@@ -187,7 +236,16 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
                 draft={draft}
                 selected={draftId === draft.id}
                 isLoading={draftId === draft.id && getDraft.isFetching}
+                pendingPublication={
+                  pendingPublication?.id === draft.id
+                    ? pendingPublication.publicationStatus === "published"
+                      ? "publish"
+                      : "unpublish"
+                    : null
+                }
                 onSelect={() => setDraftId(draft.id)}
+                onPublish={() => handleSetPublication(draft, "published")}
+                onUnpublish={() => handleSetPublication(draft, "draft")}
                 onDelete={() => setPendingDelete(draft)}
               />
             </li>
@@ -198,14 +256,14 @@ export function DraftList({ setCurrentDraft, catalogueId }: DraftListProps) {
       {draftId && getDraft.isFetching && (
         <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
           <Spinner />
-          Loading draft…
+          Loading dataset…
         </div>
       )}
 
       {draftId && getDraft.isError && (
         <div className="mt-4">
           <ErrorState
-            title="Couldn't load draft"
+            title="Couldn't load dataset"
             message={getDraft.error.message}
             onRetry={() => getDraft.refetch()}
           />

@@ -4,6 +4,7 @@ import {
   GetDraftParamsSchema,
   GetParamsSchema,
   SearchParamsSchema,
+  SetPublicationStatusParamsSchema,
 } from "./schemas/search";
 import { AssistantParamsSchema } from "./schemas/assistant";
 import { protectedProcedure, publicProcedure } from "./auth/procedures";
@@ -19,6 +20,8 @@ import {
   getDatasetDrafts,
   getFeaturedDatasets,
   searchDatasets,
+  setDatasetPublicationStatus,
+  updateDatasetPublication,
 } from "@/lib/repo/dataset/api";
 import { deleteAllDatasetFiles } from "@/lib/repo/uploader/server";
 import axios from "axios";
@@ -206,6 +209,30 @@ export const appRouter = router({
           );
         }),
     },
+
+    setPublicationStatus: protectedProcedure
+      .input(SetPublicationStatusParamsSchema)
+      .mutation(async (opts) => {
+        const { input, ctx } = opts;
+
+        if (input.dataset) {
+          await updateDatasetPublication(
+            input.catalogueId,
+            input.id,
+            input.dataset,
+            input.publicationStatus,
+            getAxiosInstance(ctx),
+          );
+          return;
+        }
+
+        await setDatasetPublicationStatus(
+          input.catalogueId,
+          input.id,
+          input.publicationStatus,
+          getAxiosInstance(ctx),
+        );
+      }),
   },
 
   model: {
