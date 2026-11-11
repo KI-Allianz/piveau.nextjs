@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, FileText, Trash2 } from "lucide-react";
+import { CheckCircle2, EyeOff, FileText, Globe, Trash2 } from "lucide-react";
 
 import HtmlSnippet from "@/components/HTMLSnippet";
 import { useLocale } from "@/hooks/useLocale";
@@ -10,11 +10,16 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
+type PendingPublication = "publish" | "unpublish";
+
 interface DraftCardProps {
   draft: DraftSummary;
   selected: boolean;
   isLoading?: boolean;
+  pendingPublication?: PendingPublication | null;
   onSelect: () => void;
+  onPublish: () => void;
+  onUnpublish: () => void;
   onDelete: () => void;
 }
 
@@ -22,7 +27,10 @@ export function DraftCard({
   draft,
   selected,
   isLoading = false,
+  pendingPublication = null,
   onSelect,
+  onPublish,
+  onUnpublish,
   onDelete,
 }: DraftCardProps) {
   const { translateDict } = useLocale();
@@ -88,17 +96,54 @@ export function DraftCard({
         ) : null}
       </button>
 
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        aria-label="Delete dataset"
-        title="Delete dataset"
-        onClick={onDelete}
-        className="self-center shrink-0 text-muted-foreground hover:text-destructive"
-      >
-        <Trash2 className="size-4" />
-      </Button>
+      <div className="flex shrink-0 items-center gap-1 self-center">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="Publish dataset"
+          title="Publish dataset"
+          onClick={onPublish}
+          disabled={!!pendingPublication}
+          className="text-muted-foreground hover:text-primary"
+        >
+          {pendingPublication === "publish" ? (
+            <Spinner className="size-4" />
+          ) : (
+            <Globe className="size-4" />
+          )}
+        </Button>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="Unpublish dataset"
+          title="Unpublish dataset"
+          onClick={onUnpublish}
+          disabled={!!pendingPublication}
+          className="text-muted-foreground hover:text-primary"
+        >
+          {pendingPublication === "unpublish" ? (
+            <Spinner className="size-4" />
+          ) : (
+            <EyeOff className="size-4" />
+          )}
+        </Button>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="Delete dataset"
+          title="Delete dataset"
+          onClick={onDelete}
+          disabled={!!pendingPublication}
+          className="text-muted-foreground hover:text-destructive"
+        >
+          <Trash2 className="size-4" />
+        </Button>
+      </div>
     </div>
   );
 }
