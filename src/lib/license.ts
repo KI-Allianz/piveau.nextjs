@@ -4,6 +4,7 @@ import fs from "fs";
 import { DataFactory, Store, NamedNode, Literal, Quad_Subject } from "n3";
 import { Readable } from "stream";
 import path from "node:path";
+import { normalizeLicenseKey } from "./license-key";
 
 const { namedNode } = DataFactory;
 
@@ -28,6 +29,9 @@ export type LicenseEntry = {
   inScheme?: string; // scheme IRI
   topConceptOf?: string[]; // skos:topConceptOf[*]
   types?: string[]; // rdf:type[*]
+  deprecated?: boolean; // SPDX: isDeprecatedLicenseId
+  isOsiApproved?: boolean; // SPDX: isOsiApproved
+  isFsfLibre?: boolean; // SPDX: isFsfLibre
 };
 
 // Utilities
@@ -152,8 +156,7 @@ export async function getDCATLicenses(): Promise<Record<string, LicenseEntry>> {
 
     const label = bestLabel(store, s, langPrefs);
 
-    // Remove protocol prefixes (http:// or https://) from the URI for easier keying
-    const cleanedUri = uri.replace(/^https?:\/\//, "");
+    const cleanedUri = normalizeLicenseKey(uri);
 
     result[cleanedUri] = {
       uri,
@@ -225,7 +228,7 @@ export async function getEuropeLicenses(): Promise<
     const types = getIriValues(store, s, RDF + "type");
 
     for (const reference of references) {
-      const cleanedUri = reference.replace(/^https?:\/\//, "");
+      const cleanedUri = normalizeLicenseKey(reference);
 
       result[cleanedUri] = {
         uri,
@@ -243,14 +246,93 @@ export async function getEuropeLicenses(): Promise<
   return result;
 }
 
-// Main: parse licenses as a dict keyed by concept URI
-export async function getLicenses(): Promise<Record<string, LicenseEntry>> {
-  const licenses = await getDCATLicenses();
-  const europeLicenses = await getEuropeLicenses();
-  // Merge Europe licenses (may overwrite DCAT ones if same URI)
-  Object.assign(licenses, europeLicenses);
+type SPDXLicense = {
+  reference: string;
+  isDeprecatedLicenseId: boolean;
+  detailsUrl: string;
+  referenceNumber: number;
+  name: string;
+  licenseId: string;
+  seeAlso?: string[];
+  isOsiApproved?: boolean;
+  isFsfLibre?: boolean;
+};
 
-  // console.log(licenses);
-  // console.log(europeLicenses);
+type SPDXLicenseList = {
+  licenseListVersion: string;
+  releaseDate: string;
+  licenses: SPDXLicense[];
+};
+
+export async function getSPDXLicenses(): Promise<Record<string, LicenseEntry>> {
+  const filePath = path.join(process.cwd(), "assets", "licenses-spdx.json");
+  const data = JSON.parse(
+    await fs.promises.readFile(filePath, "utf8"),
+  ) as SPDXLicenseList;
+
+  const result: Record<string, LicenseEntry> = {};
+  const entries: Array<{ license: SPDXLicense; entry: LicenseEntry }> =
+    data.licenses.map((license) => ({
+      license,
+      entry: {
+        uri: license.reference,
+        identifier: license.licenseId,
+        label: license.name,
+        altLabels: [license.licenseId],
+        homepage: license.reference,
+        references: license.seeAlso ?? [],
+        inScheme: "https://spdx.org/licenses",
+        deprecated: license.isDeprecatedLicenseId,
+        isOsiApproved: license.isOsiApproved,
+        isFsfLibre: license.isFsfLibre,
+      },
+    }));
+
+  for (const { license, entry } of entries) {
+    for (const uri of [
+      `http://spdx.org/licenses/${license.licenseId}`,
+      license.reference,
+      license.detailsUrl,
+    ]) {
+      const key = normalizeLicenseKey(uri);
+      if (key) {
+        result[key] = entry;
+      }
+    }
+  }
+
+  for (const { license, entry } of entries) {
+    for (const uri of license.seeAlso ?? []) {
+      const key = normalizeLicenseKey(uri);
+      if (key && !result[key]) {
+        result[key] = entry;
+      }
+    }
+  }
+
+  return result;
+}
+
+async function loadLicenses(): Promise<Record<string, LicenseEntry>> {
+  const licenses = await getSPDXLicenses();
+  Object.assign(licenses, await getDCATLicenses());
+  Object.assign(licenses, await getEuropeLicenses());
+
   return licenses;
+}
+
+let licensesPromise: Promise<Record<string, LicenseEntry>> | undefined;
+
+// Main: parse licenses as a dict keyed by normalized license URI.
+// The assets are static, so resolve them once per server process.
+export function getLicenses(): Promise<Record<string, LicenseEntry>> {
+  if (!licensesPromise) {
+    licensesPromise = loadLicenses().catch((error) => {
+      // Do not cache failures (e.g. a missing asset during development).
+      licensesPromise = undefined;
+      throw error;
+    });
+  }
+
+  return licensesPromise;
 }

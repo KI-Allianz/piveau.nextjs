@@ -1,7 +1,8 @@
 "use client";
 
 import React, { createContext, useContext } from "react";
-import { LicenseEntry } from "@/lib/license";
+import type { LicenseEntry } from "@/lib/license";
+import { normalizeLicenseKey } from "@/lib/license-key";
 
 const LicenseContext = createContext<{
   licenses: Record<string, LicenseEntry>;
@@ -27,10 +28,6 @@ export function LicenseProvider({
   );
 }
 
-function removeProtocol(uri: string): string {
-  return uri.replace(/^https?:\/\//, "");
-}
-
 export function useLicenses() {
   const context = useContext(LicenseContext);
   if (context === null) {
@@ -40,7 +37,7 @@ export function useLicenses() {
   return {
     licenses: context.licenses,
     getLicenseOrUndefined: (licenseId?: string | null) =>
-      context.licenses[removeProtocol(licenseId || "")],
+      context.licenses[normalizeLicenseKey(licenseId)],
     getLicense: (
       license?: {
         label?: string | null;
@@ -49,9 +46,9 @@ export function useLicenses() {
         description?: string | null;
       } | null,
     ) =>
-      context.licenses[license?.resource || ""] ||
+      context.licenses[normalizeLicenseKey(license?.resource || license?.id)] ||
       ({
-        uri: license?.resource,
+        uri: license?.resource || license?.id,
         identifier: license?.id || "unknown",
         label: license?.label || "Unknown License",
         altLabels: [],
