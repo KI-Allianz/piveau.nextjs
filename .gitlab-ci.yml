@@ -74,14 +74,38 @@ trigger-deploy:
       ENV_UPPER=$(echo "${CI_COMMIT_BRANCH}" | tr '[:lower:]' '[:upper:]')
 
       eval "TARGET_IP=\$${ENV_UPPER}_IP"
-      eval "TARGET_SECRET=\$${ENV_UPPER}_SECRET"
 
       if [ -z "$TARGET_IP" ]; then
         echo "ERROR: ${ENV_UPPER}_IP is not defined in GitLab CI/CD variables!"
         exit 1
       fi
 
-      echo "Triggering deployment to ${CI_COMMIT_BRANCH} environment at ${TARGET_IP}..."
+      # The host reports which slot it currently runs (plain text, e.g. "green").
+      # That color decides which webhook secret authenticates the redeploy.
+      if ! IDENTITY=$(curl --silent --show-error --fail-with-body \
+          --retry 3 --retry-connrefused "https://${TARGET_IP}/hooks/identity"); then
+        echo "ERROR: could not read deployment color from https://${TARGET_IP}/hooks/identity"
+        exit 1
+      fi
+      TARGET_COLOR=$(printf '%s' "$IDENTITY" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+
+      case "$TARGET_COLOR" in
+        green|blue) ;;
+        *)
+          echo "ERROR: https://${TARGET_IP}/hooks/identity returned unexpected color '${TARGET_COLOR}' (expected green or blue)"
+          exit 1
+          ;;
+      esac
+
+      COLOR_UPPER=$(echo "$TARGET_COLOR" | tr '[:lower:]' '[:upper:]')
+      eval "TARGET_SECRET=\$${COLOR_UPPER}_SECRET"
+
+      if [ -z "$TARGET_SECRET" ]; then
+        echo "ERROR: ${COLOR_UPPER}_SECRET is not defined in GitLab CI/CD variables!"
+        exit 1
+      fi
+
+      echo "Triggering deployment to ${CI_COMMIT_BRANCH} (${TARGET_COLOR} slot) at ${TARGET_IP}..."
 
       curl --fail-with-body --show-error \
         -H "Content-Type: application/json" \
