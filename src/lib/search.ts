@@ -41,7 +41,7 @@ export function buildDatasetExcludeFacets(params: URLSearchParams) {
     };
   }
 
-  return {};
+  return undefined;
 }
 
 export function extendReturnedFacets(
